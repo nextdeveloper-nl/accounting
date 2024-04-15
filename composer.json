@@ -9,8 +9,9 @@
         "php": ">=8.2.0",
         "league/fractal": "*",
         "monolog/monolog": "*",
-        "omnipay/common": "^3.0",
-        "iyzico/iyzipay-php": "^2.0"
+        "omnipay/common": "^v3.3.0",
+        "php-http/guzzle7-adapter": "*",
+        "omnipay/iyzico": "*"
     },
     "require-dev": {
         "illuminate/support": "5.5.*",
