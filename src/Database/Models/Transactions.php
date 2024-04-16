@@ -27,6 +27,8 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property string $conversation_id
+ * @property boolean $is_pending
  */
 class Transactions extends Model
 {
@@ -40,78 +42,80 @@ class Transactions extends Model
 
 
     /**
-     * @var array
+     @var array
      */
     protected $guarded = [];
 
     protected $fillable = [
-        'accounting_invoice_id',
-        'amount',
-        'common_currency_id',
-        'accounting_payment_gateway_id',
-        'iam_account_id',
-        'accounting_account_id',
-        'gateway_response',
-        'conversation_id',
+            'accounting_invoice_id',
+            'amount',
+            'common_currency_id',
+            'accounting_payment_gateway_id',
+            'iam_account_id',
+            'accounting_account_id',
+            'gateway_response',
+            'conversation_id',
+            'is_pending',
     ];
 
     /**
-     * Here we have the fulltext fields. We can use these for fulltext search if enabled.
+      Here we have the fulltext fields. We can use these for fulltext search if enabled.
      */
     protected $fullTextFields = [
 
     ];
 
     /**
-     * @var array
+     @var array
      */
     protected $appends = [
 
     ];
 
     /**
-     * We are casting fields to objects so that we can work on them better
+     We are casting fields to objects so that we can work on them better
      *
-     * @var array
+     @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'accounting_invoice_id' => 'integer',
-        'common_currency_id' => 'integer',
-        'accounting_payment_gateway_id' => 'integer',
-        'accounting_account_id' => 'integer',
-        'gateway_response' => 'string',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
-        'conversation_id'   =>  'string'
+    'id' => 'integer',
+    'accounting_invoice_id' => 'integer',
+    'common_currency_id' => 'integer',
+    'accounting_payment_gateway_id' => 'integer',
+    'accounting_account_id' => 'integer',
+    'gateway_response' => 'string',
+    'created_at' => 'datetime',
+    'updated_at' => 'datetime',
+    'deleted_at' => 'datetime',
+    'conversation_id' => 'string',
+    'is_pending' => 'boolean',
     ];
 
     /**
-     * We are casting data fields.
+     We are casting data fields.
      *
-     * @var array
+     @var array
      */
     protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
+    'created_at',
+    'updated_at',
+    'deleted_at',
     ];
 
     /**
-     * @var array
+     @var array
      */
     protected $with = [
 
     ];
 
     /**
-     * @var int
+     @var int
      */
     protected $perPage = 20;
 
     /**
-     * @return void
+     @return void
      */
     public static function boot()
     {
@@ -128,11 +132,9 @@ class Transactions extends Model
         $globalScopes = config('accounting.scopes.global');
         $modelScopes = config('accounting.scopes.accounting_transactions');
 
-        if (!$modelScopes) {
-            $modelScopes = [];
+        if(!$modelScopes) { $modelScopes = [];
         }
-        if (!$globalScopes) {
-            $globalScopes = [];
+        if (!$globalScopes) { $globalScopes = [];
         }
 
         $scopes = array_merge(
@@ -140,7 +142,7 @@ class Transactions extends Model
             $modelScopes
         );
 
-        if ($scopes) {
+        if($scopes) {
             foreach ($scopes as $scope) {
                 static::addGlobalScope(app($scope));
             }
@@ -148,6 +150,7 @@ class Transactions extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 }

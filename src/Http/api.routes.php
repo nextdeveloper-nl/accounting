@@ -56,6 +56,24 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('transactions')->group(
+            function () {
+                Route::get('/', 'Transactions\TransactionsController@index');
+
+                Route::get('{accounting_transactions}/tags ', 'Transactions\TransactionsController@tags');
+                Route::post('{accounting_transactions}/tags ', 'Transactions\TransactionsController@saveTags');
+                Route::get('{accounting_transactions}/addresses ', 'Transactions\TransactionsController@addresses');
+                Route::post('{accounting_transactions}/addresses ', 'Transactions\TransactionsController@saveAddresses');
+
+                Route::get('/{accounting_transactions}/{subObjects}', 'Transactions\TransactionsController@relatedObjects');
+                Route::get('/{accounting_transactions}', 'Transactions\TransactionsController@show');
+
+                Route::post('/', 'Transactions\TransactionsController@store');
+                Route::patch('/{accounting_transactions}', 'Transactions\TransactionsController@update');
+                Route::delete('/{accounting_transactions}', 'Transactions\TransactionsController@destroy');
+            }
+        );
+
         Route::prefix('payment-gateways')->group(
             function () {
                 Route::get('/', 'PaymentGateways\PaymentGatewaysController@index');
@@ -74,21 +92,21 @@ Route::prefix('accounting')->group(
             }
         );
 
-        Route::prefix('transactions')->group(
+        Route::prefix('credit-cards')->group(
             function () {
-                Route::get('/', 'Transactions\TransactionsController@index');
+                Route::get('/', 'CreditCards\CreditCardsController@index');
 
-                Route::get('{accounting_transactions}/tags ', 'Transactions\TransactionsController@tags');
-                Route::post('{accounting_transactions}/tags ', 'Transactions\TransactionsController@saveTags');
-                Route::get('{accounting_transactions}/addresses ', 'Transactions\TransactionsController@addresses');
-                Route::post('{accounting_transactions}/addresses ', 'Transactions\TransactionsController@saveAddresses');
+                Route::get('{accounting_credit_cards}/tags ', 'CreditCards\CreditCardsController@tags');
+                Route::post('{accounting_credit_cards}/tags ', 'CreditCards\CreditCardsController@saveTags');
+                Route::get('{accounting_credit_cards}/addresses ', 'CreditCards\CreditCardsController@addresses');
+                Route::post('{accounting_credit_cards}/addresses ', 'CreditCards\CreditCardsController@saveAddresses');
 
-                Route::get('/{accounting_transactions}/{subObjects}', 'Transactions\TransactionsController@relatedObjects');
-                Route::get('/{accounting_transactions}', 'Transactions\TransactionsController@show');
+                Route::get('/{accounting_credit_cards}/{subObjects}', 'CreditCards\CreditCardsController@relatedObjects');
+                Route::get('/{accounting_credit_cards}', 'CreditCards\CreditCardsController@show');
 
-                Route::post('/', 'Transactions\TransactionsController@store');
-                Route::patch('/{accounting_transactions}', 'Transactions\TransactionsController@update');
-                Route::delete('/{accounting_transactions}', 'Transactions\TransactionsController@destroy');
+                Route::post('/', 'CreditCards\CreditCardsController@store');
+                Route::patch('/{accounting_credit_cards}', 'CreditCards\CreditCardsController@update');
+                Route::delete('/{accounting_credit_cards}', 'CreditCards\CreditCardsController@destroy');
             }
         );
 
@@ -130,8 +148,15 @@ Route::prefix('accounting')->group(
 
 
 
+
+
+
+
+
+
     }
 );
+
 
 
 

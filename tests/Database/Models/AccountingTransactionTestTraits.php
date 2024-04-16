@@ -59,6 +59,7 @@ trait AccountingTransactionTestTraits
             'POST', '/accounting/accountingtransaction', [
             'form_params'   =>  [
                 'gateway_response'  =>  'a',
+                'conversation_id'  =>  'a',
                             ],
                 ['http_errors' => false]
             ]
@@ -347,6 +348,25 @@ trait AccountingTransactionTestTraits
             $request = new Request(
                 [
                 'gateway_response'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingTransactionQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingtransaction_event_conversation_id_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'conversation_id'  =>  'a'
                 ]
             );
 

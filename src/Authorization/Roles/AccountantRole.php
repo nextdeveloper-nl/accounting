@@ -9,16 +9,16 @@ use NextDeveloper\CRM\Database\Models\AccountManagers;
 use NextDeveloper\IAM\Authorization\Roles\AbstractRole;
 use NextDeveloper\IAM\Authorization\Roles\IAuthorizationRole;
 use NextDeveloper\IAM\Database\Models\Users;
+use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
-class AccountingUserRole extends AbstractRole implements IAuthorizationRole
+class AccountantRole extends AbstractRole implements IAuthorizationRole
 {
-    public const NAME = 'accounting-user';
+    public const NAME = 'accountant';
 
-    public const LEVEL = 150;
+    public const LEVEL = 20;
 
-    public const DESCRIPTION = 'Accounting user whose can see their invoices, credit cards, transactions and' .
-    ' other accounting related data.';
+    public const DESCRIPTION = 'Accounting operations manager who has access to all objects in this module.';
 
     public const DB_PREFIX = 'accounting';
 
@@ -31,10 +31,7 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
      */
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where([
-            'iam_account_id'    =>  UserHelper::currentAccount()->id,
-            'iam_user_id'       =>  UserHelper::me()->id
-        ]);
+        // An accountant can see all accounting data
     }
 
     public function checkPrivileges(Users $users = null)
@@ -55,7 +52,13 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             'accounting_credit_cards:update',
             'accounting_credit_cards:delete',
             'accounting_invoices:read',
+            'accounting_invoices:create',
+            'accounting_invoices:update',
+            'accounting_invoices:delete',
             'accounting_invoice_items:read',
+            'accounting_invoice_items:create',
+            'accounting_invoice_items:update',
+            'accounting_invoice_items:delete',
             'accounting_transactions:read',
         ];
     }
