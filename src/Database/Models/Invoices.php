@@ -26,7 +26,6 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property boolean $is_paid
  * @property boolean $is_refund
  * @property \Carbon\Carbon $due_date
- * @property integer $gift_code_id
  * @property integer $iam_account_id
  * @property integer $iam_user_id
  * @property boolean $is_payable
@@ -62,7 +61,6 @@ class Invoices extends Model
             'is_paid',
             'is_refund',
             'due_date',
-            'gift_code_id',
             'iam_account_id',
             'iam_user_id',
             'is_payable',
@@ -98,7 +96,6 @@ class Invoices extends Model
     'is_paid' => 'boolean',
     'is_refund' => 'boolean',
     'due_date' => 'datetime',
-    'gift_code_id' => 'integer',
     'is_payable' => 'boolean',
     'is_sealed' => 'boolean',
     'note' => 'string',
@@ -167,11 +164,4 @@ class Invoices extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
 }

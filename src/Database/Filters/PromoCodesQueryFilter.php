@@ -4,13 +4,13 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                
+            
 
 /**
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class InvoiceItemsQueryFilter extends AbstractQueryFilter
+class PromoCodesQueryFilter extends AbstractQueryFilter
 {
 
     /**
@@ -18,12 +18,17 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
     
-    public function objectType($value)
+    public function code($value)
     {
-        return $this->builder->where('object_type', 'like', '%' . $value . '%');
+        return $this->builder->where('code', 'like', '%' . $value . '%');
+    }
+    
+    public function giftCodeData($value)
+    {
+        return $this->builder->where('gift_code_data', 'like', '%' . $value . '%');
     }
 
-    public function quantity($value)
+    public function value($value)
     {
         $operator = substr($value, 0, 1);
 
@@ -33,7 +38,7 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('quantity', $operator, $value);
+        return $this->builder->where('value', $operator, $value);
     }
 
     public function createdAtStart($date)
@@ -66,15 +71,6 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('deleted_at', '<=', $date);
     }
 
-    public function commonCurrencyId($value)
-    {
-            $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
-
-        if($commonCurrency) {
-            return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
-        }
-    }
-
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -84,21 +80,21 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    public function accountingInvoiceId($value)
+    public function iamUserId($value)
     {
-            $accountingInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
+            $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
 
-        if($accountingInvoice) {
-            return $this->builder->where('accounting_invoice_id', '=', $accountingInvoice->id);
+        if($iamUser) {
+            return $this->builder->where('iam_user_id', '=', $iamUser->id);
         }
     }
 
-    public function accountingPromoCodeId($value)
+    public function commonCurrencyId($value)
     {
-            $accountingPromoCode = \NextDeveloper\Accounting\Database\Models\PromoCodes::where('uuid', $value)->first();
+            $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
 
-        if($accountingPromoCode) {
-            return $this->builder->where('accounting_promo_code_id', '=', $accountingPromoCode->id);
+        if($commonCurrency) {
+            return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
         }
     }
 

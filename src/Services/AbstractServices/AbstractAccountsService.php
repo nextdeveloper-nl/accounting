@@ -133,20 +133,17 @@ class AbstractAccountsService
                 $data['iam_account_id']
             );
         }
-
+            
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
-            
         if (array_key_exists('common_currency_id', $data)) {
             $data['common_currency_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\Commons\Database\Models\Currencies',
                 $data['common_currency_id']
             );
         }
-
-            
-            
+                        
         try {
             $model = Accounts::create($data);
         } catch(\Exception $e) {

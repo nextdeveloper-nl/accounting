@@ -133,9 +133,29 @@ class AbstractInvoiceItemsService
                 $data['common_currency_id']
             );
         }
-
+        if (array_key_exists('iam_account_id', $data)) {
+            $data['iam_account_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\IAM\Database\Models\Accounts',
+                $data['iam_account_id']
+            );
+        }
             
-            
+        if(!array_key_exists('iam_account_id', $data)) {
+            $data['iam_account_id'] = UserHelper::currentAccount()->id;
+        }
+        if (array_key_exists('accounting_invoice_id', $data)) {
+            $data['accounting_invoice_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\Invoices',
+                $data['accounting_invoice_id']
+            );
+        }
+        if (array_key_exists('accounting_promo_code_id', $data)) {
+            $data['accounting_promo_code_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\PromoCodes',
+                $data['accounting_promo_code_id']
+            );
+        }
+                        
         try {
             $model = InvoiceItems::create($data);
         } catch(\Exception $e) {
@@ -180,6 +200,24 @@ class AbstractInvoiceItemsService
             $data['common_currency_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\Commons\Database\Models\Currencies',
                 $data['common_currency_id']
+            );
+        }
+        if (array_key_exists('iam_account_id', $data)) {
+            $data['iam_account_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\IAM\Database\Models\Accounts',
+                $data['iam_account_id']
+            );
+        }
+        if (array_key_exists('accounting_invoice_id', $data)) {
+            $data['accounting_invoice_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\Invoices',
+                $data['accounting_invoice_id']
+            );
+        }
+        if (array_key_exists('accounting_promo_code_id', $data)) {
+            $data['accounting_promo_code_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\PromoCodes',
+                $data['accounting_promo_code_id']
             );
         }
     

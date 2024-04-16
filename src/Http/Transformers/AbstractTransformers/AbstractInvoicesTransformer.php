@@ -22,7 +22,6 @@ class AbstractInvoicesTransformer extends AbstractTransformer
     {
                         $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                     $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
-                    $giftCodeId = \NextDeveloper\\Database\Models\GiftCodes::where('id', $model->gift_code_id)->first();
                     $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                     $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
         
@@ -38,7 +37,6 @@ class AbstractInvoicesTransformer extends AbstractTransformer
             'is_paid'  =>  $model->is_paid,
             'is_refund'  =>  $model->is_refund,
             'due_date'  =>  $model->due_date,
-            'gift_code_id'  =>  $giftCodeId ? $giftCodeId->uuid : null,
             'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
             'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
             'is_payable'  =>  $model->is_payable,
@@ -52,6 +50,8 @@ class AbstractInvoicesTransformer extends AbstractTransformer
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

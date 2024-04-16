@@ -9,21 +9,21 @@ use Illuminate\Support\Str;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
-use NextDeveloper\Accounting\Database\Models\Transactions;
-use NextDeveloper\Accounting\Database\Filters\TransactionsQueryFilter;
+use NextDeveloper\Accounting\Database\Models\PromoCodes;
+use NextDeveloper\Accounting\Database\Filters\PromoCodesQueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Events\Services\Events;
 
 /**
- * This class is responsible from managing the data for Transactions
+ * This class is responsible from managing the data for PromoCodes
  *
- * Class TransactionsService.
+ * Class PromoCodesService.
  *
  * @package NextDeveloper\Accounting\Database\Models
  */
-class AbstractTransactionsService
+class AbstractPromoCodesService
 {
-    public static function get(TransactionsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
+    public static function get(PromoCodesQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
     {
         $enablePaginate = array_key_exists('paginate', $params);
 
@@ -34,7 +34,7 @@ class AbstractTransactionsService
         * Please let me know if you have any other idea about this; baris.bulut@nextdeveloper.com
         */
         if($filter == null) {
-            $filter = new TransactionsQueryFilter(new Request());
+            $filter = new PromoCodesQueryFilter(new Request());
         }
 
         $perPage = config('commons.pagination.per_page');
@@ -55,7 +55,7 @@ class AbstractTransactionsService
             $filter->orderBy($params['orderBy']);
         }
 
-        $model = Transactions::filter($filter);
+        $model = PromoCodes::filter($filter);
 
         if($model && $enablePaginate) {
             return $model->paginate($perPage);
@@ -66,7 +66,7 @@ class AbstractTransactionsService
 
     public static function getAll()
     {
-        return Transactions::all();
+        return PromoCodes::all();
     }
 
     /**
@@ -75,20 +75,20 @@ class AbstractTransactionsService
      * @param  $ref
      * @return mixed
      */
-    public static function getByRef($ref) : ?Transactions
+    public static function getByRef($ref) : ?PromoCodes
     {
-        return Transactions::findByRef($ref);
+        return PromoCodes::findByRef($ref);
     }
 
     /**
      * This method returns the model by lookint at its id
      *
      * @param  $id
-     * @return Transactions|null
+     * @return PromoCodes|null
      */
-    public static function getById($id) : ?Transactions
+    public static function getById($id) : ?PromoCodes
     {
-        return Transactions::where('id', $id)->first();
+        return PromoCodes::where('id', $id)->first();
     }
 
     /**
@@ -102,7 +102,7 @@ class AbstractTransactionsService
     public static function relatedObjects($uuid, $object)
     {
         try {
-            $obj = Transactions::where('uuid', $uuid)->first();
+            $obj = PromoCodes::where('uuid', $uuid)->first();
 
             if(!$obj) {
                 throw new ModelNotFoundException('Cannot find the related model');
@@ -127,24 +127,6 @@ class AbstractTransactionsService
      */
     public static function create(array $data)
     {
-        if (array_key_exists('accounting_invoice_id', $data)) {
-            $data['accounting_invoice_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Invoices',
-                $data['accounting_invoice_id']
-            );
-        }
-        if (array_key_exists('common_currency_id', $data)) {
-            $data['common_currency_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Commons\Database\Models\Currencies',
-                $data['common_currency_id']
-            );
-        }
-        if (array_key_exists('accounting_payment_gateway_id', $data)) {
-            $data['accounting_payment_gateway_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\PaymentGateways',
-                $data['accounting_payment_gateway_id']
-            );
-        }
         if (array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\IAM\Database\Models\Accounts',
@@ -155,26 +137,30 @@ class AbstractTransactionsService
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
-        if (array_key_exists('accounting_account_id', $data)) {
-            $data['accounting_account_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Accounts',
-                $data['accounting_account_id']
+        if (array_key_exists('iam_user_id', $data)) {
+            $data['iam_user_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\IAM\Database\Models\Users',
+                $data['iam_user_id']
             );
         }
-        if (array_key_exists('conversation_id', $data)) {
-            $data['conversation_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\\Database\Models\Conversations',
-                $data['conversation_id']
+                    
+        if(!array_key_exists('iam_user_id', $data)) {
+            $data['iam_user_id']    = UserHelper::me()->id;
+        }
+        if (array_key_exists('common_currency_id', $data)) {
+            $data['common_currency_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Commons\Database\Models\Currencies',
+                $data['common_currency_id']
             );
         }
                         
         try {
-            $model = Transactions::create($data);
+            $model = PromoCodes::create($data);
         } catch(\Exception $e) {
             throw $e;
         }
 
-        Events::fire('created:NextDeveloper\Accounting\Transactions', $model);
+        Events::fire('created:NextDeveloper\Accounting\PromoCodes', $model);
 
         return $model->fresh();
     }
@@ -183,9 +169,9 @@ class AbstractTransactionsService
      * This function expects the ID inside the object.
      *
      * @param  array $data
-     * @return Transactions
+     * @return PromoCodes
      */
-    public static function updateRaw(array $data) : ?Transactions
+    public static function updateRaw(array $data) : ?PromoCodes
     {
         if(array_key_exists('id', $data)) {
             return self::update($data['id'], $data);
@@ -206,12 +192,18 @@ class AbstractTransactionsService
      */
     public static function update($id, array $data)
     {
-        $model = Transactions::where('uuid', $id)->first();
+        $model = PromoCodes::where('uuid', $id)->first();
 
-        if (array_key_exists('accounting_invoice_id', $data)) {
-            $data['accounting_invoice_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Invoices',
-                $data['accounting_invoice_id']
+        if (array_key_exists('iam_account_id', $data)) {
+            $data['iam_account_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\IAM\Database\Models\Accounts',
+                $data['iam_account_id']
+            );
+        }
+        if (array_key_exists('iam_user_id', $data)) {
+            $data['iam_user_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\IAM\Database\Models\Users',
+                $data['iam_user_id']
             );
         }
         if (array_key_exists('common_currency_id', $data)) {
@@ -220,32 +212,8 @@ class AbstractTransactionsService
                 $data['common_currency_id']
             );
         }
-        if (array_key_exists('accounting_payment_gateway_id', $data)) {
-            $data['accounting_payment_gateway_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\PaymentGateways',
-                $data['accounting_payment_gateway_id']
-            );
-        }
-        if (array_key_exists('iam_account_id', $data)) {
-            $data['iam_account_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\IAM\Database\Models\Accounts',
-                $data['iam_account_id']
-            );
-        }
-        if (array_key_exists('accounting_account_id', $data)) {
-            $data['accounting_account_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Accounts',
-                $data['accounting_account_id']
-            );
-        }
-        if (array_key_exists('conversation_id', $data)) {
-            $data['conversation_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\\Database\Models\Conversations',
-                $data['conversation_id']
-            );
-        }
     
-        Events::fire('updating:NextDeveloper\Accounting\Transactions', $model);
+        Events::fire('updating:NextDeveloper\Accounting\PromoCodes', $model);
 
         try {
             $isUpdated = $model->update($data);
@@ -254,7 +222,7 @@ class AbstractTransactionsService
             throw $e;
         }
 
-        Events::fire('updated:NextDeveloper\Accounting\Transactions', $model);
+        Events::fire('updated:NextDeveloper\Accounting\PromoCodes', $model);
 
         return $model->fresh();
     }
@@ -271,9 +239,9 @@ class AbstractTransactionsService
      */
     public static function delete($id)
     {
-        $model = Transactions::where('uuid', $id)->first();
+        $model = PromoCodes::where('uuid', $id)->first();
 
-        Events::fire('deleted:NextDeveloper\Accounting\Transactions', $model);
+        Events::fire('deleted:NextDeveloper\Accounting\PromoCodes', $model);
 
         try {
             $model = $model->delete();

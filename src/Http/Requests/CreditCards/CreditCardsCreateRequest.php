@@ -14,7 +14,7 @@ class CreditCardsCreateRequest extends AbstractFormRequest
     {
         return [
             'name' => 'required|string',
-        'type' => 'required|string',
+        'type' => 'nullable|string',
         'cc_holder_name' => 'required|string',
         'cc_number' => 'required|string',
         'cc_month' => 'required|string',
