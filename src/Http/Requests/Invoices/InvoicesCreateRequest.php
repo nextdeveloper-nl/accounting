@@ -22,7 +22,6 @@ class InvoicesCreateRequest extends AbstractFormRequest
         'is_paid' => 'boolean',
         'is_refund' => 'boolean',
         'due_date' => 'required|date',
-        'gift_code_id' => 'nullable|exists:gift_codes,uuid|uuid',
         'is_payable' => 'boolean',
         'is_sealed' => 'boolean',
         'note' => 'string',

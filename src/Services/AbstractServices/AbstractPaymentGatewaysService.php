@@ -133,20 +133,17 @@ class AbstractPaymentGatewaysService
                 $data['common_country_id']
             );
         }
-
-            
         if (array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\IAM\Database\Models\Accounts',
                 $data['iam_account_id']
             );
         }
-
+            
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
-            
-            
+                        
         try {
             $model = PaymentGateways::create($data);
         } catch(\Exception $e) {

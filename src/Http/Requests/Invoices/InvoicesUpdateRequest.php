@@ -22,7 +22,6 @@ class InvoicesUpdateRequest extends AbstractFormRequest
         'is_paid' => 'boolean',
         'is_refund' => 'boolean',
         'due_date' => 'nullable|date',
-        'gift_code_id' => 'nullable|exists:gift_codes,uuid|uuid',
         'is_payable' => 'boolean',
         'is_sealed' => 'boolean',
         'note' => 'string',

@@ -6,31 +6,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Accounting\Database\Observers\InvoiceItemsObserver;
+use NextDeveloper\Accounting\Database\Observers\PromoCodesObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * InvoiceItems model.
+ * PromoCodes model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property string $object_type
- * @property integer $object_id
- * @property integer $quantity
- * @property $unit_price
+ * @property string $code
+ * @property integer $iam_account_id
+ * @property integer $iam_user_id
+ * @property integer $value
  * @property integer $common_currency_id
+ * @property string $gift_code_data
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
- * @property integer $iam_account_id
- * @property integer $accounting_invoice_id
- * @property $total_price
- * @property integer $accounting_promo_code_id
  */
-class InvoiceItems extends Model
+class PromoCodes extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable;
     use SoftDeletes;
@@ -38,7 +35,7 @@ class InvoiceItems extends Model
 
     public $timestamps = true;
 
-    protected $table = 'accounting_invoice_items';
+    protected $table = 'accounting_promo_codes';
 
 
     /**
@@ -47,15 +44,12 @@ class InvoiceItems extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'object_type',
-            'object_id',
-            'quantity',
-            'unit_price',
-            'common_currency_id',
+            'code',
             'iam_account_id',
-            'accounting_invoice_id',
-            'total_price',
-            'accounting_promo_code_id',
+            'iam_user_id',
+            'value',
+            'common_currency_id',
+            'gift_code_data',
     ];
 
     /**
@@ -79,15 +73,13 @@ class InvoiceItems extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'object_type' => 'string',
-    'object_id' => 'integer',
-    'quantity' => 'integer',
+    'code' => 'string',
+    'value' => 'integer',
     'common_currency_id' => 'integer',
+    'gift_code_data' => 'string',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-    'accounting_invoice_id' => 'integer',
-    'accounting_promo_code_id' => 'integer',
     ];
 
     /**
@@ -121,7 +113,7 @@ class InvoiceItems extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(InvoiceItemsObserver::class);
+        parent::observe(PromoCodesObserver::class);
 
         self::registerScopes();
     }
@@ -129,7 +121,7 @@ class InvoiceItems extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_invoice_items');
+        $modelScopes = config('accounting.scopes.accounting_promo_codes');
 
         if(!$modelScopes) { $modelScopes = [];
         }

@@ -133,21 +133,12 @@ class AbstractInvoicesService
                 $data['accounting_account_id']
             );
         }
-
         if (array_key_exists('common_currency_id', $data)) {
             $data['common_currency_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\Commons\Database\Models\Currencies',
                 $data['common_currency_id']
             );
         }
-
-        if (array_key_exists('gift_code_id', $data)) {
-            $data['gift_code_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\\Database\Models\GiftCodes',
-                $data['gift_code_id']
-            );
-        }
-
         if (array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\IAM\Database\Models\Accounts',
@@ -158,14 +149,12 @@ class AbstractInvoicesService
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
-
         if (array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\IAM\Database\Models\Users',
                 $data['iam_user_id']
             );
         }
-
 
         if(!array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id']    = UserHelper::me()->id;
@@ -221,12 +210,6 @@ class AbstractInvoicesService
             $data['common_currency_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\Commons\Database\Models\Currencies',
                 $data['common_currency_id']
-            );
-        }
-        if (array_key_exists('gift_code_id', $data)) {
-            $data['gift_code_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\\Database\Models\GiftCodes',
-                $data['gift_code_id']
             );
         }
         if (array_key_exists('iam_account_id', $data)) {

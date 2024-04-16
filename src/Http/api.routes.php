@@ -110,6 +110,39 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('promo-codes')->group(
+            function () {
+                Route::get('/', 'PromoCodes\PromoCodesController@index');
+
+                Route::get('{accounting_promo_codes}/tags ', 'PromoCodes\PromoCodesController@tags');
+                Route::post('{accounting_promo_codes}/tags ', 'PromoCodes\PromoCodesController@saveTags');
+                Route::get('{accounting_promo_codes}/addresses ', 'PromoCodes\PromoCodesController@addresses');
+                Route::post('{accounting_promo_codes}/addresses ', 'PromoCodes\PromoCodesController@saveAddresses');
+
+                Route::get('/{accounting_promo_codes}/{subObjects}', 'PromoCodes\PromoCodesController@relatedObjects');
+                Route::get('/{accounting_promo_codes}', 'PromoCodes\PromoCodesController@show');
+
+                Route::post('/', 'PromoCodes\PromoCodesController@store');
+                Route::patch('/{accounting_promo_codes}', 'PromoCodes\PromoCodesController@update');
+                Route::delete('/{accounting_promo_codes}', 'PromoCodes\PromoCodesController@destroy');
+            }
+        );
+
         // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 );
+
+
