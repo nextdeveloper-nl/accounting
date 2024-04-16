@@ -11,7 +11,7 @@
         "monolog/monolog": "*",
         "omnipay/common": "^v3.3.0",
         "php-http/guzzle7-adapter": "*",
-        "omnipay/iyzico": "*"
+        "nextdeveloper/omnipay-iyzico": "*"
     },
     "require-dev": {
         "illuminate/support": "5.5.*",
