@@ -25,6 +25,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property $parameters
  */
 class PaymentGateways extends Model
 {
@@ -48,6 +49,7 @@ class PaymentGateways extends Model
             'is_active',
             'common_country_id',
             'iam_account_id',
+            'parameters',
     ];
 
     /**
@@ -78,7 +80,7 @@ class PaymentGateways extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-        'parameters'    =>  'json'
+    'parameters' => 'array',
     ];
 
     /**
@@ -140,6 +142,7 @@ class PaymentGateways extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

@@ -21,12 +21,13 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property integer $object_id
  * @property integer $quantity
  * @property $unit_price
- * @property $total_price
  * @property integer $common_currency_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
- * @property integer $iam_account_ig
+ * @property integer $iam_account_id
+ * @property integer $accounting_invoice_id
+ * @property $total_price
  */
 class InvoiceItems extends Model
 {
@@ -49,9 +50,10 @@ class InvoiceItems extends Model
             'object_id',
             'quantity',
             'unit_price',
-            'total_price',
             'common_currency_id',
-            'iam_account_ig',
+            'iam_account_id',
+            'accounting_invoice_id',
+            'total_price',
     ];
 
     /**
@@ -82,7 +84,7 @@ class InvoiceItems extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-    'iam_account_ig' => 'integer',
+    'accounting_invoice_id' => 'integer',
     ];
 
     /**
@@ -144,6 +146,7 @@ class InvoiceItems extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

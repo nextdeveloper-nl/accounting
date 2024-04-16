@@ -19,6 +19,8 @@ class TransactionsCreateRequest extends AbstractFormRequest
         'accounting_payment_gateway_id' => 'required|exists:accounting_payment_gateways,uuid|uuid',
         'accounting_account_id' => 'required|exists:accounting_accounts,uuid|uuid',
         'gateway_response' => 'required|string',
+        'conversation_id' => 'required|string|exists:conversations,uuid|uuid',
+        'is_pending' => 'boolean',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

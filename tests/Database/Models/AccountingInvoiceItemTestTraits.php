@@ -60,7 +60,6 @@ trait AccountingInvoiceItemTestTraits
             'form_params'   =>  [
                 'object_type'  =>  'a',
                 'quantity'  =>  '1',
-                'iam_account_ig'  =>  '1',
                             ],
                 ['http_errors' => false]
             ]
@@ -368,25 +367,6 @@ trait AccountingInvoiceItemTestTraits
             $request = new Request(
                 [
                 'quantity'  =>  '1'
-                ]
-            );
-
-            $filter = new AccountingInvoiceItemQueryFilter($request);
-
-            $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoiceItem::filter($filter)->first();
-        } catch (\Exception $e) {
-            $this->assertFalse(false, $e->getMessage());
-        }
-
-        $this->assertTrue(true);
-    }
-
-    public function test_accountinginvoiceitem_event_iam_account_ig_filter()
-    {
-        try {
-            $request = new Request(
-                [
-                'iam_account_ig'  =>  '1'
                 ]
             );
 
