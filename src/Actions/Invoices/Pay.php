@@ -160,14 +160,14 @@ class Pay extends AbstractAction
         $response = $omnipay->purchase($purchaseData)->send();
 
         $transactionLog = TransactionsService::create([
-            'accounting_invoice_id' =>  $invoice->id,
-            'amount' => $invoice->amount,
-            'common_currency_id' => $invoice->common_currency_id,
+            'accounting_invoice_id'         =>  $invoice->id,
+            'amount'                        => $invoice->amount,
+            'common_currency_id'            => $invoice->common_currency_id,
             'accounting_payment_gateway_id' =>  $gateway->id,
-            'iam_account_id' => $invoice->iam_account_id,
-            'accounting_account_id' => $invoice->accounting_account_id,
-            'gateway_response' => json_encode($response),
-            'conversation_id' => $this->conversationId,
+            'iam_account_id'                => $invoice->iam_account_id,
+            'accounting_account_id'         => $invoice->accounting_account_id,
+            'gateway_response'              => json_encode($response),
+            'conversation_identifier'       => $this->conversationId,
         ]);
 
         if(!$response['isSuccessful']) {

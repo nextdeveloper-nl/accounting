@@ -59,7 +59,7 @@ trait AccountingTransactionTestTraits
             'POST', '/accounting/accountingtransaction', [
             'form_params'   =>  [
                 'gateway_response'  =>  'a',
-                'conversation_id'  =>  'a',
+                'conversation_identifier'  =>  'a',
                             ],
                 ['http_errors' => false]
             ]
@@ -361,12 +361,12 @@ trait AccountingTransactionTestTraits
         $this->assertTrue(true);
     }
 
-    public function test_accountingtransaction_event_conversation_id_filter()
+    public function test_accountingtransaction_event_conversation_identifier_filter()
     {
         try {
             $request = new Request(
                 [
-                'conversation_id'  =>  'a'
+                'conversation_identifier'  =>  'a'
                 ]
             );
 

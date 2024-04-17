@@ -27,7 +27,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
- * @property string $conversation_id
+ * @property string $conversation_identifier
  * @property boolean $is_pending
  */
 class Transactions extends Model
@@ -54,7 +54,7 @@ class Transactions extends Model
             'iam_account_id',
             'accounting_account_id',
             'gateway_response',
-            'conversation_id',
+            'conversation_identifier',
             'is_pending',
     ];
 
@@ -87,7 +87,7 @@ class Transactions extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-    'conversation_id' => 'string',
+    'conversation_identifier' => 'string',
     'is_pending' => 'boolean',
     ];
 
@@ -150,5 +150,6 @@ class Transactions extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 }

@@ -19,7 +19,7 @@ class TransactionsUpdateRequest extends AbstractFormRequest
         'accounting_payment_gateway_id' => 'nullable|exists:accounting_payment_gateways,uuid|uuid',
         'accounting_account_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
         'gateway_response' => 'nullable|string',
-        'conversation_id' => 'nullable|string|exists:conversations,uuid|uuid',
+        'conversation_identifier' => 'nullable|string',
         'is_pending' => 'boolean',
         ];
     }

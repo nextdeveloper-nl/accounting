@@ -13,13 +13,13 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 
 class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
 {
-    public const NAME = 'agenda-admin';
+    public const NAME = 'accounting-admin';
 
-    public const LEVEL = 100;
+    public const LEVEL = 10;
 
-    public const DESCRIPTION = 'Agenda Admin';
+    public const DESCRIPTION = 'Accounting Admin';
 
-    public const DB_PREFIX = 'agenda';
+    public const DB_PREFIX = 'accounting';
 
     /**
      * Applies basic member role sql for Eloquent
@@ -48,26 +48,19 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
     public function allowedOperations() :array
     {
         return [
-            'agenda_calendars:read',
-            'agenda_calendars:create',
-            'agenda_calendars:update',
-            'agenda_calendars:delete',
-            'agenda_calendar_items:read',
-            'agenda_calendar_items:create',
-            'agenda_calendar_items:update',
-            'agenda_calendar_items:delete',
-            'agenda_calendar_subscriptions:read',
-            'agenda_calendar_subscriptions:create',
-            'agenda_calendar_subscriptions:update',
-            'agenda_calendar_subscriptions:delete',
-            'agenda_contacts:read',
-            'agenda_contacts:create',
-            'agenda_contacts:update',
-            'agenda_contacts:delete',
-            'agenda_address_books:read',
-            'agenda_address_books:create',
-            'agenda_address_books:update',
-            'agenda_address_books:delete',
+            'accounting_credit_cards:read',
+            'accounting_credit_cards:create',
+            'accounting_credit_cards:update',
+            'accounting_credit_cards:delete',
+            'accounting_invoices:read',
+            'accounting_invoices:create',
+            'accounting_invoices:update',
+            'accounting_invoices:delete',
+            'accounting_invoice_items:read',
+            'accounting_invoice_items:create',
+            'accounting_invoice_items:update',
+            'accounting_invoice_items:delete',
+            'accounting_transactions:read',
         ];
     }
 
