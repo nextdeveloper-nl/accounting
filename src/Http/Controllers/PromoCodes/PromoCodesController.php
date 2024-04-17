@@ -35,6 +35,44 @@ class PromoCodesController extends AbstractController
     }
 
     /**
+     * This function returns the list of actions that can be performed on this object.
+     *
+     * @return void
+     */
+    public function getActions()
+    {
+        $actions = InvoicesService::getActions();
+
+        if($actions) {
+            if(array_key_exists($this->model, $actions)) {
+                return $this->withArray($actions[$this->model]);
+            }
+        }
+
+        return $this->noContent();
+    }
+
+    /**
+     * Makes the related action to the object
+     *
+     * @param  $objectId
+     * @param  $action
+     * @return array
+     */
+    public function doAction($objectId, $action)
+    {
+        $model = InvoicesService::getById($objectId);
+
+        $actionId = InvoicesService::doAction($model, $action);
+
+        return $this->withArray(
+            [
+            'action_id' =>  $actionId
+            ]
+        );
+    }
+
+    /**
      * This method receives ID for the related model and returns the item to the client.
      *
      * @param  $promoCodesId

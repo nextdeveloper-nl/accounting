@@ -80,6 +80,28 @@ class AbstractInvoicesService
         return Invoices::findByRef($ref);
     }
 
+    public static function getActions()
+    {
+        return config('accounting.actions');
+    }
+
+    public static function doAction($objectId, $action, $params)
+    {
+        $object = Invoices::where('uuid', $objectId)->first();
+
+        $action = '\\NextDeveloper\\Accounting\\Actions\\Invoices\\' . Str::studly($action);
+
+        if(class_exists($action)) {
+            $action = new $action($object, $params);
+
+            dispatch($action);
+
+            return $action->getActionId();
+        }
+
+        return null;
+    }
+
     /**
      * This method returns the model by lookint at its id
      *

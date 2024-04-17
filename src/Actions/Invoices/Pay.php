@@ -29,7 +29,7 @@ class Pay extends AbstractAction
     /**
      * @param Invoices $invoice
      */
-    public function __construct(Invoices $invoice)
+    public function __construct(Invoices $invoice, ...$args)
     {
         $this->model = $invoice;
 

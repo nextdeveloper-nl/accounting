@@ -80,6 +80,11 @@ class AbstractInvoiceItemsService
         return InvoiceItems::findByRef($ref);
     }
 
+    public static function getActions()
+    {
+        return config('accounting.actions');
+    }
+
     /**
      * This method returns the model by lookint at its id
      *
@@ -155,6 +160,12 @@ class AbstractInvoiceItemsService
                 $data['accounting_promo_code_id']
             );
         }
+        if (array_key_exists('accounting_account_id', $data)) {
+            $data['accounting_account_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\Accounts',
+                $data['accounting_account_id']
+            );
+        }
                         
         try {
             $model = InvoiceItems::create($data);
@@ -218,6 +229,12 @@ class AbstractInvoiceItemsService
             $data['accounting_promo_code_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\Accounting\Database\Models\PromoCodes',
                 $data['accounting_promo_code_id']
+            );
+        }
+        if (array_key_exists('accounting_account_id', $data)) {
+            $data['accounting_account_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\Accounts',
+                $data['accounting_account_id']
             );
         }
     

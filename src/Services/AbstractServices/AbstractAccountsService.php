@@ -80,6 +80,11 @@ class AbstractAccountsService
         return Accounts::findByRef($ref);
     }
 
+    public static function getActions()
+    {
+        return config('accounting.actions');
+    }
+
     /**
      * This method returns the model by lookint at its id
      *

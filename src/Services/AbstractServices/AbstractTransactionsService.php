@@ -80,6 +80,11 @@ class AbstractTransactionsService
         return Transactions::findByRef($ref);
     }
 
+    public static function getActions()
+    {
+        return config('accounting.actions');
+    }
+
     /**
      * This method returns the model by lookint at its id
      *
@@ -161,12 +166,6 @@ class AbstractTransactionsService
                 $data['accounting_account_id']
             );
         }
-        if (array_key_exists('conversation_id', $data)) {
-            $data['conversation_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\\Database\Models\Conversations',
-                $data['conversation_id']
-            );
-        }
                         
         try {
             $model = Transactions::create($data);
@@ -236,12 +235,6 @@ class AbstractTransactionsService
             $data['accounting_account_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\Accounting\Database\Models\Accounts',
                 $data['accounting_account_id']
-            );
-        }
-        if (array_key_exists('conversation_id', $data)) {
-            $data['conversation_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\\Database\Models\Conversations',
-                $data['conversation_id']
             );
         }
     

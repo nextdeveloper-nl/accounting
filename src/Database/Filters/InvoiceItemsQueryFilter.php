@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                
+                    
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -102,5 +102,18 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
         }
     }
 
+    public function accountingAccountId($value)
+    {
+            $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
+
+        if($accountingAccount) {
+            return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
+        }
+    }
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
 }
