@@ -33,6 +33,9 @@ Route::prefix('accounting')->group(
                 Route::get('/{accounting_invoices}', 'Invoices\InvoicesController@show');
 
                 Route::post('/', 'Invoices\InvoicesController@store');
+
+                Route::post('/{accounting_invoices}/{action}', 'Invoices\InvoicesController@action');
+
                 Route::patch('/{accounting_invoices}', 'Invoices\InvoicesController@update');
                 Route::delete('/{accounting_invoices}', 'Invoices\InvoicesController@destroy');
             }
@@ -129,28 +132,9 @@ Route::prefix('accounting')->group(
         );
 
         // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 );
+
 
 
 

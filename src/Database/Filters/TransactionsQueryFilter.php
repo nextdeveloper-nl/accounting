@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                        
+                    
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -23,9 +23,9 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('gateway_response', 'like', '%' . $value . '%');
     }
     
-    public function conversationId($value)
+    public function conversationIdentifier($value)
     {
-        return $this->builder->where('conversation_id', 'like', '%' . $value . '%');
+        return $this->builder->where('conversation_identifier', 'like', '%' . $value . '%');
     }
 
     public function isPending()
@@ -105,15 +105,6 @@ class TransactionsQueryFilter extends AbstractQueryFilter
 
         if($accountingAccount) {
             return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
-        }
-    }
-
-    public function conversationId($value)
-    {
-            $conversation = \NextDeveloper\\Database\Models\Conversations::where('uuid', $value)->first();
-
-        if($conversation) {
-            return $this->builder->where('conversation_id', '=', $conversation->id);
         }
     }
 

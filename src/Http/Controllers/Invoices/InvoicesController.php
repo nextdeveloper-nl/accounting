@@ -17,6 +17,7 @@ class InvoicesController extends AbstractController
 
     use Tags;
     use Addresses;
+
     /**
      * This method returns the list of invoices.
      *

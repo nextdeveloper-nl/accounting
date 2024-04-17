@@ -25,7 +25,6 @@ class AbstractTransactionsTransformer extends AbstractTransformer
                     $accountingPaymentGatewayId = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('id', $model->accounting_payment_gateway_id)->first();
                     $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                     $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
-                    $conversationId = \NextDeveloper\\Database\Models\Conversations::where('id', $model->conversation_id)->first();
         
         return $this->buildPayload(
             [
@@ -40,13 +39,14 @@ class AbstractTransactionsTransformer extends AbstractTransformer
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
-            'conversation_id'  =>  $conversationId ? $conversationId->uuid : null,
+            'conversation_identifier'  =>  $model->conversation_identifier,
             'is_pending'  =>  $model->is_pending,
             ]
         );
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
