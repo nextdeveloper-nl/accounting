@@ -41,7 +41,7 @@ class AccountantRole extends AbstractRole implements IAuthorizationRole
 
     public function getModule()
     {
-        return 'agenda';
+        return 'accounting';
     }
 
     public function allowedOperations() :array
