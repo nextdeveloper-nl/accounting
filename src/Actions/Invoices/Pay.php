@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
-use NextDeveloper\Accounting\Database\Models\Transactions;
 use NextDeveloper\Accounting\Services\TransactionsService;
 use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Database\Models\Currencies;
