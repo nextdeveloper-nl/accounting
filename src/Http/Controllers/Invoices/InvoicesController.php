@@ -17,7 +17,6 @@ class InvoicesController extends AbstractController
 
     use Tags;
     use Addresses;
-
     /**
      * This method returns the list of invoices.
      *
@@ -33,6 +32,42 @@ class InvoicesController extends AbstractController
         $data = InvoicesService::get($filter, $request->all());
 
         return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * This function returns the list of actions that can be performed on this object.
+     *
+     * @return void
+     */
+    public function getActions()
+    {
+        $actions = InvoicesService::getActions();
+
+        if($actions) {
+            if(array_key_exists($this->model, $actions)) {
+                return $this->withArray($actions[$this->model]);
+            }
+        }
+
+        return $this->noContent();
+    }
+
+    /**
+     * Makes the related action to the object
+     *
+     * @param  $objectId
+     * @param  $action
+     * @return array
+     */
+    public function doAction($objectId, $action)
+    {
+        $actionId = InvoicesService::doAction($objectId, $action, request()->all());
+
+        return $this->withArray(
+            [
+                'action_id' =>  $actionId
+            ]
+        );
     }
 
     /**

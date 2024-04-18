@@ -20,6 +20,7 @@ class InvoiceItemsUpdateRequest extends AbstractFormRequest
         'common_currency_id' => 'nullable|exists:common_currencies,uuid|uuid',
         'accounting_invoice_id' => 'nullable|exists:accounting_invoices,uuid|uuid',
         'total_price' => 'nullable',
+        'accounting_account_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

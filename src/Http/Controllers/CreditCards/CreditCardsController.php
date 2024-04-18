@@ -11,7 +11,6 @@ use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Services\CreditCardsService;
 use NextDeveloper\Accounting\Http\Requests\CreditCards\CreditCardsCreateRequest;
 use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
-
 class CreditCardsController extends AbstractController
 {
     private $model = CreditCards::class;
@@ -33,6 +32,44 @@ class CreditCardsController extends AbstractController
         $data = CreditCardsService::get($filter, $request->all());
 
         return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * This function returns the list of actions that can be performed on this object.
+     *
+     * @return void
+     */
+    public function getActions()
+    {
+        $actions = InvoicesService::getActions();
+
+        if($actions) {
+            if(array_key_exists($this->model, $actions)) {
+                return $this->withArray($actions[$this->model]);
+            }
+        }
+
+        return $this->noContent();
+    }
+
+    /**
+     * Makes the related action to the object
+     *
+     * @param  $objectId
+     * @param  $action
+     * @return array
+     */
+    public function doAction($objectId, $action)
+    {
+        $model = InvoicesService::getById($objectId);
+
+        $actionId = InvoicesService::doAction($model, $action);
+
+        return $this->withArray(
+            [
+            'action_id' =>  $actionId
+            ]
+        );
     }
 
     /**

@@ -5,10 +5,12 @@ namespace NextDeveloper\Accounting\Authorization\Roles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\CRM\Database\Models\AccountManagers;
 use NextDeveloper\IAM\Authorization\Roles\AbstractRole;
 use NextDeveloper\IAM\Authorization\Roles\IAuthorizationRole;
 use NextDeveloper\IAM\Database\Models\Users;
+use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
 class AccountingUserRole extends AbstractRole implements IAuthorizationRole
@@ -31,10 +33,29 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
      */
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where([
-            'iam_account_id'    =>  UserHelper::currentAccount()->id,
-            'iam_user_id'       =>  UserHelper::me()->id
-        ]);
+        if(
+            $model->getTable() == 'accounting_invoices' ||
+            $model->getTable() == 'accounting_transactions'
+        ) {
+            $myAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('iam_account_id', UserHelper::currentAccount()->id)
+                ->first();
+
+            $builder->where('accounting_account_id', $myAccount->id);
+        }
+
+        if(
+            $model->getTable() == 'accounting_accounts' ||
+            $model->getTable() == 'accounting_credit_cards' ||
+
+            // this payment gateway is owned by the account that is why we put here
+            //  In security sense this would be logical to seperate
+            $model->getTable() == 'accounting_payment_gateways'
+        ) {
+            $builder->where('iam_account_id', UserHelper::currentAccount()->id);
+        }
+
+
     }
 
     public function checkPrivileges(Users $users = null)
