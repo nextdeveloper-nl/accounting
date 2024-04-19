@@ -33,6 +33,8 @@ class CreditCardsTransformer extends AbstractCreditCardsTransformer
 
         $transformed = parent::transform($model);
 
+        unset($transformed['cc_number']);
+
         Cache::set(
             CacheHelper::getKey('CreditCards', $model->uuid, 'Transformed'),
             $transformed
