@@ -2,9 +2,11 @@
 
 namespace NextDeveloper\Accounting\Database\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use NextDeveloper\Commons\Database\Traits\Filterable;
 use NextDeveloper\Accounting\Database\Observers\CreditCardsObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
@@ -163,9 +165,12 @@ class CreditCards extends Model
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
-
-
-
-
-
+    protected function ccNumber(): Attribute
+    {
+        return Attribute::make(
+            set: function ($value) {
+                return encrypt($value);
+            },
+        );
+    }
 }

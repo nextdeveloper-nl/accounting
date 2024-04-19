@@ -3,13 +3,17 @@
 namespace NextDeveloper\Accounting\Actions\Invoices;
 
 use Carbon\Carbon;
+use GPBMetadata\Google\Api\Auth;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
+use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Services\TransactionsService;
 use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Commons\Database\Models\Languages;
+use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
@@ -24,6 +28,11 @@ use Omnipay\Omnipay;
 class Pay extends AbstractAction
 {
     private $conversationId = 0;
+
+    public const EVENTS = [
+        'payment-successful:NextDeveloper\Accounting\Invoices',
+        'payment-failed:NextDeveloper\Accounting\Invoices'
+    ];
 
     /**
      * @param Invoices $invoice
@@ -114,13 +123,23 @@ class Pay extends AbstractAction
             $omnipay->setTestMode(true);
         }
 
+        $creditCard = CreditCards::withoutGlobalScope()
+            ->where('iam_account_id', $customer->id)
+            ->where('iam_user_id', $customer->iam_user_id)
+            ->where('is_default', true)
+            ->first();
+
+        $cardOwner = Users::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $creditCard->iam_user_id)
+            ->first();
+
         $cardData = [
-            'firstName' => $accountManager->name,
-            'lastName' => $accountManager->surname,
-            'number' => '5528790000000008',
-            'expiryMonth' => '12',
-            'expiryYear' => '2030',
-            'cvv' => '123',
+            'firstName' => $cardOwner->name,
+            'lastName' => $cardOwner->surname,
+            'number' => Str::remove(' ', $creditCard->cc_number),
+            'expiryMonth' => $creditCard->cc_month,
+            'expiryYear' => $creditCard->cc_year,
+            'cvv' => $creditCard->cc_cvv,
             'email' => $accountManager->email
         ];
 
@@ -134,7 +153,7 @@ class Pay extends AbstractAction
         }
 
         $purchaseData = [
-            'identityNumber'    =>  $accountManager->nin,
+            'identityNumber'    =>  $cardOwner->nin,
             'amount' => round($invoice->amount, 2, PHP_ROUND_HALF_UP),
             'currency' => $currency->code,
             //  This goes to the Omnipay Card data
@@ -169,15 +188,22 @@ class Pay extends AbstractAction
             'conversation_identifier'       => $this->conversationId,
         ]);
 
+        Events::fire('created:NextDeveloper\Accounting\Transactions', $transactionLog);
+
         if(!$response['isSuccessful']) {
             $this->setFinishedWithError('The payment request has failed. The error message is: '
                 . $response['error']['message']);
+
+            Events::fire('payment-failed:NextDeveloper\Accounting\Invoices', $invoice);
 
             return;
         }
 
         $this->setFinished('The payment request has been successfully sent.');
 
-        //  @todo: Here we need to check the response and update the invoice status
+        $invoice->update(['is_paid' => true]);
+        $invoice = $invoice->fresh();
+
+        Events::fire('payment-successful:NextDeveloper\Accounting\Invoices', $invoice);
     }
 }

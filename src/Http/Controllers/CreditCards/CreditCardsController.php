@@ -11,6 +11,7 @@ use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Services\CreditCardsService;
 use NextDeveloper\Accounting\Http\Requests\CreditCards\CreditCardsCreateRequest;
 use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
+
 class CreditCardsController extends AbstractController
 {
     private $model = CreditCards::class;
