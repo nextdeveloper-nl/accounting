@@ -41,7 +41,7 @@ class CreditCardsController extends AbstractController
      */
     public function getActions()
     {
-        $actions = InvoicesService::getActions();
+        $actions = CreditCardsService::getActions();
 
         if($actions) {
             if(array_key_exists($this->model, $actions)) {
@@ -61,9 +61,7 @@ class CreditCardsController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $model = InvoicesService::getById($objectId);
-
-        $actionId = InvoicesService::doAction($model, $action);
+        $actionId = CreditCardsService::doAction($objectId, $action);
 
         return $this->withArray(
             [

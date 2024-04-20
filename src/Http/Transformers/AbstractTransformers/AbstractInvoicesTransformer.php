@@ -62,7 +62,4 @@ class AbstractInvoicesTransformer extends AbstractTransformer
 
 
 
-
-
-
 }

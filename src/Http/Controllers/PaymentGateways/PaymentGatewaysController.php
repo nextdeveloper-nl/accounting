@@ -41,7 +41,7 @@ class PaymentGatewaysController extends AbstractController
      */
     public function getActions()
     {
-        $actions = InvoicesService::getActions();
+        $actions = PaymentGatewaysService::getActions();
 
         if($actions) {
             if(array_key_exists($this->model, $actions)) {
@@ -61,9 +61,7 @@ class PaymentGatewaysController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $model = InvoicesService::getById($objectId);
-
-        $actionId = InvoicesService::doAction($model, $action);
+        $actionId = PaymentGatewaysService::doAction($objectId, $action);
 
         return $this->withArray(
             [

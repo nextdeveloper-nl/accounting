@@ -8,9 +8,13 @@ Features of this library are as follows. Marked ones are implemented and working
 - [x] Invoicing
 - [ ] Accounting
 - [ ] Ledger
-- [ ] Payment Gateway Management
+- [x] Payment Gateway Management
 - [x] Transaction Management
 - [x] Credit Card Storage and Management (PCI DSS Compliant)
+
+## Payment Gateways Implemented
+
+- [x] Omnipay / Iyzico
 
 # Commercial Support
 Please let us know if you need any commercial support. We dont have such a business plan but we will be happy to help you on your project and/or applying this library in your project

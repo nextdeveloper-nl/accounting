@@ -85,7 +85,10 @@ class AbstractInvoicesService
         return config('accounting.actions');
     }
 
-    public static function doAction($objectId, $action, $params)
+    /**
+     * This method initiates the related action with the given parameters.
+     */
+    public static function doAction($objectId, $action, ...$params)
     {
         $object = Invoices::where('uuid', $objectId)->first();
 
@@ -167,7 +170,7 @@ class AbstractInvoicesService
                 $data['iam_account_id']
             );
         }
-
+            
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
@@ -177,11 +180,11 @@ class AbstractInvoicesService
                 $data['iam_user_id']
             );
         }
-
+                    
         if(!array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id']    = UserHelper::me()->id;
         }
-
+            
         try {
             $model = Invoices::create($data);
         } catch(\Exception $e) {
@@ -246,7 +249,7 @@ class AbstractInvoicesService
                 $data['iam_user_id']
             );
         }
-
+    
         Events::fire('updating:NextDeveloper\Accounting\Invoices', $model);
 
         try {

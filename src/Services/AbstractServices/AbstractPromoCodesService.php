@@ -86,6 +86,26 @@ class AbstractPromoCodesService
     }
 
     /**
+     * This method initiates the related action with the given parameters.
+     */
+    public static function doAction($objectId, $action, ...$params)
+    {
+        $object = Invoices::where('uuid', $objectId)->first();
+
+        $action = '\\NextDeveloper\\Accounting\\Actions\\PromoCodes\\' . Str::studly($action);
+
+        if(class_exists($action)) {
+            $action = new $action($object, $params);
+
+            dispatch($action);
+
+            return $action->getActionId();
+        }
+
+        return null;
+    }
+
+    /**
      * This method returns the model by lookint at its id
      *
      * @param  $id

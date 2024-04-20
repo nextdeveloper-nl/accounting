@@ -4,13 +4,13 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-        
+    
 
 /**
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class PaymentGatewaysQueryFilter extends AbstractQueryFilter
+class PaymentGatewayMessagesQueryFilter extends AbstractQueryFilter
 {
 
     /**
@@ -18,19 +18,14 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
     
-    public function name($value)
+    public function messageIdentifier($value)
     {
-        return $this->builder->where('name', 'like', '%' . $value . '%');
+        return $this->builder->where('message_identifier', 'like', '%' . $value . '%');
     }
     
-    public function gateway($value)
+    public function message($value)
     {
-        return $this->builder->where('gateway', 'like', '%' . $value . '%');
-    }
-
-    public function isActive()
-    {
-        return $this->builder->where('is_active', true);
+        return $this->builder->where('message', 'like', '%' . $value . '%');
     }
 
     public function createdAtStart($date)
@@ -63,25 +58,18 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         return $this->builder->where('deleted_at', '<=', $date);
     }
 
-    public function commonCountryId($value)
+    public function accountingPaymentGatewayId($value)
     {
-            $commonCountry = \NextDeveloper\Commons\Database\Models\Countries::where('uuid', $value)->first();
+            $accountingPaymentGateway = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('uuid', $value)->first();
 
-        if($commonCountry) {
-            return $this->builder->where('common_country_id', '=', $commonCountry->id);
-        }
-    }
-
-    public function iamAccountId($value)
-    {
-            $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
-
-        if($iamAccount) {
-            return $this->builder->where('iam_account_id', '=', $iamAccount->id);
+        if($accountingPaymentGateway) {
+            return $this->builder->where('accounting_payment_gateway_id', '=', $accountingPaymentGateway->id);
         }
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

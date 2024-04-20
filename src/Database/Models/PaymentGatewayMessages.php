@@ -2,41 +2,29 @@
 
 namespace NextDeveloper\Accounting\Database\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Accounting\Database\Observers\CreditCardsObserver;
+use NextDeveloper\Accounting\Database\Observers\PaymentGatewayMessagesObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * CreditCards model.
+ * PaymentGatewayMessages model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property string $name
- * @property string $type
- * @property string $cc_holder_name
- * @property string $cc_number
- * @property string $cc_month
- * @property string $cc_year
- * @property string $cc_cvv
- * @property boolean $is_default
- * @property boolean $is_valid
- * @property boolean $is_active
- * @property boolean $is_3d_secure
- * @property integer $iam_account_id
- * @property integer $iam_user_id
+ * @property string $message_identifier
+ * @property string $message
+ * @property integer $accounting_payment_gateway_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
  */
-class CreditCards extends Model
+class PaymentGatewayMessages extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable;
     use SoftDeletes;
@@ -44,7 +32,7 @@ class CreditCards extends Model
 
     public $timestamps = true;
 
-    protected $table = 'accounting_credit_cards';
+    protected $table = 'accounting_payment_gateway_messages';
 
 
     /**
@@ -53,19 +41,9 @@ class CreditCards extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'name',
-            'type',
-            'cc_holder_name',
-            'cc_number',
-            'cc_month',
-            'cc_year',
-            'cc_cvv',
-            'is_default',
-            'is_valid',
-            'is_active',
-            'is_3d_secure',
-            'iam_account_id',
-            'iam_user_id',
+            'message_identifier',
+            'message',
+            'accounting_payment_gateway_id',
     ];
 
     /**
@@ -89,17 +67,9 @@ class CreditCards extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'name' => 'string',
-    'type' => 'string',
-    'cc_holder_name' => 'string',
-    'cc_number' => 'string',
-    'cc_month' => 'string',
-    'cc_year' => 'string',
-    'cc_cvv' => 'string',
-    'is_default' => 'boolean',
-    'is_valid' => 'boolean',
-    'is_active' => 'boolean',
-    'is_3d_secure' => 'boolean',
+    'message_identifier' => 'string',
+    'message' => 'string',
+    'accounting_payment_gateway_id' => 'integer',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
@@ -136,7 +106,7 @@ class CreditCards extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(CreditCardsObserver::class);
+        parent::observe(PaymentGatewayMessagesObserver::class);
 
         self::registerScopes();
     }
@@ -144,7 +114,7 @@ class CreditCards extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_credit_cards');
+        $modelScopes = config('accounting.scopes.accounting_payment_gateway_messages');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -165,14 +135,11 @@ class CreditCards extends Model
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
-    protected function ccNumber(): Attribute
-    {
-        return Attribute::make(
-            set: function ($value) {
-                return encrypt($value);
-            },
-        );
-    }
+
+
+
+
+
 
 
 
