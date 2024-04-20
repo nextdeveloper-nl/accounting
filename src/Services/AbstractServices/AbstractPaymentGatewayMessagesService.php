@@ -9,21 +9,21 @@ use Illuminate\Support\Str;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
-use NextDeveloper\Accounting\Database\Models\InvoiceItems;
-use NextDeveloper\Accounting\Database\Filters\InvoiceItemsQueryFilter;
+use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
+use NextDeveloper\Accounting\Database\Filters\PaymentGatewayMessagesQueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Events\Services\Events;
 
 /**
- * This class is responsible from managing the data for InvoiceItems
+ * This class is responsible from managing the data for PaymentGatewayMessages
  *
- * Class InvoiceItemsService.
+ * Class PaymentGatewayMessagesService.
  *
  * @package NextDeveloper\Accounting\Database\Models
  */
-class AbstractInvoiceItemsService
+class AbstractPaymentGatewayMessagesService
 {
-    public static function get(InvoiceItemsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
+    public static function get(PaymentGatewayMessagesQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
     {
         $enablePaginate = array_key_exists('paginate', $params);
 
@@ -34,7 +34,7 @@ class AbstractInvoiceItemsService
         * Please let me know if you have any other idea about this; baris.bulut@nextdeveloper.com
         */
         if($filter == null) {
-            $filter = new InvoiceItemsQueryFilter(new Request());
+            $filter = new PaymentGatewayMessagesQueryFilter(new Request());
         }
 
         $perPage = config('commons.pagination.per_page');
@@ -55,7 +55,7 @@ class AbstractInvoiceItemsService
             $filter->orderBy($params['orderBy']);
         }
 
-        $model = InvoiceItems::filter($filter);
+        $model = PaymentGatewayMessages::filter($filter);
 
         if($model && $enablePaginate) {
             return $model->paginate($perPage);
@@ -66,7 +66,7 @@ class AbstractInvoiceItemsService
 
     public static function getAll()
     {
-        return InvoiceItems::all();
+        return PaymentGatewayMessages::all();
     }
 
     /**
@@ -75,9 +75,9 @@ class AbstractInvoiceItemsService
      * @param  $ref
      * @return mixed
      */
-    public static function getByRef($ref) : ?InvoiceItems
+    public static function getByRef($ref) : ?PaymentGatewayMessages
     {
-        return InvoiceItems::findByRef($ref);
+        return PaymentGatewayMessages::findByRef($ref);
     }
 
     public static function getActions()
@@ -92,7 +92,7 @@ class AbstractInvoiceItemsService
     {
         $object = Invoices::where('uuid', $objectId)->first();
 
-        $action = '\\NextDeveloper\\Accounting\\Actions\\InvoiceItems\\' . Str::studly($action);
+        $action = '\\NextDeveloper\\Accounting\\Actions\\PaymentGatewayMessages\\' . Str::studly($action);
 
         if(class_exists($action)) {
             $action = new $action($object, $params);
@@ -109,11 +109,11 @@ class AbstractInvoiceItemsService
      * This method returns the model by lookint at its id
      *
      * @param  $id
-     * @return InvoiceItems|null
+     * @return PaymentGatewayMessages|null
      */
-    public static function getById($id) : ?InvoiceItems
+    public static function getById($id) : ?PaymentGatewayMessages
     {
-        return InvoiceItems::where('id', $id)->first();
+        return PaymentGatewayMessages::where('id', $id)->first();
     }
 
     /**
@@ -127,7 +127,7 @@ class AbstractInvoiceItemsService
     public static function relatedObjects($uuid, $object)
     {
         try {
-            $obj = InvoiceItems::where('uuid', $uuid)->first();
+            $obj = PaymentGatewayMessages::where('uuid', $uuid)->first();
 
             if(!$obj) {
                 throw new ModelNotFoundException('Cannot find the related model');
@@ -152,48 +152,20 @@ class AbstractInvoiceItemsService
      */
     public static function create(array $data)
     {
-        if (array_key_exists('common_currency_id', $data)) {
-            $data['common_currency_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Commons\Database\Models\Currencies',
-                $data['common_currency_id']
-            );
-        }
-        if (array_key_exists('iam_account_id', $data)) {
-            $data['iam_account_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\IAM\Database\Models\Accounts',
-                $data['iam_account_id']
-            );
-        }
-            
-        if(!array_key_exists('iam_account_id', $data)) {
-            $data['iam_account_id'] = UserHelper::currentAccount()->id;
-        }
-        if (array_key_exists('accounting_invoice_id', $data)) {
-            $data['accounting_invoice_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Invoices',
-                $data['accounting_invoice_id']
-            );
-        }
-        if (array_key_exists('accounting_promo_code_id', $data)) {
-            $data['accounting_promo_code_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\PromoCodes',
-                $data['accounting_promo_code_id']
-            );
-        }
-        if (array_key_exists('accounting_account_id', $data)) {
-            $data['accounting_account_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Accounts',
-                $data['accounting_account_id']
+        if (array_key_exists('accounting_payment_gateway_id', $data)) {
+            $data['accounting_payment_gateway_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\PaymentGateways',
+                $data['accounting_payment_gateway_id']
             );
         }
                         
         try {
-            $model = InvoiceItems::create($data);
+            $model = PaymentGatewayMessages::create($data);
         } catch(\Exception $e) {
             throw $e;
         }
 
-        Events::fire('created:NextDeveloper\Accounting\InvoiceItems', $model);
+        Events::fire('created:NextDeveloper\Accounting\PaymentGatewayMessages', $model);
 
         return $model->fresh();
     }
@@ -202,9 +174,9 @@ class AbstractInvoiceItemsService
      * This function expects the ID inside the object.
      *
      * @param  array $data
-     * @return InvoiceItems
+     * @return PaymentGatewayMessages
      */
-    public static function updateRaw(array $data) : ?InvoiceItems
+    public static function updateRaw(array $data) : ?PaymentGatewayMessages
     {
         if(array_key_exists('id', $data)) {
             return self::update($data['id'], $data);
@@ -225,40 +197,16 @@ class AbstractInvoiceItemsService
      */
     public static function update($id, array $data)
     {
-        $model = InvoiceItems::where('uuid', $id)->first();
+        $model = PaymentGatewayMessages::where('uuid', $id)->first();
 
-        if (array_key_exists('common_currency_id', $data)) {
-            $data['common_currency_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Commons\Database\Models\Currencies',
-                $data['common_currency_id']
-            );
-        }
-        if (array_key_exists('iam_account_id', $data)) {
-            $data['iam_account_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\IAM\Database\Models\Accounts',
-                $data['iam_account_id']
-            );
-        }
-        if (array_key_exists('accounting_invoice_id', $data)) {
-            $data['accounting_invoice_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Invoices',
-                $data['accounting_invoice_id']
-            );
-        }
-        if (array_key_exists('accounting_promo_code_id', $data)) {
-            $data['accounting_promo_code_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\PromoCodes',
-                $data['accounting_promo_code_id']
-            );
-        }
-        if (array_key_exists('accounting_account_id', $data)) {
-            $data['accounting_account_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Accounts',
-                $data['accounting_account_id']
+        if (array_key_exists('accounting_payment_gateway_id', $data)) {
+            $data['accounting_payment_gateway_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\PaymentGateways',
+                $data['accounting_payment_gateway_id']
             );
         }
     
-        Events::fire('updating:NextDeveloper\Accounting\InvoiceItems', $model);
+        Events::fire('updating:NextDeveloper\Accounting\PaymentGatewayMessages', $model);
 
         try {
             $isUpdated = $model->update($data);
@@ -267,7 +215,7 @@ class AbstractInvoiceItemsService
             throw $e;
         }
 
-        Events::fire('updated:NextDeveloper\Accounting\InvoiceItems', $model);
+        Events::fire('updated:NextDeveloper\Accounting\PaymentGatewayMessages', $model);
 
         return $model->fresh();
     }
@@ -284,9 +232,9 @@ class AbstractInvoiceItemsService
      */
     public static function delete($id)
     {
-        $model = InvoiceItems::where('uuid', $id)->first();
+        $model = PaymentGatewayMessages::where('uuid', $id)->first();
 
-        Events::fire('deleted:NextDeveloper\Accounting\InvoiceItems', $model);
+        Events::fire('deleted:NextDeveloper\Accounting\PaymentGatewayMessages', $model);
 
         try {
             $model = $model->delete();

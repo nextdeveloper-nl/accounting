@@ -1,35 +1,35 @@
 <?php
 
-namespace NextDeveloper\Accounting\Http\Controllers\Accounts;
+namespace NextDeveloper\Accounting\Http\Controllers\PaymentGatewayMessages;
 
 use Illuminate\Http\Request;
 use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\Accounts\AccountsUpdateRequest;
-use NextDeveloper\Accounting\Database\Filters\AccountsQueryFilter;
-use NextDeveloper\Accounting\Database\Models\Accounts;
-use NextDeveloper\Accounting\Services\AccountsService;
-use NextDeveloper\Accounting\Http\Requests\Accounts\AccountsCreateRequest;
+use NextDeveloper\Accounting\Http\Requests\PaymentGatewayMessages\PaymentGatewayMessagesUpdateRequest;
+use NextDeveloper\Accounting\Database\Filters\PaymentGatewayMessagesQueryFilter;
+use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
+use NextDeveloper\Accounting\Services\PaymentGatewayMessagesService;
+use NextDeveloper\Accounting\Http\Requests\PaymentGatewayMessages\PaymentGatewayMessagesCreateRequest;
 use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
-class AccountsController extends AbstractController
+class PaymentGatewayMessagesController extends AbstractController
 {
-    private $model = Accounts::class;
+    private $model = PaymentGatewayMessages::class;
 
     use Tags;
     use Addresses;
     /**
-     * This method returns the list of accounts.
+     * This method returns the list of paymentgatewaymessages.
      *
      * optional http params:
      * - paginate: If you set paginate parameter, the result will be returned paginated.
      *
-     * @param  AccountsQueryFilter $filter  An object that builds search query
-     * @param  Request             $request Laravel request object, this holds all data about request. Automatically populated.
+     * @param  PaymentGatewayMessagesQueryFilter $filter  An object that builds search query
+     * @param  Request                           $request Laravel request object, this holds all data about request. Automatically populated.
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(AccountsQueryFilter $filter, Request $request)
+    public function index(PaymentGatewayMessagesQueryFilter $filter, Request $request)
     {
-        $data = AccountsService::get($filter, $request->all());
+        $data = PaymentGatewayMessagesService::get($filter, $request->all());
 
         return ResponsableFactory::makeResponse($this, $data);
     }
@@ -41,7 +41,7 @@ class AccountsController extends AbstractController
      */
     public function getActions()
     {
-        $actions = AccountsService::getActions();
+        $actions = PaymentGatewayMessagesService::getActions();
 
         if($actions) {
             if(array_key_exists($this->model, $actions)) {
@@ -61,7 +61,7 @@ class AccountsController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = AccountsService::doAction($objectId, $action);
+        $actionId = PaymentGatewayMessagesService::doAction($objectId, $action);
 
         return $this->withArray(
             [
@@ -73,7 +73,7 @@ class AccountsController extends AbstractController
     /**
      * This method receives ID for the related model and returns the item to the client.
      *
-     * @param  $accountsId
+     * @param  $paymentGatewayMessagesId
      * @return mixed|null
      * @throws \Laravel\Octane\Exceptions\DdException
      */
@@ -81,7 +81,7 @@ class AccountsController extends AbstractController
     {
         //  Here we are not using Laravel Route Model Binding. Please check routeBinding.md file
         //  in NextDeveloper Platform Project
-        $model = AccountsService::getByRef($ref);
+        $model = PaymentGatewayMessagesService::getByRef($ref);
 
         return ResponsableFactory::makeResponse($this, $model);
     }
@@ -98,51 +98,51 @@ class AccountsController extends AbstractController
      */
     public function relatedObjects($ref, $subObject)
     {
-        $objects = AccountsService::relatedObjects($ref, $subObject);
+        $objects = PaymentGatewayMessagesService::relatedObjects($ref, $subObject);
 
         return ResponsableFactory::makeResponse($this, $objects);
     }
 
     /**
-     * This method created Accounts object on database.
+     * This method created PaymentGatewayMessages object on database.
      *
-     * @param  AccountsCreateRequest $request
+     * @param  PaymentGatewayMessagesCreateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
-    public function store(AccountsCreateRequest $request)
+    public function store(PaymentGatewayMessagesCreateRequest $request)
     {
-        $model = AccountsService::create($request->validated());
+        $model = PaymentGatewayMessagesService::create($request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
     }
 
     /**
-     * This method updates Accounts object on database.
+     * This method updates PaymentGatewayMessages object on database.
      *
-     * @param  $accountsId
+     * @param  $paymentGatewayMessagesId
      * @param  CountryCreateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
-    public function update($accountsId, AccountsUpdateRequest $request)
+    public function update($paymentGatewayMessagesId, PaymentGatewayMessagesUpdateRequest $request)
     {
-        $model = AccountsService::update($accountsId, $request->validated());
+        $model = PaymentGatewayMessagesService::update($paymentGatewayMessagesId, $request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
     }
 
     /**
-     * This method updates Accounts object on database.
+     * This method updates PaymentGatewayMessages object on database.
      *
-     * @param  $accountsId
+     * @param  $paymentGatewayMessagesId
      * @param  CountryCreateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
-    public function destroy($accountsId)
+    public function destroy($paymentGatewayMessagesId)
     {
-        $model = AccountsService::delete($accountsId);
+        $model = PaymentGatewayMessagesService::delete($paymentGatewayMessagesId);
 
         return $this->noContent();
     }

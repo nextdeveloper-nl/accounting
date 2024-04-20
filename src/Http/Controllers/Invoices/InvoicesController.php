@@ -61,11 +61,11 @@ class InvoicesController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = InvoicesService::doAction($objectId, $action, request()->all());
+        $actionId = InvoicesService::doAction($objectId, $action);
 
         return $this->withArray(
             [
-                'action_id' =>  $actionId
+            'action_id' =>  $actionId
             ]
         );
     }

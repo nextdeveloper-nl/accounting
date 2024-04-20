@@ -41,7 +41,7 @@ class InvoiceItemsController extends AbstractController
      */
     public function getActions()
     {
-        $actions = InvoicesService::getActions();
+        $actions = InvoiceItemsService::getActions();
 
         if($actions) {
             if(array_key_exists($this->model, $actions)) {
@@ -61,9 +61,7 @@ class InvoiceItemsController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $model = InvoicesService::getById($objectId);
-
-        $actionId = InvoicesService::doAction($model, $action);
+        $actionId = InvoiceItemsService::doAction($objectId, $action);
 
         return $this->withArray(
             [

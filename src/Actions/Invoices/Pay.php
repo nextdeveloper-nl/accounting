@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Database\Models\Invoices;
+use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Services\TransactionsService;
 use NextDeveloper\Commons\Actions\AbstractAction;
@@ -123,11 +124,18 @@ class Pay extends AbstractAction
             $omnipay->setTestMode(true);
         }
 
-        $creditCard = CreditCards::withoutGlobalScope()
+        $creditCard = CreditCards::withoutGlobalScope(AuthorizationScope::class)
             ->where('iam_account_id', $customer->id)
             ->where('iam_user_id', $customer->iam_user_id)
-            ->where('is_default', true)
+            //  We will use the default credit card for the customer but we will use the latest one first.
+            //->where('is_default', true)
+            ->orderBy('id', 'desc')
             ->first();
+
+        if(!$creditCard) {
+            $this->setFinishedWithError('The credit card is not available for the customer');
+            return;
+        }
 
         $cardOwner = Users::withoutGlobalScope(AuthorizationScope::class)
             ->where('id', $creditCard->iam_user_id)
@@ -184,20 +192,42 @@ class Pay extends AbstractAction
             'accounting_payment_gateway_id' =>  $gateway->id,
             'iam_account_id'                => $invoice->iam_account_id,
             'accounting_account_id'         => $invoice->accounting_account_id,
-            'gateway_response'              => json_encode($response),
             'conversation_identifier'       => $this->conversationId,
         ]);
 
         Events::fire('created:NextDeveloper\Accounting\Transactions', $transactionLog);
 
+        //  Registering the received message here, because we may want to tell customer a reasonable error message
+        try {
+            if(array_key_exists('error', $response)) {
+                PaymentGatewayMessages::create([
+                    'accounting_payment_gateway_id' => $gateway->id,
+                    'message_identifier' => $response['error']['code'],
+                    'message' => $response['error']['message']
+                ]);
+            }
+        } catch (\Exception $e) {
+            //  We are not going to do anything here.
+        }
+
         if(!$response['isSuccessful']) {
             $this->setFinishedWithError('The payment request has failed. The error message is: '
                 . $response['error']['message']);
+
+            $transactionLog->update([
+                'gateway_response'  =>  $response['error']['message'],
+                'is_pending' => false
+            ]);
 
             Events::fire('payment-failed:NextDeveloper\Accounting\Invoices', $invoice);
 
             return;
         }
+
+        $transactionLog->update([
+            'gateway_response'  =>  'The payment has successfully processed.',
+            'is_pending' => false
+        ]);
 
         $this->setFinished('The payment request has been successfully sent.');
 

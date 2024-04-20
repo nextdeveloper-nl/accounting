@@ -52,14 +52,4 @@ class AbstractInvoiceItemsTransformer extends AbstractTransformer
 
 
 
-
-
-
-
-
-
-
-
-
-
 }

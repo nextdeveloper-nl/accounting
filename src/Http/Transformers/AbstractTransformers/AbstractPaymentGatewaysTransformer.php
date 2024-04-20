@@ -45,14 +45,4 @@ class AbstractPaymentGatewaysTransformer extends AbstractTransformer
 
 
 
-
-
-
-
-
-
-
-
-
-
 }

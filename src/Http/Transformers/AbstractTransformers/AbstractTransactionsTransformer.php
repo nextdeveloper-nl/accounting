@@ -51,14 +51,4 @@ class AbstractTransactionsTransformer extends AbstractTransformer
 
 
 
-
-
-
-
-
-
-
-
-
-
 }
