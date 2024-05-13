@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
+use NextDeveloper\Commons\Database\Models\AvailableActions;
+use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
@@ -82,7 +84,14 @@ class AbstractInvoicesService
 
     public static function getActions()
     {
-        return config('accounting.actions');
+        $model = Invoices::class;
+
+        $model = Str::remove('Database\\Models\\', $model);
+
+        $actions = AvailableActions::where('input', $model)
+            ->get();
+
+        return $actions;
     }
 
     /**
@@ -90,7 +99,7 @@ class AbstractInvoicesService
      */
     public static function doAction($objectId, $action, ...$params)
     {
-        $object = Invoices::where('uuid', $objectId)->first();
+        $object = Invoices::withoutGlobalScope(AuthorizationScope::class)->where('uuid', $objectId)->first();
 
         $action = '\\NextDeveloper\\Accounting\\Actions\\Invoices\\' . Str::studly($action);
 
@@ -170,7 +179,7 @@ class AbstractInvoicesService
                 $data['iam_account_id']
             );
         }
-            
+
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
@@ -180,11 +189,11 @@ class AbstractInvoicesService
                 $data['iam_user_id']
             );
         }
-                    
+
         if(!array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id']    = UserHelper::me()->id;
         }
-            
+
         try {
             $model = Invoices::create($data);
         } catch(\Exception $e) {
@@ -249,7 +258,7 @@ class AbstractInvoicesService
                 $data['iam_user_id']
             );
         }
-    
+
         Events::fire('updating:NextDeveloper\Accounting\Invoices', $model);
 
         try {

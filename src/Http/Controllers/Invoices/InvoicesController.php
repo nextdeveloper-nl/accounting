@@ -41,15 +41,9 @@ class InvoicesController extends AbstractController
      */
     public function getActions()
     {
-        $actions = InvoicesService::getActions();
+        $data = InvoicesService::getActions();
 
-        if($actions) {
-            if(array_key_exists($this->model, $actions)) {
-                return $this->withArray($actions[$this->model]);
-            }
-        }
-
-        return $this->noContent();
+        return ResponsableFactory::makeResponse($this, $data);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace NextDeveloper\Accounting\Actions\Invoices;
 
 use Carbon\Carbon;
-use GPBMetadata\Google\Api\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\CreditCards;
@@ -35,14 +34,23 @@ class Pay extends AbstractAction
         'payment-failed:NextDeveloper\Accounting\Invoices'
     ];
 
+    public const PARAMETERS = [
+        'installment' => [
+            'type'          =>  'integer',
+            'validation'    =>  'nullable|integer'
+        ]
+    ];
+
     /**
      * @param Invoices $invoice
      */
-    public function __construct(Invoices $invoice, ...$args)
+    public function __construct(Invoices $invoice, $params = null)
     {
         $this->model = $invoice;
 
         $this->conversationId = Carbon::now()->timestamp;
+
+        $this->validateParameters(self::PARAMETERS, $params);
     }
 
     public function handle()

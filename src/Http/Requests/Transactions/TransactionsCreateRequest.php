@@ -18,7 +18,7 @@ class TransactionsCreateRequest extends AbstractFormRequest
         'common_currency_id' => 'required|exists:common_currencies,uuid|uuid',
         'accounting_payment_gateway_id' => 'required|exists:accounting_payment_gateways,uuid|uuid',
         'accounting_account_id' => 'required|exists:accounting_accounts,uuid|uuid',
-        'gateway_response' => 'required|string',
+        'gateway_response' => 'nullable|string',
         'conversation_identifier' => 'required|string',
         'is_pending' => 'boolean',
         ];
