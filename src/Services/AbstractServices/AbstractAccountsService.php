@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use NextDeveloper\IAM\Helpers\UserHelper;
-use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Filters\AccountsQueryFilter;
@@ -158,7 +157,7 @@ class AbstractAccountsService
                 $data['iam_account_id']
             );
         }
-            
+
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
@@ -168,7 +167,7 @@ class AbstractAccountsService
                 $data['common_currency_id']
             );
         }
-                        
+
         try {
             $model = Accounts::create($data);
         } catch(\Exception $e) {
@@ -221,7 +220,7 @@ class AbstractAccountsService
                 $data['common_currency_id']
             );
         }
-    
+
         Events::fire('updating:NextDeveloper\Accounting\Accounts', $model);
 
         try {
