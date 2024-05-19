@@ -56,11 +56,6 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
         }
     }
 
-    public function checkPrivileges(Users $users = null)
-    {
-        //return UserHelper::hasRole(self::NAME, $users);
-    }
-
     public function getModule()
     {
         return 'accounting';
@@ -112,8 +107,8 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
         return self::DB_PREFIX;
     }
 
-    public function checkRules(Users $users): bool
+    public function checkRules(Users $users = null): bool
     {
-        // TODO: Implement checkRules() method.
+        return false;
     }
 }

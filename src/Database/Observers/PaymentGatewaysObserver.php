@@ -4,6 +4,7 @@ namespace NextDeveloper\Accounting\Database\Observers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use NextDeveloper\Commons\Exceptions\NotAllowedException;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
 /**
@@ -30,7 +31,10 @@ class PaymentGatewaysObserver
      */
     public function creating(Model $model)
     {
-        return UserHelper::applyUserFields($model);
+        throw_if(
+            !UserHelper::can('create', $model),
+            new NotAllowedException('You are not allowed to create this record')
+        );
     }
 
     /**
@@ -49,6 +53,10 @@ class PaymentGatewaysObserver
      */
     public function saving(Model $model)
     {
+        throw_if(
+            !UserHelper::can('update', $model),
+            new NotAllowedException('You are not allowed to save this record')
+        );
     }
 
     /**
@@ -66,6 +74,10 @@ class PaymentGatewaysObserver
      */
     public function updating(Model $model)
     {
+        throw_if(
+            !UserHelper::can('update', $model),
+            new NotAllowedException('You are not allowed to update this record')
+        );
     }
 
     /**
@@ -83,6 +95,10 @@ class PaymentGatewaysObserver
      */
     public function deleting(Model $model)
     {
+        throw_if(
+            !UserHelper::can('delete', $model),
+            new NotAllowedException('You are not allowed to delete this record')
+        );
     }
 
     /**
@@ -101,6 +117,10 @@ class PaymentGatewaysObserver
      */
     public function restoring(Model $model)
     {
+        throw_if(
+            !UserHelper::can('restore', $model),
+            new NotAllowedException('You are not allowed to restore this record')
+        );
     }
 
     /**

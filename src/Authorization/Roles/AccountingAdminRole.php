@@ -99,6 +99,6 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
 
     public function checkRules(Users $users): bool
     {
-        // TODO: Implement checkRules() method.
+        return true;
     }
 }
