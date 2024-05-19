@@ -9,10 +9,12 @@ use Illuminate\Support\Str;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
+use NextDeveloper\Commons\Database\Models\AvailableActions;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Filters\InvoiceItemsQueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Events\Services\Events;
+use NextDeveloper\Commons\Exceptions\NotAllowedException;
 
 /**
  * This class is responsible from managing the data for InvoiceItems
@@ -27,6 +29,8 @@ class AbstractInvoiceItemsService
     {
         $enablePaginate = array_key_exists('paginate', $params);
 
+        $request = new Request();
+
         /**
         * Here we are adding null request since if filter is null, this means that this function is called from
         * non http application. This is actually not I think its a correct way to handle this problem but it's a workaround.
@@ -34,7 +38,7 @@ class AbstractInvoiceItemsService
         * Please let me know if you have any other idea about this; baris.bulut@nextdeveloper.com
         */
         if($filter == null) {
-            $filter = new InvoiceItemsQueryFilter(new Request());
+            $filter = new InvoiceItemsQueryFilter($request);
         }
 
         $perPage = config('commons.pagination.per_page');
@@ -57,11 +61,18 @@ class AbstractInvoiceItemsService
 
         $model = InvoiceItems::filter($filter);
 
-        if($model && $enablePaginate) {
-            return $model->paginate($perPage);
-        } else {
-            return $model->get();
+        if($enablePaginate) {
+            //  We are using this because we have been experiencing huge security problem when we use the paginate method.
+            //  The reason was, when the pagination method was using, somehow paginate was discarding all the filters.
+            return new \Illuminate\Pagination\LengthAwarePaginator(
+                $model->skip(($request->get('page', 1) - 1) * $perPage)->take($perPage)->get(),
+                $model->count(),
+                $perPage,
+                $request->get('page', 1)
+            );
         }
+
+        return $model->get();
     }
 
     public static function getAll()
@@ -82,7 +93,14 @@ class AbstractInvoiceItemsService
 
     public static function getActions()
     {
-        return config('accounting.actions');
+        $model = InvoiceItems::class;
+
+        $model = Str::remove('Database\\Models\\', $model);
+
+        $actions = AvailableActions::where('input', $model)
+            ->get();
+
+        return $actions;
     }
 
     /**
@@ -90,7 +108,7 @@ class AbstractInvoiceItemsService
      */
     public static function doAction($objectId, $action, ...$params)
     {
-        $object = Invoices::where('uuid', $objectId)->first();
+        $object = InvoiceItems::where('uuid', $objectId)->first();
 
         $action = '\\NextDeveloper\\Accounting\\Actions\\InvoiceItems\\' . Str::studly($action);
 
@@ -227,6 +245,13 @@ class AbstractInvoiceItemsService
     {
         $model = InvoiceItems::where('uuid', $id)->first();
 
+        if(!$model) {
+            throw new NotAllowedException(
+                'We cannot find the related object to update. ' .
+                'Maybe you dont have the permission to update this object?'
+            );
+        }
+
         if (array_key_exists('common_currency_id', $data)) {
             $data['common_currency_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\Commons\Database\Models\Currencies',
@@ -285,6 +310,13 @@ class AbstractInvoiceItemsService
     public static function delete($id)
     {
         $model = InvoiceItems::where('uuid', $id)->first();
+
+        if(!$model) {
+            throw new NotAllowedException(
+                'We cannot find the related object to delete. ' .
+                'Maybe you dont have the permission to update this object?'
+            );
+        }
 
         Events::fire('deleted:NextDeveloper\Accounting\InvoiceItems', $model);
 

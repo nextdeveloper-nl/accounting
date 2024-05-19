@@ -6,15 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
-use NextDeveloper\Commons\Database\Models\AvailableActions;
-use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
+use NextDeveloper\Commons\Database\Models\AvailableActions;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Filters\InvoicesQueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Events\Services\Events;
+use NextDeveloper\Commons\Exceptions\NotAllowedException;
 
 /**
  * This class is responsible from managing the data for Invoices
@@ -29,6 +29,8 @@ class AbstractInvoicesService
     {
         $enablePaginate = array_key_exists('paginate', $params);
 
+        $request = new Request();
+
         /**
         * Here we are adding null request since if filter is null, this means that this function is called from
         * non http application. This is actually not I think its a correct way to handle this problem but it's a workaround.
@@ -36,7 +38,7 @@ class AbstractInvoicesService
         * Please let me know if you have any other idea about this; baris.bulut@nextdeveloper.com
         */
         if($filter == null) {
-            $filter = new InvoicesQueryFilter(new Request());
+            $filter = new InvoicesQueryFilter($request);
         }
 
         $perPage = config('commons.pagination.per_page');
@@ -59,11 +61,18 @@ class AbstractInvoicesService
 
         $model = Invoices::filter($filter);
 
-        if($model && $enablePaginate) {
-            return $model->paginate($perPage);
-        } else {
-            return $model->get();
+        if($enablePaginate) {
+            //  We are using this because we have been experiencing huge security problem when we use the paginate method.
+            //  The reason was, when the pagination method was using, somehow paginate was discarding all the filters.
+            return new \Illuminate\Pagination\LengthAwarePaginator(
+                $model->skip(($request->get('page', 1) - 1) * $perPage)->take($perPage)->get(),
+                $model->count(),
+                $perPage,
+                $request->get('page', 1)
+            );
         }
+
+        return $model->get();
     }
 
     public static function getAll()
@@ -99,7 +108,7 @@ class AbstractInvoicesService
      */
     public static function doAction($objectId, $action, ...$params)
     {
-        $object = Invoices::withoutGlobalScope(AuthorizationScope::class)->where('uuid', $objectId)->first();
+        $object = Invoices::where('uuid', $objectId)->first();
 
         $action = '\\NextDeveloper\\Accounting\\Actions\\Invoices\\' . Str::studly($action);
 
@@ -179,7 +188,7 @@ class AbstractInvoicesService
                 $data['iam_account_id']
             );
         }
-
+            
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
@@ -189,11 +198,11 @@ class AbstractInvoicesService
                 $data['iam_user_id']
             );
         }
-
+                    
         if(!array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id']    = UserHelper::me()->id;
         }
-
+            
         try {
             $model = Invoices::create($data);
         } catch(\Exception $e) {
@@ -234,6 +243,13 @@ class AbstractInvoicesService
     {
         $model = Invoices::where('uuid', $id)->first();
 
+        if(!$model) {
+            throw new NotAllowedException(
+                'We cannot find the related object to update. ' .
+                'Maybe you dont have the permission to update this object?'
+            );
+        }
+
         if (array_key_exists('accounting_account_id', $data)) {
             $data['accounting_account_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\Accounting\Database\Models\Accounts',
@@ -258,7 +274,7 @@ class AbstractInvoicesService
                 $data['iam_user_id']
             );
         }
-
+    
         Events::fire('updating:NextDeveloper\Accounting\Invoices', $model);
 
         try {
@@ -286,6 +302,13 @@ class AbstractInvoicesService
     public static function delete($id)
     {
         $model = Invoices::where('uuid', $id)->first();
+
+        if(!$model) {
+            throw new NotAllowedException(
+                'We cannot find the related object to delete. ' .
+                'Maybe you dont have the permission to update this object?'
+            );
+        }
 
         Events::fire('deleted:NextDeveloper\Accounting\Invoices', $model);
 
