@@ -104,7 +104,7 @@ class AccountingServiceProvider extends AbstractServiceProvider {
      * @return void
      */
     protected function registerRoutes() {
-        if ( ! $this->app->routesAreCached() && config('leo.allowed_routes.blogs', true) ) {
+        if ( ! $this->app->routesAreCached() && config('leo.allowed_routes.accounting', true) ) {
             $this->app['router']
                 ->namespace('NextDeveloper\Accounting\Http\Controllers')
                 ->group(__DIR__.DIRECTORY_SEPARATOR.'Http'.DIRECTORY_SEPARATOR.'api.routes.php');
