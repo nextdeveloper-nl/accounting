@@ -61,7 +61,7 @@ class AccountsController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = AccountsService::doAction($objectId, $action);
+        $actionId = AccountsService::doAction($objectId, $action, request()->all());
 
         return $this->withArray(
             [

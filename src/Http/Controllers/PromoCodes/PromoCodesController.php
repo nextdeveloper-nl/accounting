@@ -61,7 +61,7 @@ class PromoCodesController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = PromoCodesService::doAction($objectId, $action);
+        $actionId = PromoCodesService::doAction($objectId, $action, request()->all());
 
         return $this->withArray(
             [

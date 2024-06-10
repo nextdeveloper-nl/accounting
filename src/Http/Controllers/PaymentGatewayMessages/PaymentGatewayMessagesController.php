@@ -61,7 +61,7 @@ class PaymentGatewayMessagesController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = PaymentGatewayMessagesService::doAction($objectId, $action);
+        $actionId = PaymentGatewayMessagesService::doAction($objectId, $action, request()->all());
 
         return $this->withArray(
             [
