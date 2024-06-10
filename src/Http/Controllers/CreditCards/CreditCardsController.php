@@ -61,7 +61,7 @@ class CreditCardsController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = CreditCardsService::doAction($objectId, $action);
+        $actionId = CreditCardsService::doAction($objectId, $action, request()->all());
 
         return $this->withArray(
             [

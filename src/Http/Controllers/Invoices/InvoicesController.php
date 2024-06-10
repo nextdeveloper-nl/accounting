@@ -55,7 +55,7 @@ class InvoicesController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = InvoicesService::doAction($objectId, $action);
+        $actionId = InvoicesService::doAction($objectId, $action, request()->all());
 
         return $this->withArray(
             [

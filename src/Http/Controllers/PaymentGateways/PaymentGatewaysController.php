@@ -61,7 +61,7 @@ class PaymentGatewaysController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = PaymentGatewaysService::doAction($objectId, $action);
+        $actionId = PaymentGatewaysService::doAction($objectId, $action, request()->all());
 
         return $this->withArray(
             [
