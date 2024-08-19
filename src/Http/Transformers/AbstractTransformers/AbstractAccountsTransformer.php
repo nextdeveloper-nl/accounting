@@ -69,6 +69,9 @@ class AbstractAccountsTransformer extends AbstractTransformer
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
+            'trade_office_number'  =>  $model->trade_office_number,
+            'trade_office'  =>  $model->trade_office,
+            'tr_mersis'  =>  $model->tr_mersis,
             ]
         );
     }
@@ -157,6 +160,13 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
 
 
 

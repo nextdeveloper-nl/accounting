@@ -53,24 +53,40 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('cc_cvv', 'like', '%' . $value . '%');
     }
 
-    public function isDefault()
+    public function isDefault($value)
     {
-        return $this->builder->where('is_default', true);
+        if(!is_bool($value)) {
+            $value = false;
+        }
+
+        return $this->builder->where('is_default', $value);
     }
 
-    public function isValid()
+    public function isValid($value)
     {
-        return $this->builder->where('is_valid', true);
+        if(!is_bool($value)) {
+            $value = false;
+        }
+
+        return $this->builder->where('is_valid', $value);
     }
 
-    public function isActive()
+    public function isActive($value)
     {
-        return $this->builder->where('is_active', true);
+        if(!is_bool($value)) {
+            $value = false;
+        }
+
+        return $this->builder->where('is_active', $value);
     }
 
-    public function is3dSecure()
+    public function is3dSecure($value)
     {
-        return $this->builder->where('is_3d_secure', true);
+        if(!is_bool($value)) {
+            $value = false;
+        }
+
+        return $this->builder->where('is_3d_secure', $value);
     }
 
     public function createdAtStart($date)
@@ -122,6 +138,13 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
 
 
 

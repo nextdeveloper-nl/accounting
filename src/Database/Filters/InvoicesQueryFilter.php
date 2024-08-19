@@ -28,24 +28,40 @@ class InvoicesQueryFilter extends AbstractQueryFilter
         return $this->builder->where('note', 'like', '%' . $value . '%');
     }
 
-    public function isPaid()
+    public function isPaid($value)
     {
-        return $this->builder->where('is_paid', true);
+        if(!is_bool($value)) {
+            $value = false;
+        }
+
+        return $this->builder->where('is_paid', $value);
     }
 
-    public function isRefund()
+    public function isRefund($value)
     {
-        return $this->builder->where('is_refund', true);
+        if(!is_bool($value)) {
+            $value = false;
+        }
+
+        return $this->builder->where('is_refund', $value);
     }
 
-    public function isPayable()
+    public function isPayable($value)
     {
-        return $this->builder->where('is_payable', true);
+        if(!is_bool($value)) {
+            $value = false;
+        }
+
+        return $this->builder->where('is_payable', $value);
     }
 
-    public function isSealed()
+    public function isSealed($value)
     {
-        return $this->builder->where('is_sealed', true);
+        if(!is_bool($value)) {
+            $value = false;
+        }
+
+        return $this->builder->where('is_sealed', $value);
     }
 
     public function dueDateStart($date)
@@ -125,6 +141,13 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
 
 
 

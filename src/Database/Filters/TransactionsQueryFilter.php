@@ -28,9 +28,13 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('conversation_identifier', 'like', '%' . $value . '%');
     }
 
-    public function isPending()
+    public function isPending($value)
     {
-        return $this->builder->where('is_pending', true);
+        if(!is_bool($value)) {
+            $value = false;
+        }
+
+        return $this->builder->where('is_pending', $value);
     }
 
     public function createdAtStart($date)
@@ -109,6 +113,13 @@ class TransactionsQueryFilter extends AbstractQueryFilter
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
 
 
 

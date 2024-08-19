@@ -18,6 +18,9 @@ class AccountsUpdateRequest extends AbstractFormRequest
         'accounting_identifier' => 'nullable|string',
         'credit' => '',
         'common_currency_id' => 'nullable|exists:common_currencies,uuid|uuid',
+        'trade_office_number' => 'nullable|string',
+        'trade_office' => 'nullable|string',
+        'tr_mersis' => 'nullable|string',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
