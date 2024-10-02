@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-        
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,60 +17,68 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function name($value)
     {
         return $this->builder->where('name', 'like', '%' . $value . '%');
     }
-    
+
     public function type($value)
     {
         return $this->builder->where('type', 'like', '%' . $value . '%');
     }
-    
+
     public function ccHolderName($value)
     {
         return $this->builder->where('cc_holder_name', 'like', '%' . $value . '%');
     }
-    
+
     public function ccNumber($value)
     {
         return $this->builder->where('cc_number', 'like', '%' . $value . '%');
     }
-    
+
     public function ccMonth($value)
     {
         return $this->builder->where('cc_month', 'like', '%' . $value . '%');
     }
-    
+
     public function ccYear($value)
     {
         return $this->builder->where('cc_year', 'like', '%' . $value . '%');
     }
-    
+
     public function ccCvv($value)
     {
         return $this->builder->where('cc_cvv', 'like', '%' . $value . '%');
     }
 
-    public function isDefault()
+    public function isDefault($value)
     {
-        return $this->builder->where('is_default', true);
+
+
+        return $this->builder->where('is_default', $value);
     }
 
-    public function isValid()
+    public function isValid($value)
     {
-        return $this->builder->where('is_valid', true);
+
+
+        return $this->builder->where('is_valid', $value);
     }
 
-    public function isActive()
+    public function isActive($value)
     {
-        return $this->builder->where('is_active', true);
+
+
+        return $this->builder->where('is_active', $value);
     }
 
-    public function is3dSecure()
+    public function is3dSecure($value)
     {
-        return $this->builder->where('is_3d_secure', true);
+
+
+        return $this->builder->where('is_3d_secure', $value);
     }
 
     public function createdAtStart($date)
@@ -122,6 +130,13 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
 
 
 

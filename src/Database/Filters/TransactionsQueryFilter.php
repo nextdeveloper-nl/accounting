@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                    
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,20 +17,22 @@ class TransactionsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function gatewayResponse($value)
     {
         return $this->builder->where('gateway_response', 'like', '%' . $value . '%');
     }
-    
+
     public function conversationIdentifier($value)
     {
         return $this->builder->where('conversation_identifier', 'like', '%' . $value . '%');
     }
 
-    public function isPending()
+    public function isPending($value)
     {
-        return $this->builder->where('is_pending', true);
+
+
+        return $this->builder->where('is_pending', $value);
     }
 
     public function createdAtStart($date)
@@ -109,6 +111,13 @@ class TransactionsQueryFilter extends AbstractQueryFilter
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
 
 
 

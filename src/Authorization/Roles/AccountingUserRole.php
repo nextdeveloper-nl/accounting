@@ -64,6 +64,8 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
     public function allowedOperations() :array
     {
         return [
+            'accounting_accounts:read',
+            'accounting_accounts:update',
             'accounting_credit_cards:read',
             'accounting_credit_cards:create',
             'accounting_credit_cards:update',

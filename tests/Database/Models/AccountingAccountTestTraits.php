@@ -61,6 +61,9 @@ trait AccountingAccountTestTraits
                 'tax_office'  =>  'a',
                 'tax_number'  =>  'a',
                 'accounting_identifier'  =>  'a',
+                'trade_office_number'  =>  'a',
+                'trade_office'  =>  'a',
+                'tr_mersis'  =>  'a',
                             ],
                 ['http_errors' => false]
             ]
@@ -387,6 +390,63 @@ trait AccountingAccountTestTraits
             $request = new Request(
                 [
                 'accounting_identifier'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingAccountQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingAccount::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingaccount_event_trade_office_number_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'trade_office_number'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingAccountQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingAccount::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingaccount_event_trade_office_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'trade_office'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingAccountQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingAccount::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingaccount_event_tr_mersis_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'tr_mersis'  =>  'a'
                 ]
             );
 

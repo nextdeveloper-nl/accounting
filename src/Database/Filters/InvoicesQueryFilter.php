@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,35 +17,43 @@ class InvoicesQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function invoiceNumber($value)
     {
         return $this->builder->where('invoice_number', 'like', '%' . $value . '%');
     }
-    
+
     public function note($value)
     {
         return $this->builder->where('note', 'like', '%' . $value . '%');
     }
 
-    public function isPaid()
+    public function isPaid($value)
     {
-        return $this->builder->where('is_paid', true);
+
+
+        return $this->builder->where('is_paid', $value);
     }
 
-    public function isRefund()
+    public function isRefund($value)
     {
-        return $this->builder->where('is_refund', true);
+
+
+        return $this->builder->where('is_refund', $value);
     }
 
-    public function isPayable()
+    public function isPayable($value)
     {
-        return $this->builder->where('is_payable', true);
+
+
+        return $this->builder->where('is_payable', $value);
     }
 
-    public function isSealed()
+    public function isSealed($value)
     {
-        return $this->builder->where('is_sealed', true);
+
+
+        return $this->builder->where('is_sealed', $value);
     }
 
     public function dueDateStart($date)
@@ -125,6 +133,13 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
 
 
 

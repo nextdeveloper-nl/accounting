@@ -32,6 +32,21 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->builder->where('accounting_identifier', 'like', '%' . $value . '%');
     }
+    
+    public function tradeOfficeNumber($value)
+    {
+        return $this->builder->where('trade_office_number', 'like', '%' . $value . '%');
+    }
+    
+    public function tradeOffice($value)
+    {
+        return $this->builder->where('trade_office', 'like', '%' . $value . '%');
+    }
+    
+    public function trMersis($value)
+    {
+        return $this->builder->where('tr_mersis', 'like', '%' . $value . '%');
+    }
 
     public function createdAtStart($date)
     {
@@ -82,6 +97,13 @@ class AccountsQueryFilter extends AbstractQueryFilter
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
 
 
 
