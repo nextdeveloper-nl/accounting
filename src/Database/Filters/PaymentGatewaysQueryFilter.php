@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-        
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,12 +17,12 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function name($value)
     {
         return $this->builder->where('name', 'like', '%' . $value . '%');
     }
-    
+
     public function gateway($value)
     {
         return $this->builder->where('gateway', 'like', '%' . $value . '%');
@@ -30,9 +30,7 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
 
     public function isActive($value)
     {
-        if(!is_bool($value)) {
-            $value = false;
-        }
+
 
         return $this->builder->where('is_active', $value);
     }
