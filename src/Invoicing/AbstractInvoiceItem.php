@@ -55,12 +55,14 @@ abstract class AbstractInvoiceItem
                 'object_id'     =>  is_object($this->model) ? $this->model->id : 0,
                 'quantity'      =>  1,
                 'unit_price'    =>  $cost,
-                'common_currency_id'    =>  $currency->id
+                'common_currency_id'    =>  $currency->id,
+                'accounting_account_id' =>  $this->invoice->accounting_account_id
             ]);
         }
 
         $item->update([
-            'unit_price'    =>  $cost
+            'unit_price'    =>  $cost,
+            'accounting_account_id' =>  $this->invoice->accounting_account_id
         ]);
 
         Events::fire('updated:NextDeveloper\Accounting\InvoiceItems', $item);

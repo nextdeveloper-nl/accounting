@@ -11,6 +11,7 @@ use NextDeveloper\Accounting\Services\InvoicesService;
 use NextDeveloper\Commons\Database\GlobalScopes\LimitScope;
 use NextDeveloper\Commons\Services\CurrenciesService;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
+use NextDeveloper\IAM\Helpers\UserHelper;
 
 class InvoiceHelper
 {
@@ -44,9 +45,11 @@ class InvoiceHelper
                 'common_currency_id'    =>  CurrenciesService::getDefaultCurrency()->id,
                 'vat'       => 0,
                 'term_year'     =>  $year,
-                'term_month'    =>  $month
+                'term_month'    =>  $month,
                 //  We don't put due date here because due date is +7 days after we close the invoice
                 //'due_date'  => $from->copy()->addMonth()->addDays(7)
+                'iam_account_id'    =>  UserHelper::currentAccount()->id,
+                'iam_user_id'       =>  UserHelper::me()->id
             ]);
         }
 
