@@ -3,42 +3,48 @@
 namespace NextDeveloper\Accounting\Database\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use NextDeveloper\Commons\Database\Traits\HasStates;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Accounting\Database\Observers\AccountsObserver;
+use NextDeveloper\Accounting\Database\Observers\InvoiceItemsPerspectiveObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * Accounts model.
+ * InvoiceItemsPerspective model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
+ * @property integer $accounting_invoice_id
+ * @property integer $term_year
+ * @property integer $term_month
+ * @property $invoice_amount
+ * @property string $object_type
+ * @property integer $object_id
+ * @property $unit_price
+ * @property integer $quantity
+ * @property $total_price
  * @property integer $iam_account_id
- * @property string $tax_office
- * @property string $tax_number
+ * @property string $name
+ * @property integer $iam_user_id
  * @property string $accounting_identifier
  * @property $credit
  * @property integer $common_currency_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
- * @property string $trade_office_number
- * @property string $trade_office
- * @property string $tr_mersis
  */
-class Accounts extends Model
+class InvoiceItemsPerspective extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'accounting_accounts';
+    protected $table = 'accounting_invoice_items_perspective';
 
 
     /**
@@ -47,15 +53,21 @@ class Accounts extends Model
     protected $guarded = [];
 
     protected $fillable = [
+            'accounting_invoice_id',
+            'term_year',
+            'term_month',
+            'invoice_amount',
+            'object_type',
+            'object_id',
+            'unit_price',
+            'quantity',
+            'total_price',
             'iam_account_id',
-            'tax_office',
-            'tax_number',
+            'name',
+            'iam_user_id',
             'accounting_identifier',
             'credit',
             'common_currency_id',
-            'trade_office_number',
-            'trade_office',
-            'tr_mersis',
     ];
 
     /**
@@ -79,16 +91,18 @@ class Accounts extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'tax_office' => 'string',
-    'tax_number' => 'string',
+    'accounting_invoice_id' => 'integer',
+    'term_year' => 'integer',
+    'term_month' => 'integer',
+    'object_type' => 'string',
+    'object_id' => 'integer',
+    'quantity' => 'integer',
+    'name' => 'string',
     'accounting_identifier' => 'string',
     'common_currency_id' => 'integer',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-    'trade_office_number' => 'string',
-    'trade_office' => 'string',
-    'tr_mersis' => 'string',
     ];
 
     /**
@@ -122,7 +136,7 @@ class Accounts extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(AccountsObserver::class);
+        parent::observe(InvoiceItemsPerspectiveObserver::class);
 
         self::registerScopes();
     }
@@ -130,7 +144,7 @@ class Accounts extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_accounts');
+        $modelScopes = config('accounting.scopes.accounting_invoice_items_perspective');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -149,19 +163,5 @@ class Accounts extends Model
         }
     }
 
-    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
-    }
-    
-    public function invoices() : \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(\NextDeveloper\Accounting\Database\Models\Invoices::class);
-    }
-
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
 }

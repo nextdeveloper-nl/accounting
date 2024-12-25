@@ -60,6 +60,8 @@ trait AccountingInvoiceTestTraits
             'form_params'   =>  [
                 'invoice_number'  =>  'a',
                 'note'  =>  'a',
+                'term_year'  =>  '1',
+                'term_month'  =>  '1',
                     'due_date'  =>  now(),
                             ],
                 ['http_errors' => false]
@@ -368,6 +370,44 @@ trait AccountingInvoiceTestTraits
             $request = new Request(
                 [
                 'note'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingInvoiceQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountinginvoice_event_term_year_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'term_year'  =>  '1'
+                ]
+            );
+
+            $filter = new AccountingInvoiceQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountinginvoice_event_term_month_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'term_month'  =>  '1'
                 ]
             );
 
