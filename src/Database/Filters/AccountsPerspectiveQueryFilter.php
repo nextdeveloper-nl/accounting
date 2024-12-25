@@ -4,13 +4,13 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-        
+                    
 
 /**
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class AccountsQueryFilter extends AbstractQueryFilter
+class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 {
 
     /**
@@ -18,15 +18,21 @@ class AccountsQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
     
-    public function taxOffice($value)
+    public function name($value)
     {
-        return $this->builder->where('tax_office', 'like', '%' . $value . '%');
+        return $this->builder->where('name', 'like', '%' . $value . '%');
     }
 
-        //  This is an alias function of taxOffice
-    public function tax_office($value)
+        
+    public function phoneNumber($value)
     {
-        return $this->taxOffice($value);
+        return $this->builder->where('phone_number', 'like', '%' . $value . '%');
+    }
+
+        //  This is an alias function of phoneNumber
+    public function phone_number($value)
+    {
+        return $this->phoneNumber($value);
     }
         
     public function taxNumber($value)
@@ -40,6 +46,17 @@ class AccountsQueryFilter extends AbstractQueryFilter
         return $this->taxNumber($value);
     }
         
+    public function taxOffice($value)
+    {
+        return $this->builder->where('tax_office', 'like', '%' . $value . '%');
+    }
+
+        //  This is an alias function of taxOffice
+    public function tax_office($value)
+    {
+        return $this->taxOffice($value);
+    }
+        
     public function accountingIdentifier($value)
     {
         return $this->builder->where('accounting_identifier', 'like', '%' . $value . '%');
@@ -51,15 +68,15 @@ class AccountsQueryFilter extends AbstractQueryFilter
         return $this->accountingIdentifier($value);
     }
         
-    public function tradeOfficeNumber($value)
+    public function trMersis($value)
     {
-        return $this->builder->where('trade_office_number', 'like', '%' . $value . '%');
+        return $this->builder->where('tr_mersis', 'like', '%' . $value . '%');
     }
 
-        //  This is an alias function of tradeOfficeNumber
-    public function trade_office_number($value)
+        //  This is an alias function of trMersis
+    public function tr_mersis($value)
     {
-        return $this->tradeOfficeNumber($value);
+        return $this->trMersis($value);
     }
         
     public function tradeOffice($value)
@@ -73,15 +90,15 @@ class AccountsQueryFilter extends AbstractQueryFilter
         return $this->tradeOffice($value);
     }
         
-    public function trMersis($value)
+    public function tradeOfficeNumber($value)
     {
-        return $this->builder->where('tr_mersis', 'like', '%' . $value . '%');
+        return $this->builder->where('trade_office_number', 'like', '%' . $value . '%');
     }
 
-        //  This is an alias function of trMersis
-    public function tr_mersis($value)
+        //  This is an alias function of tradeOfficeNumber
+    public function trade_office_number($value)
     {
-        return $this->trMersis($value);
+        return $this->tradeOfficeNumber($value);
     }
     
     public function createdAtStart($date)
@@ -150,15 +167,60 @@ class AccountsQueryFilter extends AbstractQueryFilter
         return $this->deletedAtEnd($value);
     }
 
-    public function iamAccountId($value)
+    public function commonCountryId($value)
     {
-            $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
+            $commonCountry = \NextDeveloper\Commons\Database\Models\Countries::where('uuid', $value)->first();
 
-        if($iamAccount) {
-            return $this->builder->where('iam_account_id', '=', $iamAccount->id);
+        if($commonCountry) {
+            return $this->builder->where('common_country_id', '=', $commonCountry->id);
         }
     }
 
+        //  This is an alias function of commonCountry
+    public function common_country_id($value)
+    {
+        return $this->commonCountry($value);
+    }
+    
+    public function commonDomainId($value)
+    {
+            $commonDomain = \NextDeveloper\Commons\Database\Models\Domains::where('uuid', $value)->first();
+
+        if($commonDomain) {
+            return $this->builder->where('common_domain_id', '=', $commonDomain->id);
+        }
+    }
+
+        //  This is an alias function of commonDomain
+    public function common_domain_id($value)
+    {
+        return $this->commonDomain($value);
+    }
+    
+    public function iamUserId($value)
+    {
+            $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
+
+        if($iamUser) {
+            return $this->builder->where('iam_user_id', '=', $iamUser->id);
+        }
+    }
+
+    
+    public function iamAccountTypeId($value)
+    {
+            $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
+
+        if($iamAccountType) {
+            return $this->builder->where('iam_account_type_id', '=', $iamAccountType->id);
+        }
+    }
+
+        //  This is an alias function of iamAccountType
+    public function iam_account_type_id($value)
+    {
+        return $this->iamAccountType($value);
+    }
     
     public function commonCurrencyId($value)
     {
@@ -176,36 +238,4 @@ class AccountsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -2,8 +2,6 @@
 
 namespace NextDeveloper\Accounting\Http\Transformers\AbstractTransformers;
 
-use NextDeveloper\Accounting\Database\Models\Accounts;
-use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\Commons\Database\Models\Addresses;
 use NextDeveloper\Commons\Database\Models\Comments;
 use NextDeveloper\Commons\Database\Models\Meta;
@@ -22,14 +20,16 @@ use NextDeveloper\Commons\Http\Transformers\MetaTransformer;
 use NextDeveloper\Commons\Http\Transformers\VotesTransformer;
 use NextDeveloper\Commons\Http\Transformers\AddressesTransformer;
 use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
+use NextDeveloper\Accounting\Database\Models\AccountsPerspective;
+use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
 /**
- * Class AccountsTransformer. This class is being used to manipulate the data we are serving to the customer
+ * Class AccountsPerspectiveTransformer. This class is being used to manipulate the data we are serving to the customer
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractAccountsTransformer extends AbstractTransformer
+class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
 {
 
     /**
@@ -48,35 +48,43 @@ class AbstractAccountsTransformer extends AbstractTransformer
     ];
 
     /**
-     * @param Accounts $model
+     * @param AccountsPerspective $model
      *
      * @return array
      */
-    public function transform(Accounts $model)
+    public function transform(AccountsPerspective $model)
     {
-                                                $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
+                                                $commonCountryId = \NextDeveloper\Commons\Database\Models\Countries::where('id', $model->common_country_id)->first();
+                                                            $commonDomainId = \NextDeveloper\Commons\Database\Models\Domains::where('id', $model->common_domain_id)->first();
+                                                            $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
+                                                            $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                         
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'tax_office'  =>  $model->tax_office,
+            'name'  =>  $model->name,
+            'phone_number'  =>  $model->phone_number,
+            'common_country_id'  =>  $commonCountryId ? $commonCountryId->uuid : null,
+            'common_domain_id'  =>  $commonDomainId ? $commonDomainId->uuid : null,
+            'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
+            'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
             'tax_number'  =>  $model->tax_number,
+            'tax_office'  =>  $model->tax_office,
             'accounting_identifier'  =>  $model->accounting_identifier,
             'credit'  =>  $model->credit,
             'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+            'tr_mersis'  =>  $model->tr_mersis,
+            'trade_office'  =>  $model->trade_office,
+            'trade_office_number'  =>  $model->trade_office_number,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
-            'trade_office_number'  =>  $model->trade_office_number,
-            'trade_office'  =>  $model->trade_office,
-            'tr_mersis'  =>  $model->tr_mersis,
             ]
         );
     }
 
-    public function includeStates(Accounts $model)
+    public function includeStates(AccountsPerspective $model)
     {
         $states = States::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -85,7 +93,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($states, new StatesTransformer());
     }
 
-    public function includeActions(Accounts $model)
+    public function includeActions(AccountsPerspective $model)
     {
         $input = get_class($model);
         $input = str_replace('\\Database\\Models', '', $input);
@@ -97,7 +105,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($actions, new AvailableActionsTransformer());
     }
 
-    public function includeMedia(Accounts $model)
+    public function includeMedia(AccountsPerspective $model)
     {
         $media = Media::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -106,7 +114,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($media, new MediaTransformer());
     }
 
-    public function includeSocialMedia(Accounts $model)
+    public function includeSocialMedia(AccountsPerspective $model)
     {
         $socialMedia = SocialMedia::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -115,7 +123,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($socialMedia, new SocialMediaTransformer());
     }
 
-    public function includeComments(Accounts $model)
+    public function includeComments(AccountsPerspective $model)
     {
         $comments = Comments::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -124,7 +132,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($comments, new CommentsTransformer());
     }
 
-    public function includeVotes(Accounts $model)
+    public function includeVotes(AccountsPerspective $model)
     {
         $votes = Votes::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -133,7 +141,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($votes, new VotesTransformer());
     }
 
-    public function includeMeta(Accounts $model)
+    public function includeMeta(AccountsPerspective $model)
     {
         $meta = Meta::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -142,7 +150,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($meta, new MetaTransformer());
     }
 
-    public function includePhoneNumbers(Accounts $model)
+    public function includePhoneNumbers(AccountsPerspective $model)
     {
         $phoneNumbers = PhoneNumbers::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -151,7 +159,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($phoneNumbers, new PhoneNumbersTransformer());
     }
 
-    public function includeAddresses(Accounts $model)
+    public function includeAddresses(AccountsPerspective $model)
     {
         $addresses = Addresses::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -160,27 +168,4 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

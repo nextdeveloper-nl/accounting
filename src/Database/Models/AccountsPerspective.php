@@ -3,42 +3,47 @@
 namespace NextDeveloper\Accounting\Database\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use NextDeveloper\Commons\Database\Traits\HasStates;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Accounting\Database\Observers\TransactionsObserver;
+use NextDeveloper\Accounting\Database\Observers\AccountsPerspectiveObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * Transactions model.
+ * AccountsPerspective model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property integer $accounting_invoice_id
- * @property $amount
+ * @property string $name
+ * @property string $phone_number
+ * @property integer $common_country_id
+ * @property integer $common_domain_id
+ * @property integer $iam_user_id
+ * @property integer $iam_account_type_id
+ * @property string $tax_number
+ * @property string $tax_office
+ * @property string $accounting_identifier
+ * @property $credit
  * @property integer $common_currency_id
- * @property integer $accounting_payment_gateway_id
- * @property integer $iam_account_id
- * @property integer $accounting_account_id
- * @property string $gateway_response
+ * @property string $tr_mersis
+ * @property string $trade_office
+ * @property string $trade_office_number
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
- * @property string $conversation_identifier
- * @property boolean $is_pending
  */
-class Transactions extends Model
+class AccountsPerspective extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'accounting_transactions';
+    protected $table = 'accounting_accounts_perspective';
 
 
     /**
@@ -47,15 +52,20 @@ class Transactions extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'accounting_invoice_id',
-            'amount',
+            'name',
+            'phone_number',
+            'common_country_id',
+            'common_domain_id',
+            'iam_user_id',
+            'iam_account_type_id',
+            'tax_number',
+            'tax_office',
+            'accounting_identifier',
+            'credit',
             'common_currency_id',
-            'accounting_payment_gateway_id',
-            'iam_account_id',
-            'accounting_account_id',
-            'gateway_response',
-            'conversation_identifier',
-            'is_pending',
+            'tr_mersis',
+            'trade_office',
+            'trade_office_number',
     ];
 
     /**
@@ -79,16 +89,21 @@ class Transactions extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'accounting_invoice_id' => 'integer',
+    'name' => 'string',
+    'phone_number' => 'string',
+    'common_country_id' => 'integer',
+    'common_domain_id' => 'integer',
+    'iam_account_type_id' => 'integer',
+    'tax_number' => 'string',
+    'tax_office' => 'string',
+    'accounting_identifier' => 'string',
     'common_currency_id' => 'integer',
-    'accounting_payment_gateway_id' => 'integer',
-    'accounting_account_id' => 'integer',
-    'gateway_response' => 'string',
+    'tr_mersis' => 'string',
+    'trade_office' => 'string',
+    'trade_office_number' => 'string',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-    'conversation_identifier' => 'string',
-    'is_pending' => 'boolean',
     ];
 
     /**
@@ -122,7 +137,7 @@ class Transactions extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(TransactionsObserver::class);
+        parent::observe(AccountsPerspectiveObserver::class);
 
         self::registerScopes();
     }
@@ -130,7 +145,7 @@ class Transactions extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_transactions');
+        $modelScopes = config('accounting.scopes.accounting_accounts_perspective');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -149,34 +164,5 @@ class Transactions extends Model
         }
     }
 
-    public function currencies() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\Commons\Database\Models\Currencies::class);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

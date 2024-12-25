@@ -42,80 +42,80 @@ class Accounts extends Model
 
 
     /**
-     * @var array
+     @var array
      */
     protected $guarded = [];
 
     protected $fillable = [
-        'iam_account_id',
-        'tax_office',
-        'tax_number',
-        'accounting_identifier',
-        'credit',
-        'common_currency_id',
-        'trade_office_number',
-        'trade_office',
-        'tr_mersis',
+            'iam_account_id',
+            'tax_office',
+            'tax_number',
+            'accounting_identifier',
+            'credit',
+            'common_currency_id',
+            'trade_office_number',
+            'trade_office',
+            'tr_mersis',
     ];
 
     /**
-     * Here we have the fulltext fields. We can use these for fulltext search if enabled.
+      Here we have the fulltext fields. We can use these for fulltext search if enabled.
      */
     protected $fullTextFields = [
 
     ];
 
     /**
-     * @var array
+     @var array
      */
     protected $appends = [
 
     ];
 
     /**
-     * We are casting fields to objects so that we can work on them better
+     We are casting fields to objects so that we can work on them better
      *
-     * @var array
+     @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'tax_office' => 'string',
-        'tax_number' => 'string',
-        'accounting_identifier' => 'string',
-        'common_currency_id' => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
-        'trade_office_number' => 'string',
-        'trade_office' => 'string',
-        'tr_mersis' => 'string',
+    'id' => 'integer',
+    'tax_office' => 'string',
+    'tax_number' => 'string',
+    'accounting_identifier' => 'string',
+    'common_currency_id' => 'integer',
+    'created_at' => 'datetime',
+    'updated_at' => 'datetime',
+    'deleted_at' => 'datetime',
+    'trade_office_number' => 'string',
+    'trade_office' => 'string',
+    'tr_mersis' => 'string',
     ];
 
     /**
-     * We are casting data fields.
+     We are casting data fields.
      *
-     * @var array
+     @var array
      */
     protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
+    'created_at',
+    'updated_at',
+    'deleted_at',
     ];
 
     /**
-     * @var array
+     @var array
      */
     protected $with = [
 
     ];
 
     /**
-     * @var int
+     @var int
      */
     protected $perPage = 20;
 
     /**
-     * @return void
+     @return void
      */
     public static function boot()
     {
@@ -132,11 +132,9 @@ class Accounts extends Model
         $globalScopes = config('accounting.scopes.global');
         $modelScopes = config('accounting.scopes.accounting_accounts');
 
-        if (!$modelScopes) {
-            $modelScopes = [];
+        if(!$modelScopes) { $modelScopes = [];
         }
-        if (!$globalScopes) {
-            $globalScopes = [];
+        if (!$globalScopes) { $globalScopes = [];
         }
 
         $scopes = array_merge(
@@ -144,24 +142,25 @@ class Accounts extends Model
             $modelScopes
         );
 
-        if ($scopes) {
+        if($scopes) {
             foreach ($scopes as $scope) {
                 static::addGlobalScope(app($scope));
             }
         }
     }
 
-    public function accounts(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
     }
-
-    public function invoices(): \Illuminate\Database\Eloquent\Relations\HasMany
+    
+    public function invoices() : \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\NextDeveloper\Accounting\Database\Models\Invoices::class);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 }

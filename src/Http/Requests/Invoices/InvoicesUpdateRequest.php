@@ -25,6 +25,8 @@ class InvoicesUpdateRequest extends AbstractFormRequest
         'is_payable' => 'boolean',
         'is_sealed' => 'boolean',
         'note' => 'string',
+        'term_year' => 'nullable|integer',
+        'term_month' => 'nullable|integer',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

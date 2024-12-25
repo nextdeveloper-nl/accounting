@@ -35,6 +35,8 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property integer $term_year
+ * @property integer $term_month
  */
 class Invoices extends Model
 {
@@ -45,92 +47,95 @@ class Invoices extends Model
 
     protected $table = 'accounting_invoices';
 
+
     /**
-     * @var array
+     @var array
      */
     protected $guarded = [];
 
     protected $fillable = [
-        'accounting_account_id',
-        'invoice_number',
-        'exchange_rate',
-        'amount',
-        'common_currency_id',
-        'vat',
-        'is_paid',
-        'is_refund',
-        'due_date',
-        'iam_account_id',
-        'iam_user_id',
-        'is_payable',
-        'is_sealed',
-        'note',
-        'term_year',
-        'term_month'
+            'accounting_account_id',
+            'invoice_number',
+            'exchange_rate',
+            'amount',
+            'common_currency_id',
+            'vat',
+            'is_paid',
+            'is_refund',
+            'due_date',
+            'iam_account_id',
+            'iam_user_id',
+            'is_payable',
+            'is_sealed',
+            'note',
+            'term_year',
+            'term_month',
     ];
 
     /**
-     * Here we have the fulltext fields. We can use these for fulltext search if enabled.
+      Here we have the fulltext fields. We can use these for fulltext search if enabled.
      */
     protected $fullTextFields = [
 
     ];
 
     /**
-     * @var array
+     @var array
      */
     protected $appends = [
 
     ];
 
     /**
-     * We are casting fields to objects so that we can work on them better
+     We are casting fields to objects so that we can work on them better
      *
-     * @var array
+     @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'accounting_account_id' => 'integer',
-        'invoice_number' => 'string',
-        'exchange_rate' => 'array',
-        'common_currency_id' => 'integer',
-        'is_paid' => 'boolean',
-        'is_refund' => 'boolean',
-        'due_date' => 'datetime',
-        'is_payable' => 'boolean',
-        'is_sealed' => 'boolean',
-        'note' => 'string',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+    'id' => 'integer',
+    'accounting_account_id' => 'integer',
+    'invoice_number' => 'string',
+    'exchange_rate' => 'array',
+    'common_currency_id' => 'integer',
+    'is_paid' => 'boolean',
+    'is_refund' => 'boolean',
+    'due_date' => 'datetime',
+    'is_payable' => 'boolean',
+    'is_sealed' => 'boolean',
+    'note' => 'string',
+    'created_at' => 'datetime',
+    'updated_at' => 'datetime',
+    'deleted_at' => 'datetime',
+    'term_year' => 'integer',
+    'term_month' => 'integer',
     ];
 
     /**
-     * We are casting data fields.
+     We are casting data fields.
      *
-     * @var array
+     @var array
      */
     protected $dates = [
-        'due_date',
-        'created_at',
-        'updated_at',
-        'deleted_at',
+    'due_date',
+    'created_at',
+    'updated_at',
+    'deleted_at',
     ];
 
     /**
-     * @var array
+     @var array
      */
     protected $with = [
 
     ];
 
     /**
-     * @var int
+     @var int
      */
     protected $perPage = 20;
 
     /**
-     * @return void
+     @return void
      */
     public static function boot()
     {
@@ -147,11 +152,9 @@ class Invoices extends Model
         $globalScopes = config('accounting.scopes.global');
         $modelScopes = config('accounting.scopes.accounting_invoices');
 
-        if (!$modelScopes) {
-            $modelScopes = [];
+        if(!$modelScopes) { $modelScopes = [];
         }
-        if (!$globalScopes) {
-            $globalScopes = [];
+        if (!$globalScopes) { $globalScopes = [];
         }
 
         $scopes = array_merge(
@@ -159,24 +162,25 @@ class Invoices extends Model
             $modelScopes
         );
 
-        if ($scopes) {
+        if($scopes) {
             foreach ($scopes as $scope) {
                 static::addGlobalScope(app($scope));
             }
         }
     }
 
-    public function accounts(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\NextDeveloper\Accounting\Database\Models\Accounts::class);
     }
-
-    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    
+    public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
     }
-
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 }

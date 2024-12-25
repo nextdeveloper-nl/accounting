@@ -13,7 +13,7 @@ class CreditCardsCreateRequest extends AbstractFormRequest
     public function rules()
     {
         return [
-            'name' => 'string',
+            'name' => 'nullable|string',
         'type' => 'nullable|string',
         'cc_holder_name' => 'required|string',
         'cc_number' => 'required|string',
@@ -27,4 +27,5 @@ class CreditCardsCreateRequest extends AbstractFormRequest
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }
