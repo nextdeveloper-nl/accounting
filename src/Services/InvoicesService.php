@@ -3,8 +3,6 @@
 namespace NextDeveloper\Accounting\Services;
 
 use NextDeveloper\Accounting\Database\Filters\InvoicesQueryFilter;
-use NextDeveloper\Accounting\Database\Models\InvoiceItems;
-use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractInvoicesService;
 
 /**
@@ -18,5 +16,8 @@ class InvoicesService extends AbstractInvoicesService
 {
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
+    public static function get(InvoicesQueryFilter $filter = null, array $params = []): \Illuminate\Database\Eloquent\Collection|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return parent::get($filter, $params);
+    }
 }

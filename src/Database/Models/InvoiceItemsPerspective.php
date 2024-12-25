@@ -7,29 +7,29 @@ use NextDeveloper\Commons\Database\Traits\HasStates;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Accounting\Database\Observers\InvoicesPerspectiveObserver;
+use NextDeveloper\Accounting\Database\Observers\InvoiceItemsPerspectiveObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * InvoicesPerspective model.
+ * InvoiceItemsPerspective model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
+ * @property integer $accounting_invoice_id
  * @property integer $term_year
  * @property integer $term_month
- * @property $amount
- * @property boolean $is_paid
- * @property boolean $is_payable
- * @property boolean $is_refund
- * @property boolean $is_sealed
+ * @property $invoice_amount
+ * @property string $object_type
+ * @property integer $object_id
+ * @property $unit_price
+ * @property integer $quantity
+ * @property $total_price
+ * @property integer $iam_account_id
  * @property string $name
- * @property integer $common_country_id
- * @property integer $common_domain_id
  * @property integer $iam_user_id
- * @property integer $iam_account_type_id
  * @property string $accounting_identifier
  * @property $credit
  * @property integer $common_currency_id
@@ -37,14 +37,14 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
  */
-class InvoicesPerspective extends Model
+class InvoiceItemsPerspective extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'accounting_invoices_perspective';
+    protected $table = 'accounting_invoice_items_perspective';
 
 
     /**
@@ -53,18 +53,18 @@ class InvoicesPerspective extends Model
     protected $guarded = [];
 
     protected $fillable = [
+            'accounting_invoice_id',
             'term_year',
             'term_month',
-            'amount',
-            'is_paid',
-            'is_payable',
-            'is_refund',
-            'is_sealed',
+            'invoice_amount',
+            'object_type',
+            'object_id',
+            'unit_price',
+            'quantity',
+            'total_price',
+            'iam_account_id',
             'name',
-            'common_country_id',
-            'common_domain_id',
             'iam_user_id',
-            'iam_account_type_id',
             'accounting_identifier',
             'credit',
             'common_currency_id',
@@ -91,16 +91,13 @@ class InvoicesPerspective extends Model
      */
     protected $casts = [
     'id' => 'integer',
+    'accounting_invoice_id' => 'integer',
     'term_year' => 'integer',
     'term_month' => 'integer',
-    'is_paid' => 'boolean',
-    'is_payable' => 'boolean',
-    'is_refund' => 'boolean',
-    'is_sealed' => 'boolean',
+    'object_type' => 'string',
+    'object_id' => 'integer',
+    'quantity' => 'integer',
     'name' => 'string',
-    'common_country_id' => 'integer',
-    'common_domain_id' => 'integer',
-    'iam_account_type_id' => 'integer',
     'accounting_identifier' => 'string',
     'common_currency_id' => 'integer',
     'created_at' => 'datetime',
@@ -139,7 +136,7 @@ class InvoicesPerspective extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(InvoicesPerspectiveObserver::class);
+        parent::observe(InvoiceItemsPerspectiveObserver::class);
 
         self::registerScopes();
     }
@@ -147,7 +144,7 @@ class InvoicesPerspective extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_invoices_perspective');
+        $modelScopes = config('accounting.scopes.accounting_invoice_items_perspective');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -167,5 +164,4 @@ class InvoicesPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
 }
