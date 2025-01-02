@@ -28,11 +28,13 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property string $name
  * @property integer $common_country_id
  * @property integer $common_domain_id
+ * @property integer $iam_account_id
  * @property integer $iam_user_id
  * @property integer $iam_account_type_id
  * @property string $accounting_identifier
  * @property $credit
  * @property integer $common_currency_id
+ * @property integer $accounting_account_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
@@ -63,11 +65,13 @@ class InvoicesPerspective extends Model
             'name',
             'common_country_id',
             'common_domain_id',
+            'iam_account_id',
             'iam_user_id',
             'iam_account_type_id',
             'accounting_identifier',
             'credit',
             'common_currency_id',
+            'accounting_account_id',
     ];
 
     /**
@@ -103,6 +107,7 @@ class InvoicesPerspective extends Model
     'iam_account_type_id' => 'integer',
     'accounting_identifier' => 'string',
     'common_currency_id' => 'integer',
+    'accounting_account_id' => 'integer',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
@@ -167,5 +172,7 @@ class InvoicesPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 }

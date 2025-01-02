@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-
+                
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,35 +17,35 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-
+    
     public function objectType($value)
     {
         return $this->builder->where('object_type', 'like', '%' . $value . '%');
     }
 
-    //  This is an alias function of objectType
+        //  This is an alias function of objectType
     public function object_type($value)
     {
         return $this->objectType($value);
     }
-
+        
     public function name($value)
     {
         return $this->builder->where('name', 'like', '%' . $value . '%');
     }
 
-
+        
     public function accountingIdentifier($value)
     {
         return $this->builder->where('accounting_identifier', 'like', '%' . $value . '%');
     }
 
-    //  This is an alias function of accountingIdentifier
+        //  This is an alias function of accountingIdentifier
     public function accounting_identifier($value)
     {
         return $this->accountingIdentifier($value);
     }
-
+    
     public function termYear($value)
     {
         $operator = substr($value, 0, 1);
@@ -59,12 +59,12 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('term_year', $operator, $value);
     }
 
-    //  This is an alias function of termYear
+        //  This is an alias function of termYear
     public function term_year($value)
     {
         return $this->termYear($value);
     }
-
+    
     public function termMonth($value)
     {
         $operator = substr($value, 0, 1);
@@ -78,12 +78,12 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('term_month', $operator, $value);
     }
 
-    //  This is an alias function of termMonth
+        //  This is an alias function of termMonth
     public function term_month($value)
     {
         return $this->termMonth($value);
     }
-
+    
     public function quantity($value)
     {
         $operator = substr($value, 0, 1);
@@ -97,7 +97,7 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('quantity', $operator, $value);
     }
 
-
+    
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -166,53 +166,55 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function accountingInvoiceId($value)
     {
-        $accountingInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
+            $accountingInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
 
-        if ($accountingInvoice) {
+        if($accountingInvoice) {
             return $this->builder->where('accounting_invoice_id', '=', $accountingInvoice->id);
         }
     }
 
-    //  This is an alias function of accountingInvoice
+        //  This is an alias function of accountingInvoice
     public function accounting_invoice_id($value)
     {
         return $this->accountingInvoice($value);
     }
-
+    
     public function iamAccountId($value)
     {
-        $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
+            $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
 
-        if ($iamAccount) {
+        if($iamAccount) {
             return $this->builder->where('iam_account_id', '=', $iamAccount->id);
         }
     }
 
-
+    
     public function iamUserId($value)
     {
-        $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
+            $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
 
-        if ($iamUser) {
+        if($iamUser) {
             return $this->builder->where('iam_user_id', '=', $iamUser->id);
         }
     }
 
-
+    
     public function commonCurrencyId($value)
     {
-        $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
+            $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
 
-        if ($commonCurrency) {
+        if($commonCurrency) {
             return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
         }
     }
 
-    //  This is an alias function of commonCurrency
+        //  This is an alias function of commonCurrency
     public function common_currency_id($value)
     {
         return $this->commonCurrency($value);
     }
-
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 }

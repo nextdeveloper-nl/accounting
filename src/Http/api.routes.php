@@ -23,6 +23,27 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('invoice-items')->group(
+            function () {
+                Route::get('/', 'InvoiceItems\InvoiceItemsController@index');
+                Route::get('/actions', 'InvoiceItems\InvoiceItemsController@getActions');
+
+                Route::get('{accounting_invoice_items}/tags ', 'InvoiceItems\InvoiceItemsController@tags');
+                Route::post('{accounting_invoice_items}/tags ', 'InvoiceItems\InvoiceItemsController@saveTags');
+                Route::get('{accounting_invoice_items}/addresses ', 'InvoiceItems\InvoiceItemsController@addresses');
+                Route::post('{accounting_invoice_items}/addresses ', 'InvoiceItems\InvoiceItemsController@saveAddresses');
+
+                Route::get('/{accounting_invoice_items}/{subObjects}', 'InvoiceItems\InvoiceItemsController@relatedObjects');
+                Route::get('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@show');
+
+                Route::post('/', 'InvoiceItems\InvoiceItemsController@store');
+                Route::post('/{accounting_invoice_items}/do/{action}', 'InvoiceItems\InvoiceItemsController@doAction');
+
+                Route::patch('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@update');
+                Route::delete('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@destroy');
+            }
+        );
+
         Route::prefix('invoices')->group(
             function () {
                 Route::get('/', 'Invoices\InvoicesController@index');
@@ -62,27 +83,6 @@ Route::prefix('accounting')->group(
 
                 Route::patch('/{apgm}', 'PaymentGatewayMessages\PaymentGatewayMessagesController@update');
                 Route::delete('/{apgm}', 'PaymentGatewayMessages\PaymentGatewayMessagesController@destroy');
-            }
-        );
-
-        Route::prefix('invoice-items')->group(
-            function () {
-                Route::get('/', 'InvoiceItems\InvoiceItemsController@index');
-                Route::get('/actions', 'InvoiceItems\InvoiceItemsController@getActions');
-
-                Route::get('{accounting_invoice_items}/tags ', 'InvoiceItems\InvoiceItemsController@tags');
-                Route::post('{accounting_invoice_items}/tags ', 'InvoiceItems\InvoiceItemsController@saveTags');
-                Route::get('{accounting_invoice_items}/addresses ', 'InvoiceItems\InvoiceItemsController@addresses');
-                Route::post('{accounting_invoice_items}/addresses ', 'InvoiceItems\InvoiceItemsController@saveAddresses');
-
-                Route::get('/{accounting_invoice_items}/{subObjects}', 'InvoiceItems\InvoiceItemsController@relatedObjects');
-                Route::get('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@show');
-
-                Route::post('/', 'InvoiceItems\InvoiceItemsController@store');
-                Route::post('/{accounting_invoice_items}/do/{action}', 'InvoiceItems\InvoiceItemsController@doAction');
-
-                Route::patch('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@update');
-                Route::delete('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@destroy');
             }
         );
 
@@ -128,6 +128,48 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('contracts')->group(
+            function () {
+                Route::get('/', 'Contracts\ContractsController@index');
+                Route::get('/actions', 'Contracts\ContractsController@getActions');
+
+                Route::get('{accounting_contracts}/tags ', 'Contracts\ContractsController@tags');
+                Route::post('{accounting_contracts}/tags ', 'Contracts\ContractsController@saveTags');
+                Route::get('{accounting_contracts}/addresses ', 'Contracts\ContractsController@addresses');
+                Route::post('{accounting_contracts}/addresses ', 'Contracts\ContractsController@saveAddresses');
+
+                Route::get('/{accounting_contracts}/{subObjects}', 'Contracts\ContractsController@relatedObjects');
+                Route::get('/{accounting_contracts}', 'Contracts\ContractsController@show');
+
+                Route::post('/', 'Contracts\ContractsController@store');
+                Route::post('/{accounting_contracts}/do/{action}', 'Contracts\ContractsController@doAction');
+
+                Route::patch('/{accounting_contracts}', 'Contracts\ContractsController@update');
+                Route::delete('/{accounting_contracts}', 'Contracts\ContractsController@destroy');
+            }
+        );
+
+        Route::prefix('contract-items')->group(
+            function () {
+                Route::get('/', 'ContractItems\ContractItemsController@index');
+                Route::get('/actions', 'ContractItems\ContractItemsController@getActions');
+
+                Route::get('{accounting_contract_items}/tags ', 'ContractItems\ContractItemsController@tags');
+                Route::post('{accounting_contract_items}/tags ', 'ContractItems\ContractItemsController@saveTags');
+                Route::get('{accounting_contract_items}/addresses ', 'ContractItems\ContractItemsController@addresses');
+                Route::post('{accounting_contract_items}/addresses ', 'ContractItems\ContractItemsController@saveAddresses');
+
+                Route::get('/{accounting_contract_items}/{subObjects}', 'ContractItems\ContractItemsController@relatedObjects');
+                Route::get('/{accounting_contract_items}', 'ContractItems\ContractItemsController@show');
+
+                Route::post('/', 'ContractItems\ContractItemsController@store');
+                Route::post('/{accounting_contract_items}/do/{action}', 'ContractItems\ContractItemsController@doAction');
+
+                Route::patch('/{accounting_contract_items}', 'ContractItems\ContractItemsController@update');
+                Route::delete('/{accounting_contract_items}', 'ContractItems\ContractItemsController@destroy');
+            }
+        );
+
         Route::prefix('credit-cards')->group(
             function () {
                 Route::get('/', 'CreditCards\CreditCardsController@index');
@@ -170,6 +212,27 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('invoice-items-perspective')->group(
+            function () {
+                Route::get('/', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@index');
+                Route::get('/actions', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@getActions');
+
+                Route::get('{aiip}/tags ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@tags');
+                Route::post('{aiip}/tags ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@saveTags');
+                Route::get('{aiip}/addresses ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@addresses');
+                Route::post('{aiip}/addresses ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@saveAddresses');
+
+                Route::get('/{aiip}/{subObjects}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@relatedObjects');
+                Route::get('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@show');
+
+                Route::post('/', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@store');
+                Route::post('/{aiip}/do/{action}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@doAction');
+
+                Route::patch('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@update');
+                Route::delete('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@destroy');
+            }
+        );
+
         Route::prefix('accounts-perspective')->group(
             function () {
                 Route::get('/', 'AccountsPerspective\AccountsPerspectiveController@index');
@@ -209,27 +272,6 @@ Route::prefix('accounting')->group(
 
                 Route::patch('/{accounting_invoices_perspective}', 'InvoicesPerspective\InvoicesPerspectiveController@update');
                 Route::delete('/{accounting_invoices_perspective}', 'InvoicesPerspective\InvoicesPerspectiveController@destroy');
-            }
-        );
-
-        Route::prefix('invoice-items-perspective')->group(
-            function () {
-                Route::get('/', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@index');
-                Route::get('/actions', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@getActions');
-
-                Route::get('{aiip}/tags ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@tags');
-                Route::post('{aiip}/tags ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@saveTags');
-                Route::get('{aiip}/addresses ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@addresses');
-                Route::post('{aiip}/addresses ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@saveAddresses');
-
-                Route::get('/{aiip}/{subObjects}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@relatedObjects');
-                Route::get('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@show');
-
-                Route::post('/', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@store');
-                Route::post('/{aiip}/do/{action}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@doAction');
-
-                Route::patch('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@update');
-                Route::delete('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@destroy');
             }
         );
 
@@ -397,8 +439,36 @@ Route::prefix('accounting')->group(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 );
+
+
 
 
 

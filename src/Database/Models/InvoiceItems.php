@@ -31,6 +31,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property $total_price
  * @property integer $accounting_promo_code_id
  * @property integer $accounting_account_id
+ * @property $details
  */
 class InvoiceItems extends Model
 {
@@ -58,6 +59,7 @@ class InvoiceItems extends Model
             'total_price',
             'accounting_promo_code_id',
             'accounting_account_id',
+            'details',
     ];
 
     /**
@@ -91,6 +93,7 @@ class InvoiceItems extends Model
     'accounting_invoice_id' => 'integer',
     'accounting_promo_code_id' => 'integer',
     'accounting_account_id' => 'integer',
+    'details' => 'array',
     ];
 
     /**
@@ -157,6 +160,8 @@ class InvoiceItems extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

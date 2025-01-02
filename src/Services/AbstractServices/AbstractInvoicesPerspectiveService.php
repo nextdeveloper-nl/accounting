@@ -193,7 +193,7 @@ class AbstractInvoicesPerspectiveService
                 $data['iam_user_id']
             );
         }
-                    
+
         if(!array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id']    = UserHelper::me()->id;
         }
@@ -209,7 +209,7 @@ class AbstractInvoicesPerspectiveService
                 $data['common_currency_id']
             );
         }
-                        
+
         try {
             $model = InvoicesPerspective::create($data);
         } catch(\Exception $e) {
@@ -285,7 +285,7 @@ class AbstractInvoicesPerspectiveService
                 $data['common_currency_id']
             );
         }
-    
+
         try {
             $isUpdated = $model->update($data);
             $model = $model->fresh();

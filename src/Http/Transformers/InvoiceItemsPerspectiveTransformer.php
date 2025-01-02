@@ -40,10 +40,12 @@ class InvoiceItemsPerspectiveTransformer extends AbstractInvoiceItemsPerspective
         switch ($transformed['object_type']) {
             case 'NextDeveloper\IAAS\VirtualMachines':
                 $obj = VirtualMachines::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
+                $transformed['object_name'] = $obj?->name;
                 $transformed['object_id'] = $obj?->uuid;
                 break;
             case 'NextDeveloper\IAAS\VirtualDiskImages':
                 $obj = VirtualDiskImages::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
+                $transformed['object_name'] = $obj?->name;
                 $transformed['object_id'] = $obj?->uuid;
                 break;
             default:
