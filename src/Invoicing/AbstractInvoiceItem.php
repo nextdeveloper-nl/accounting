@@ -41,7 +41,7 @@ abstract class AbstractInvoiceItem
         );
     }
 
-    protected function setItemCost($cost, Currencies $currency) {
+    protected function setItemCost($cost, Currencies $currency, $description = null, $contractItem = null) {
         $item = InvoiceItems::withoutGlobalScope(AuthorizationScope::class)
             ->where('object_type', get_class($this->model))
             ->where('object_id', $this->model->id)

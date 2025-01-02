@@ -56,9 +56,11 @@ class AbstractInvoicesPerspectiveTransformer extends AbstractTransformer
     {
                                                 $commonCountryId = \NextDeveloper\Commons\Database\Models\Countries::where('id', $model->common_country_id)->first();
                                                             $commonDomainId = \NextDeveloper\Commons\Database\Models\Domains::where('id', $model->common_domain_id)->first();
+                                                            $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
+                                                            $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                         
         return $this->buildPayload(
             [
@@ -73,11 +75,13 @@ class AbstractInvoicesPerspectiveTransformer extends AbstractTransformer
             'name'  =>  $model->name,
             'common_country_id'  =>  $commonCountryId ? $commonCountryId->uuid : null,
             'common_domain_id'  =>  $commonDomainId ? $commonDomainId->uuid : null,
+            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
             'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
             'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
             'accounting_identifier'  =>  $model->accounting_identifier,
             'credit'  =>  $model->credit,
             'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
@@ -169,5 +173,7 @@ class AbstractInvoicesPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 }
