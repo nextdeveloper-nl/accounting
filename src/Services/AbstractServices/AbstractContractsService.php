@@ -175,10 +175,10 @@ class AbstractContractsService
      */
     public static function create(array $data)
     {
-        if (array_key_exists('crm_account_id', $data)) {
-            $data['crm_account_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\CRM\Database\Models\Accounts',
-                $data['crm_account_id']
+        if (array_key_exists('accounting_account_id', $data)) {
+            $data['accounting_account_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\Accounts',
+                $data['accounting_account_id']
             );
         }
         if (array_key_exists('iam_account_id', $data)) {
@@ -247,10 +247,10 @@ class AbstractContractsService
             );
         }
 
-        if (array_key_exists('crm_account_id', $data)) {
-            $data['crm_account_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\CRM\Database\Models\Accounts',
-                $data['crm_account_id']
+        if (array_key_exists('accounting_account_id', $data)) {
+            $data['accounting_account_id'] = DatabaseHelper::uuidToId(
+                '\NextDeveloper\Accounting\Database\Models\Accounts',
+                $data['accounting_account_id']
             );
         }
         if (array_key_exists('iam_account_id', $data)) {

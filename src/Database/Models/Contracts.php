@@ -18,7 +18,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property integer $crm_account_id
+ * @property integer $accounting_account_id
  * @property string $name
  * @property string $description
  * @property \Carbon\Carbon $term_starts
@@ -29,6 +29,10 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property boolean $is_approved
+ * @property $price_fixed
+ * @property integer $discount_fixed
+ * @property boolean $is_signed
  */
 class Contracts extends Model
 {
@@ -46,7 +50,7 @@ class Contracts extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'crm_account_id',
+            'accounting_account_id',
             'name',
             'description',
             'term_starts',
@@ -54,6 +58,10 @@ class Contracts extends Model
             'contract_type',
             'iam_account_id',
             'iam_user_id',
+            'is_approved',
+            'price_fixed',
+            'discount_fixed',
+            'is_signed',
     ];
 
     /**
@@ -77,7 +85,7 @@ class Contracts extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'crm_account_id' => 'integer',
+    'accounting_account_id' => 'integer',
     'name' => 'string',
     'description' => 'string',
     'term_starts' => 'datetime',
@@ -86,6 +94,9 @@ class Contracts extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
+    'is_approved' => 'boolean',
+    'discount_fixed' => 'integer',
+    'is_signed' => 'boolean',
     ];
 
     /**
@@ -159,5 +170,11 @@ class Contracts extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
 
 }

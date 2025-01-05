@@ -54,14 +54,14 @@ class AbstractContractsTransformer extends AbstractTransformer
      */
     public function transform(Contracts $model)
     {
-                                                $crmAccountId = \NextDeveloper\CRM\Database\Models\Accounts::where('id', $model->crm_account_id)->first();
+                                                $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                         
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
-            'crm_account_id'  =>  $crmAccountId ? $crmAccountId->uuid : null,
+            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
             'name'  =>  $model->name,
             'description'  =>  $model->description,
             'term_starts'  =>  $model->term_starts,
@@ -72,6 +72,10 @@ class AbstractContractsTransformer extends AbstractTransformer
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
+            'is_approved'  =>  $model->is_approved,
+            'price_fixed'  =>  $model->price_fixed,
+            'discount_fixed'  =>  $model->discount_fixed,
+            'is_signed'  =>  $model->is_signed,
             ]
         );
     }
@@ -160,5 +164,11 @@ class AbstractContractsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
 
 }

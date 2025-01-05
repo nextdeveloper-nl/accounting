@@ -4,13 +4,13 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-            
+                    
 
 /**
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class ContractsQueryFilter extends AbstractQueryFilter
+class ContractsPerspectiveQueryFilter extends AbstractQueryFilter
 {
 
     /**
@@ -30,15 +30,26 @@ class ContractsQueryFilter extends AbstractQueryFilter
     }
 
         
-    public function contractType($value)
+    public function accountName($value)
     {
-        return $this->builder->where('contract_type', 'like', '%' . $value . '%');
+        return $this->builder->where('account_name', 'like', '%' . $value . '%');
     }
 
-        //  This is an alias function of contractType
-    public function contract_type($value)
+        //  This is an alias function of accountName
+    public function account_name($value)
     {
-        return $this->contractType($value);
+        return $this->accountName($value);
+    }
+        
+    public function accountingIdentifier($value)
+    {
+        return $this->builder->where('accounting_identifier', 'like', '%' . $value . '%');
+    }
+
+        //  This is an alias function of accountingIdentifier
+    public function accounting_identifier($value)
+    {
+        return $this->accountingIdentifier($value);
     }
     
     public function discountFixed($value)
@@ -60,17 +71,25 @@ class ContractsQueryFilter extends AbstractQueryFilter
         return $this->discountFixed($value);
     }
     
-    public function isApproved($value)
+    public function contractItemCount($value)
     {
-        return $this->builder->where('is_approved', $value);
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('contract_item_count', $operator, $value);
     }
 
-        //  This is an alias function of isApproved
-    public function is_approved($value)
+        //  This is an alias function of contractItemCount
+    public function contract_item_count($value)
     {
-        return $this->isApproved($value);
+        return $this->contractItemCount($value);
     }
-     
+    
     public function isSigned($value)
     {
         return $this->builder->where('is_signed', $value);
@@ -80,6 +99,17 @@ class ContractsQueryFilter extends AbstractQueryFilter
     public function is_signed($value)
     {
         return $this->isSigned($value);
+    }
+     
+    public function isApproved($value)
+    {
+        return $this->builder->where('is_approved', $value);
+    }
+
+        //  This is an alias function of isApproved
+    public function is_approved($value)
+    {
+        return $this->isApproved($value);
     }
      
     public function termStartsStart($date)
@@ -192,21 +222,6 @@ class ContractsQueryFilter extends AbstractQueryFilter
         return $this->deletedAtEnd($value);
     }
 
-    public function accountingAccountId($value)
-    {
-            $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
-
-        if($accountingAccount) {
-            return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
-        }
-    }
-
-        //  This is an alias function of accountingAccount
-    public function accounting_account_id($value)
-    {
-        return $this->accountingAccount($value);
-    }
-    
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -227,12 +242,51 @@ class ContractsQueryFilter extends AbstractQueryFilter
     }
 
     
+    public function iamAccountTypeId($value)
+    {
+            $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
+
+        if($iamAccountType) {
+            return $this->builder->where('iam_account_type_id', '=', $iamAccountType->id);
+        }
+    }
+
+        //  This is an alias function of iamAccountType
+    public function iam_account_type_id($value)
+    {
+        return $this->iamAccountType($value);
+    }
+    
+    public function commonCurrencyId($value)
+    {
+            $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
+
+        if($commonCurrency) {
+            return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
+        }
+    }
+
+        //  This is an alias function of commonCurrency
+    public function common_currency_id($value)
+    {
+        return $this->commonCurrency($value);
+    }
+    
+    public function accountingAccountId($value)
+    {
+            $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
+
+        if($accountingAccount) {
+            return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
+        }
+    }
+
+        //  This is an alias function of accountingAccount
+    public function accounting_account_id($value)
+    {
+        return $this->accountingAccount($value);
+    }
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
 
 }

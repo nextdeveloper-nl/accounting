@@ -15,8 +15,8 @@ class ContractItemsUpdateRequest extends AbstractFormRequest
         return [
             'object_type' => 'nullable|string',
         'object_id' => 'nullable',
-        'discount_ratio' => '',
-        'fixed_price' => 'nullable',
+        'accounting_contract_id' => 'nullable|exists:accounting_contracts,uuid|uuid',
+        'accounting_account_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

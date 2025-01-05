@@ -10,22 +10,22 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use NextDeveloper\Commons\Database\Models\AvailableActions;
-use NextDeveloper\Accounting\Database\Models\InvoicesPerspective;
-use NextDeveloper\Accounting\Database\Filters\InvoicesPerspectiveQueryFilter;
+use NextDeveloper\Accounting\Database\Models\ContractsPerspective;
+use NextDeveloper\Accounting\Database\Filters\ContractsPerspectiveQueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
 
 /**
- * This class is responsible from managing the data for InvoicesPerspective
+ * This class is responsible from managing the data for ContractsPerspective
  *
- * Class InvoicesPerspectiveService.
+ * Class ContractsPerspectiveService.
  *
  * @package NextDeveloper\Accounting\Database\Models
  */
-class AbstractInvoicesPerspectiveService
+class AbstractContractsPerspectiveService
 {
-    public static function get(InvoicesPerspectiveQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
+    public static function get(ContractsPerspectiveQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
     {
         $enablePaginate = array_key_exists('paginate', $params);
 
@@ -38,7 +38,7 @@ class AbstractInvoicesPerspectiveService
         * Please let me know if you have any other idea about this; baris.bulut@nextdeveloper.com
         */
         if($filter == null) {
-            $filter = new InvoicesPerspectiveQueryFilter($request);
+            $filter = new ContractsPerspectiveQueryFilter($request);
         }
 
         $perPage = config('commons.pagination.per_page');
@@ -59,7 +59,7 @@ class AbstractInvoicesPerspectiveService
             $filter->orderBy($params['orderBy']);
         }
 
-        $model = InvoicesPerspective::filter($filter);
+        $model = ContractsPerspective::filter($filter);
 
         if($enablePaginate) {
             //  We are using this because we have been experiencing huge security problem when we use the paginate method.
@@ -77,7 +77,7 @@ class AbstractInvoicesPerspectiveService
 
     public static function getAll()
     {
-        return InvoicesPerspective::all();
+        return ContractsPerspective::all();
     }
 
     /**
@@ -86,14 +86,14 @@ class AbstractInvoicesPerspectiveService
      * @param  $ref
      * @return mixed
      */
-    public static function getByRef($ref) : ?InvoicesPerspective
+    public static function getByRef($ref) : ?ContractsPerspective
     {
-        return InvoicesPerspective::findByRef($ref);
+        return ContractsPerspective::findByRef($ref);
     }
 
     public static function getActions()
     {
-        $model = InvoicesPerspective::class;
+        $model = ContractsPerspective::class;
 
         $model = Str::remove('Database\\Models\\', $model);
 
@@ -108,10 +108,10 @@ class AbstractInvoicesPerspectiveService
      */
     public static function doAction($objectId, $action, ...$params)
     {
-        $object = InvoicesPerspective::where('uuid', $objectId)->first();
+        $object = ContractsPerspective::where('uuid', $objectId)->first();
 
         $action = AvailableActions::where('name', $action)
-            ->where('input', 'NextDeveloper\Accounting\InvoicesPerspective')
+            ->where('input', 'NextDeveloper\Accounting\ContractsPerspective')
             ->first();
 
         $class = $action->class;
@@ -132,11 +132,11 @@ class AbstractInvoicesPerspectiveService
      * This method returns the model by lookint at its id
      *
      * @param  $id
-     * @return InvoicesPerspective|null
+     * @return ContractsPerspective|null
      */
-    public static function getById($id) : ?InvoicesPerspective
+    public static function getById($id) : ?ContractsPerspective
     {
-        return InvoicesPerspective::where('id', $id)->first();
+        return ContractsPerspective::where('id', $id)->first();
     }
 
     /**
@@ -150,7 +150,7 @@ class AbstractInvoicesPerspectiveService
     public static function relatedObjects($uuid, $object)
     {
         try {
-            $obj = InvoicesPerspective::where('uuid', $uuid)->first();
+            $obj = ContractsPerspective::where('uuid', $uuid)->first();
 
             if(!$obj) {
                 throw new ModelNotFoundException('Cannot find the related model');
@@ -175,18 +175,6 @@ class AbstractInvoicesPerspectiveService
      */
     public static function create(array $data)
     {
-        if (array_key_exists('common_country_id', $data)) {
-            $data['common_country_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Commons\Database\Models\Countries',
-                $data['common_country_id']
-            );
-        }
-        if (array_key_exists('common_domain_id', $data)) {
-            $data['common_domain_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Commons\Database\Models\Domains',
-                $data['common_domain_id']
-            );
-        }
         if (array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\IAM\Database\Models\Accounts',
@@ -227,7 +215,7 @@ class AbstractInvoicesPerspectiveService
         }
                         
         try {
-            $model = InvoicesPerspective::create($data);
+            $model = ContractsPerspective::create($data);
         } catch(\Exception $e) {
             throw $e;
         }
@@ -239,9 +227,9 @@ class AbstractInvoicesPerspectiveService
      * This function expects the ID inside the object.
      *
      * @param  array $data
-     * @return InvoicesPerspective
+     * @return ContractsPerspective
      */
-    public static function updateRaw(array $data) : ?InvoicesPerspective
+    public static function updateRaw(array $data) : ?ContractsPerspective
     {
         if(array_key_exists('id', $data)) {
             return self::update($data['id'], $data);
@@ -262,7 +250,7 @@ class AbstractInvoicesPerspectiveService
      */
     public static function update($id, array $data)
     {
-        $model = InvoicesPerspective::where('uuid', $id)->first();
+        $model = ContractsPerspective::where('uuid', $id)->first();
 
         if(!$model) {
             throw new NotAllowedException(
@@ -271,18 +259,6 @@ class AbstractInvoicesPerspectiveService
             );
         }
 
-        if (array_key_exists('common_country_id', $data)) {
-            $data['common_country_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Commons\Database\Models\Countries',
-                $data['common_country_id']
-            );
-        }
-        if (array_key_exists('common_domain_id', $data)) {
-            $data['common_domain_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Commons\Database\Models\Domains',
-                $data['common_domain_id']
-            );
-        }
         if (array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = DatabaseHelper::uuidToId(
                 '\NextDeveloper\IAM\Database\Models\Accounts',
@@ -336,7 +312,7 @@ class AbstractInvoicesPerspectiveService
      */
     public static function delete($id)
     {
-        $model = InvoicesPerspective::where('uuid', $id)->first();
+        $model = ContractsPerspective::where('uuid', $id)->first();
 
         if(!$model) {
             throw new NotAllowedException(

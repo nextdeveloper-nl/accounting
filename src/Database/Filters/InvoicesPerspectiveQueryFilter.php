@@ -5,7 +5,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-
+                            
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -18,13 +18,13 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-
+    
     public function name($value)
     {
         return $this->builder->where('name', 'like', '%' . $value . '%');
     }
 
-
+        
     public function accountingIdentifier($value)
     {
         return $this->builder->where('accounting_identifier', 'like', '%' . $value . '%');
@@ -35,7 +35,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingIdentifier($value);
     }
-
+    
     public function termYear($value)
     {
         $operator = substr($value, 0, 1);
@@ -54,7 +54,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->termYear($value);
     }
-
+    
     public function termMonth($value)
     {
         $operator = substr($value, 0, 1);
@@ -73,7 +73,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->termMonth($value);
     }
-
+    
     public function isPaid($value)
     {
         return $this->builder->where('is_paid', $value);
@@ -84,7 +84,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->isPaid($value);
     }
-
+     
     public function isPayable($value)
     {
         return $this->builder->where('is_payable', $value);
@@ -95,7 +95,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->isPayable($value);
     }
-
+     
     public function isRefund($value)
     {
         return $this->builder->where('is_refund', $value);
@@ -106,7 +106,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->isRefund($value);
     }
-
+     
     public function isSealed($value)
     {
         return $this->builder->where('is_sealed', $value);
@@ -117,7 +117,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->isSealed($value);
     }
-
+     
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -198,7 +198,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCountry($value);
     }
-
+    
     public function commonDomainId($value)
     {
             $commonDomain = \NextDeveloper\Commons\Database\Models\Domains::where('uuid', $value)->first();
@@ -213,7 +213,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->commonDomain($value);
     }
-
+    
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -223,7 +223,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
         }
     }
 
-
+    
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -233,7 +233,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
         }
     }
 
-
+    
     public function iamAccountTypeId($value)
     {
             $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
@@ -248,7 +248,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->iamAccountType($value);
     }
-
+    
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -263,7 +263,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrency($value);
     }
-
+    
     public function accountingAccountId($value)
     {
             $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -278,7 +278,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingAccount($value);
     }
-
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
     public function crmAccountId($value)
@@ -288,4 +288,10 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
 
         return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
     }
+
+
+
+
+
+
 }

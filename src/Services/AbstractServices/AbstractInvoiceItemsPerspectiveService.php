@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
-use NextDeveloper\Commons\Database\GlobalScopes\LimitScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
@@ -61,12 +60,6 @@ class AbstractInvoiceItemsPerspectiveService
         }
 
         $model = InvoiceItemsPerspective::filter($filter);
-
-        if(array_key_exists('per_page', $params)) {
-            if($params['per_page'] == -1) {
-                $model->withoutGlobalScope(LimitScope::class);
-            }
-        }
 
         if($enablePaginate) {
             //  We are using this because we have been experiencing huge security problem when we use the paginate method.
@@ -194,7 +187,7 @@ class AbstractInvoiceItemsPerspectiveService
                 $data['iam_account_id']
             );
         }
-
+            
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
@@ -204,7 +197,7 @@ class AbstractInvoiceItemsPerspectiveService
                 $data['iam_user_id']
             );
         }
-
+                    
         if(!array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id']    = UserHelper::me()->id;
         }
@@ -214,7 +207,7 @@ class AbstractInvoiceItemsPerspectiveService
                 $data['common_currency_id']
             );
         }
-
+                        
         try {
             $model = InvoiceItemsPerspective::create($data);
         } catch(\Exception $e) {
@@ -284,7 +277,7 @@ class AbstractInvoiceItemsPerspectiveService
                 $data['common_currency_id']
             );
         }
-
+    
         try {
             $isUpdated = $model->update($data);
             $model = $model->fresh();
