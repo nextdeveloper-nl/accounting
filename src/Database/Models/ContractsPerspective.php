@@ -3,36 +3,50 @@
 namespace NextDeveloper\Accounting\Database\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use NextDeveloper\Commons\Database\Traits\HasStates;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Accounting\Database\Observers\PaymentGatewayMessagesObserver;
+use NextDeveloper\Accounting\Database\Observers\ContractsPerspectiveObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * PaymentGatewayMessages model.
+ * ContractsPerspective model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property string $message_identifier
- * @property string $message
- * @property integer $accounting_payment_gateway_id
+ * @property string $name
+ * @property string $description
+ * @property \Carbon\Carbon $term_starts
+ * @property \Carbon\Carbon $term_ends
+ * @property $price_fixed
+ * @property integer $discount_fixed
+ * @property boolean $is_signed
+ * @property boolean $is_approved
+ * @property integer $contract_item_count
+ * @property string $account_name
+ * @property integer $iam_account_id
+ * @property integer $iam_user_id
+ * @property integer $iam_account_type_id
+ * @property string $accounting_identifier
+ * @property $credit
+ * @property integer $common_currency_id
+ * @property integer $accounting_account_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
  */
-class PaymentGatewayMessages extends Model
+class ContractsPerspective extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'accounting_payment_gateway_messages';
+    protected $table = 'accounting_contracts_perspective';
 
 
     /**
@@ -41,9 +55,23 @@ class PaymentGatewayMessages extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'message_identifier',
-            'message',
-            'accounting_payment_gateway_id',
+            'name',
+            'description',
+            'term_starts',
+            'term_ends',
+            'price_fixed',
+            'discount_fixed',
+            'is_signed',
+            'is_approved',
+            'contract_item_count',
+            'account_name',
+            'iam_account_id',
+            'iam_user_id',
+            'iam_account_type_id',
+            'accounting_identifier',
+            'credit',
+            'common_currency_id',
+            'accounting_account_id',
     ];
 
     /**
@@ -67,9 +95,19 @@ class PaymentGatewayMessages extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'message_identifier' => 'string',
-    'message' => 'string',
-    'accounting_payment_gateway_id' => 'integer',
+    'name' => 'string',
+    'description' => 'string',
+    'term_starts' => 'datetime',
+    'term_ends' => 'datetime',
+    'discount_fixed' => 'integer',
+    'is_signed' => 'boolean',
+    'is_approved' => 'boolean',
+    'contract_item_count' => 'integer',
+    'account_name' => 'string',
+    'iam_account_type_id' => 'integer',
+    'accounting_identifier' => 'string',
+    'common_currency_id' => 'integer',
+    'accounting_account_id' => 'integer',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
@@ -81,6 +119,8 @@ class PaymentGatewayMessages extends Model
      @var array
      */
     protected $dates = [
+    'term_starts',
+    'term_ends',
     'created_at',
     'updated_at',
     'deleted_at',
@@ -106,7 +146,7 @@ class PaymentGatewayMessages extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(PaymentGatewayMessagesObserver::class);
+        parent::observe(ContractsPerspectiveObserver::class);
 
         self::registerScopes();
     }
@@ -114,7 +154,7 @@ class PaymentGatewayMessages extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_payment_gateway_messages');
+        $modelScopes = config('accounting.scopes.accounting_contracts_perspective');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -134,37 +174,5 @@ class PaymentGatewayMessages extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

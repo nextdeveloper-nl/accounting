@@ -20,13 +20,13 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property string $uuid
  * @property string $object_type
  * @property integer $object_id
- * @property $discount_ratio
- * @property $fixed_price
  * @property integer $iam_account_id
  * @property integer $iam_user_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property integer $accounting_contract_id
+ * @property integer $accounting_account_id
  */
 class ContractItems extends Model
 {
@@ -46,10 +46,10 @@ class ContractItems extends Model
     protected $fillable = [
             'object_type',
             'object_id',
-            'discount_ratio',
-            'fixed_price',
             'iam_account_id',
             'iam_user_id',
+            'accounting_contract_id',
+            'accounting_account_id',
     ];
 
     /**
@@ -78,6 +78,8 @@ class ContractItems extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
+    'accounting_contract_id' => 'integer',
+    'accounting_account_id' => 'integer',
     ];
 
     /**
@@ -149,5 +151,11 @@ class ContractItems extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
 
 }

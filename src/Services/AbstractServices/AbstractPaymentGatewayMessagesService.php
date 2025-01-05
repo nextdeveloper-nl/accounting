@@ -110,14 +110,19 @@ class AbstractPaymentGatewayMessagesService
     {
         $object = PaymentGatewayMessages::where('uuid', $objectId)->first();
 
-        $action = '\\NextDeveloper\\Accounting\\Actions\\PaymentGatewayMessages\\' . Str::studly($action);
+        $action = AvailableActions::where('name', $action)
+            ->where('input', 'NextDeveloper\Accounting\PaymentGatewayMessages')
+            ->first();
 
-        if(class_exists($action)) {
-            $action = new $action($object, $params);
+        $class = $action->class;
+
+        if(class_exists($class)) {
+            $action = new $class($object, $params);
+            $actionId = $action->getActionId();
 
             dispatch($action);
 
-            return $action->getActionId();
+            return $actionId;
         }
 
         return null;
@@ -183,8 +188,6 @@ class AbstractPaymentGatewayMessagesService
             throw $e;
         }
 
-        Events::fire('created:NextDeveloper\Accounting\PaymentGatewayMessages', $model);
-
         return $model->fresh();
     }
 
@@ -231,16 +234,12 @@ class AbstractPaymentGatewayMessagesService
             );
         }
     
-        Events::fire('updating:NextDeveloper\Accounting\PaymentGatewayMessages', $model);
-
         try {
             $isUpdated = $model->update($data);
             $model = $model->fresh();
         } catch(\Exception $e) {
             throw $e;
         }
-
-        Events::fire('updated:NextDeveloper\Accounting\PaymentGatewayMessages', $model);
 
         return $model->fresh();
     }
@@ -265,8 +264,6 @@ class AbstractPaymentGatewayMessagesService
                 'Maybe you dont have the permission to update this object?'
             );
         }
-
-        Events::fire('deleted:NextDeveloper\Accounting\PaymentGatewayMessages', $model);
 
         try {
             $model = $model->delete();

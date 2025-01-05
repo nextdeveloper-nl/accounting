@@ -110,14 +110,19 @@ class AbstractCreditCardsService
     {
         $object = CreditCards::where('uuid', $objectId)->first();
 
-        $action = '\\NextDeveloper\\Accounting\\Actions\\CreditCards\\' . Str::studly($action);
+        $action = AvailableActions::where('name', $action)
+            ->where('input', 'NextDeveloper\Accounting\CreditCards')
+            ->first();
 
-        if(class_exists($action)) {
-            $action = new $action($object, $params);
+        $class = $action->class;
+
+        if(class_exists($class)) {
+            $action = new $class($object, $params);
+            $actionId = $action->getActionId();
 
             dispatch($action);
 
-            return $action->getActionId();
+            return $actionId;
         }
 
         return null;
@@ -197,8 +202,6 @@ class AbstractCreditCardsService
             throw $e;
         }
 
-        Events::fire('created:NextDeveloper\Accounting\CreditCards', $model);
-
         return $model->fresh();
     }
 
@@ -251,16 +254,12 @@ class AbstractCreditCardsService
             );
         }
     
-        Events::fire('updating:NextDeveloper\Accounting\CreditCards', $model);
-
         try {
             $isUpdated = $model->update($data);
             $model = $model->fresh();
         } catch(\Exception $e) {
             throw $e;
         }
-
-        Events::fire('updated:NextDeveloper\Accounting\CreditCards', $model);
 
         return $model->fresh();
     }
@@ -285,8 +284,6 @@ class AbstractCreditCardsService
                 'Maybe you dont have the permission to update this object?'
             );
         }
-
-        Events::fire('deleted:NextDeveloper\Accounting\CreditCards', $model);
 
         try {
             $model = $model->delete();

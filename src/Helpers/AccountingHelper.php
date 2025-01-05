@@ -17,4 +17,11 @@ class AccountingHelper
             ->where('iam_account_id', $account->id)
             ->first();
     }
+
+    public static function getAccountFromCrmAccount(\NextDeveloper\CRM\Database\Models\Accounts $account): Accounts
+    {
+        return Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('iam_account_id', $account->iam_account_id)
+            ->first();
+    }
 }

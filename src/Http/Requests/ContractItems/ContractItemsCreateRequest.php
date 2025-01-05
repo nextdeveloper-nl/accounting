@@ -15,8 +15,8 @@ class ContractItemsCreateRequest extends AbstractFormRequest
         return [
             'object_type' => 'required|string',
         'object_id' => 'required',
-        'discount_ratio' => '',
-        'fixed_price' => 'nullable',
+        'accounting_contract_id' => 'required|exists:accounting_contracts,uuid|uuid',
+        'accounting_account_id' => 'required|exists:accounting_accounts,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

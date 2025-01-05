@@ -60,6 +60,14 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
             'accounting_invoice_items:create',
             'accounting_invoice_items:update',
             'accounting_invoice_items:delete',
+            'accounting_contracts:read',
+            'accounting_contracts:create',
+            'accounting_contracts:update',
+            'accounting_contracts:delete',
+            'accounting_contract_items:read',
+            'accounting_contract_items:create',
+            'accounting_contract_items:update',
+            'accounting_contract_items:delete',
             'accounting_transactions:read',
         ];
     }

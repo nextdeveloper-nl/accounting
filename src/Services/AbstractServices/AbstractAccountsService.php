@@ -110,14 +110,19 @@ class AbstractAccountsService
     {
         $object = Accounts::where('uuid', $objectId)->first();
 
-        $action = '\\NextDeveloper\\Accounting\\Actions\\Accounts\\' . Str::studly($action);
+        $action = AvailableActions::where('name', $action)
+            ->where('input', 'NextDeveloper\Accounting\Accounts')
+            ->first();
 
-        if(class_exists($action)) {
-            $action = new $action($object, $params);
+        $class = $action->class;
+
+        if(class_exists($class)) {
+            $action = new $class($object, $params);
+            $actionId = $action->getActionId();
 
             dispatch($action);
 
-            return $action->getActionId();
+            return $actionId;
         }
 
         return null;
@@ -193,8 +198,6 @@ class AbstractAccountsService
             throw $e;
         }
 
-        Events::fire('created:NextDeveloper\Accounting\Accounts', $model);
-
         return $model->fresh();
     }
 
@@ -247,16 +250,12 @@ class AbstractAccountsService
             );
         }
     
-        Events::fire('updating:NextDeveloper\Accounting\Accounts', $model);
-
         try {
             $isUpdated = $model->update($data);
             $model = $model->fresh();
         } catch(\Exception $e) {
             throw $e;
         }
-
-        Events::fire('updated:NextDeveloper\Accounting\Accounts', $model);
 
         return $model->fresh();
     }
@@ -281,8 +280,6 @@ class AbstractAccountsService
                 'Maybe you dont have the permission to update this object?'
             );
         }
-
-        Events::fire('deleted:NextDeveloper\Accounting\Accounts', $model);
 
         try {
             $model = $model->delete();
