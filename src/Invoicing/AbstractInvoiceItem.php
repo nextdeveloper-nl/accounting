@@ -5,6 +5,8 @@ namespace NextDeveloper\Accounting\Invoicing;
 use Carbon\Carbon;
 use Helpers\AccountingHelper;
 use Helpers\InvoiceHelper;
+use Illuminate\Support\Facades\Log;
+use NextDeveloper\Accounting\Database\Models\ContractItemsPerspective;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Services\InvoiceItemsService;
 use NextDeveloper\Commons\Database\Models\Currencies;
@@ -41,7 +43,19 @@ abstract class AbstractInvoiceItem
         );
     }
 
-    protected function setItemCost($cost, Currencies $currency, $description = null, $contractItem = null) {
+    protected function getItemContract()
+    {
+        return ContractItemsPerspective::withoutGlobalScope(AuthorizationScope::class)
+            ->where('object_type', get_class($this->model))
+            ->where('object_id', $this->model->id)
+            ->where('term_starts', '<', Carbon::createFromDate($this->invoice->term_year, $this->invoice->term_month))
+            ->where('term_ends', '>', Carbon::createFromDate($this->invoice->term_year, $this->invoice->term_month))
+            ->where('is_signed', true)
+            ->where('is_approved', true)
+            ->first();
+    }
+
+    protected function setItemCost($cost, Currencies $currency, $details = [], $contractItem = null) {
         $item = InvoiceItems::withoutGlobalScope(AuthorizationScope::class)
             ->where('object_type', get_class($this->model))
             ->where('object_id', $this->model->id)
@@ -60,8 +74,20 @@ abstract class AbstractInvoiceItem
             ]);
         }
 
+        $contract = $this->getItemContract();
+
+        if($contract) {
+            $cost = $cost * ((100 - $contract->discount_fixed) / 100);
+            $details[] = 'We applied %' . $contract->discount_fixed . ' discount because of the contract: '
+                . $contract->uuid;
+
+            Log::info('[##HAS DISCOUNT##] We applied %' . $contract->discount_fixed . ' discount because of the contract: '
+                . $contract->uuid);
+        }
+
         $item->update([
             'unit_price'    =>  $cost,
+            'details'   =>  $details,
             'accounting_account_id' =>  $this->invoice->accounting_account_id
         ]);
 
