@@ -3,15 +3,14 @@
 namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
-use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                            
+                    
 
 /**
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
+class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
 {
 
     /**
@@ -19,11 +18,27 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
     
-    public function name($value)
+    public function objectType($value)
     {
-        return $this->builder->where('name', 'like', '%' . $value . '%');
+        return $this->builder->where('object_type', 'like', '%' . $value . '%');
     }
 
+        //  This is an alias function of objectType
+    public function object_type($value)
+    {
+        return $this->objectType($value);
+    }
+        
+    public function accountName($value)
+    {
+        return $this->builder->where('account_name', 'like', '%' . $value . '%');
+    }
+
+        //  This is an alias function of accountName
+    public function account_name($value)
+    {
+        return $this->accountName($value);
+    }
         
     public function accountingIdentifier($value)
     {
@@ -36,7 +51,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->accountingIdentifier($value);
     }
     
-    public function termYear($value)
+    public function discountFixed($value)
     {
         $operator = substr($value, 0, 1);
 
@@ -46,78 +61,81 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('term_year', $operator, $value);
+        return $this->builder->where('discount_fixed', $operator, $value);
     }
 
-        //  This is an alias function of termYear
-    public function term_year($value)
+        //  This is an alias function of discountFixed
+    public function discount_fixed($value)
     {
-        return $this->termYear($value);
+        return $this->discountFixed($value);
     }
     
-    public function termMonth($value)
+    public function isSigned($value)
     {
-        $operator = substr($value, 0, 1);
-
-        if ($operator != '<' || $operator != '>') {
-            $operator = '=';
-        } else {
-            $value = substr($value, 1);
-        }
-
-        return $this->builder->where('term_month', $operator, $value);
+        return $this->builder->where('is_signed', $value);
     }
 
-        //  This is an alias function of termMonth
-    public function term_month($value)
+        //  This is an alias function of isSigned
+    public function is_signed($value)
     {
-        return $this->termMonth($value);
-    }
-    
-    public function isPaid($value)
-    {
-        return $this->builder->where('is_paid', $value);
-    }
-
-        //  This is an alias function of isPaid
-    public function is_paid($value)
-    {
-        return $this->isPaid($value);
+        return $this->isSigned($value);
     }
      
-    public function isPayable($value)
+    public function isApproved($value)
     {
-        return $this->builder->where('is_payable', $value);
+        return $this->builder->where('is_approved', $value);
     }
 
-        //  This is an alias function of isPayable
-    public function is_payable($value)
+        //  This is an alias function of isApproved
+    public function is_approved($value)
     {
-        return $this->isPayable($value);
+        return $this->isApproved($value);
     }
      
-    public function isRefund($value)
+    public function termStartsStart($date)
     {
-        return $this->builder->where('is_refund', $value);
+        return $this->builder->where('term_starts', '>=', $date);
     }
 
-        //  This is an alias function of isRefund
-    public function is_refund($value)
+    public function termStartsEnd($date)
     {
-        return $this->isRefund($value);
-    }
-     
-    public function isSealed($value)
-    {
-        return $this->builder->where('is_sealed', $value);
+        return $this->builder->where('term_starts', '<=', $date);
     }
 
-        //  This is an alias function of isSealed
-    public function is_sealed($value)
+    //  This is an alias function of termStarts
+    public function term_starts_start($value)
     {
-        return $this->isSealed($value);
+        return $this->termStartsStart($value);
     }
-     
+
+    //  This is an alias function of termStarts
+    public function term_starts_end($value)
+    {
+        return $this->termStartsEnd($value);
+    }
+
+    public function termEndsStart($date)
+    {
+        return $this->builder->where('term_ends', '>=', $date);
+    }
+
+    public function termEndsEnd($date)
+    {
+        return $this->builder->where('term_ends', '<=', $date);
+    }
+
+    //  This is an alias function of termEnds
+    public function term_ends_start($value)
+    {
+        return $this->termEndsStart($value);
+    }
+
+    //  This is an alias function of termEnds
+    public function term_ends_end($value)
+    {
+        return $this->termEndsEnd($value);
+    }
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -184,36 +202,6 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->deletedAtEnd($value);
     }
 
-    public function commonCountryId($value)
-    {
-            $commonCountry = \NextDeveloper\Commons\Database\Models\Countries::where('uuid', $value)->first();
-
-        if($commonCountry) {
-            return $this->builder->where('common_country_id', '=', $commonCountry->id);
-        }
-    }
-
-        //  This is an alias function of commonCountry
-    public function common_country_id($value)
-    {
-        return $this->commonCountry($value);
-    }
-    
-    public function commonDomainId($value)
-    {
-            $commonDomain = \NextDeveloper\Commons\Database\Models\Domains::where('uuid', $value)->first();
-
-        if($commonDomain) {
-            return $this->builder->where('common_domain_id', '=', $commonDomain->id);
-        }
-    }
-
-        //  This is an alias function of commonDomain
-    public function common_domain_id($value)
-    {
-        return $this->commonDomain($value);
-    }
-    
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -280,19 +268,4 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-    public function crmAccountId($value)
-    {
-        $crmAccount = \NextDeveloper\CRM\Database\Models\Accounts::withoutGlobalScopes()->where('uuid', $value)->first();
-        $accountingAccount = Accounts::withoutGlobalScopes()->where('iam_account_id', $crmAccount->iam_account_id)->first();
-
-        return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
-    }
-
-
-
-
-
-
-
 }

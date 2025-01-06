@@ -2,8 +2,6 @@
 
 namespace NextDeveloper\Accounting\Http\Transformers\AbstractTransformers;
 
-use NextDeveloper\Accounting\Database\Models\Transactions;
-use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\Commons\Database\Models\Addresses;
 use NextDeveloper\Commons\Database\Models\Comments;
 use NextDeveloper\Commons\Database\Models\Meta;
@@ -22,14 +20,16 @@ use NextDeveloper\Commons\Http\Transformers\MetaTransformer;
 use NextDeveloper\Commons\Http\Transformers\VotesTransformer;
 use NextDeveloper\Commons\Http\Transformers\AddressesTransformer;
 use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
+use NextDeveloper\Accounting\Database\Models\ContractItemsPerspective;
+use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
 /**
- * Class TransactionsTransformer. This class is being used to manipulate the data we are serving to the customer
+ * Class ContractItemsPerspectiveTransformer. This class is being used to manipulate the data we are serving to the customer
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractTransactionsTransformer extends AbstractTransformer
+class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
 {
 
     /**
@@ -48,38 +48,45 @@ class AbstractTransactionsTransformer extends AbstractTransformer
     ];
 
     /**
-     * @param Transactions $model
+     * @param ContractItemsPerspective $model
      *
      * @return array
      */
-    public function transform(Transactions $model)
+    public function transform(ContractItemsPerspective $model)
     {
-                                                $accountingInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->accounting_invoice_id)->first();
+                                                $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
+                                                            $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
+                                                            $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
-                                                            $accountingPaymentGatewayId = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('id', $model->accounting_payment_gateway_id)->first();
-                                                            $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                         
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
-            'accounting_invoice_id'  =>  $accountingInvoiceId ? $accountingInvoiceId->uuid : null,
-            'amount'  =>  $model->amount,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'accounting_payment_gateway_id'  =>  $accountingPaymentGatewayId ? $accountingPaymentGatewayId->uuid : null,
+            'object_type'  =>  $model->object_type,
+            'object_id'  =>  $model->object_id,
+            'term_starts'  =>  $model->term_starts,
+            'term_ends'  =>  $model->term_ends,
+            'price_fixed'  =>  $model->price_fixed,
+            'discount_fixed'  =>  $model->discount_fixed,
+            'is_signed'  =>  $model->is_signed,
+            'is_approved'  =>  $model->is_approved,
+            'account_name'  =>  $model->account_name,
             'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+            'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
+            'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
+            'accounting_identifier'  =>  $model->accounting_identifier,
+            'credit'  =>  $model->credit,
+            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
             'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            'gateway_response'  =>  $model->gateway_response,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
-            'conversation_identifier'  =>  $model->conversation_identifier,
-            'is_pending'  =>  $model->is_pending,
             ]
         );
     }
 
-    public function includeStates(Transactions $model)
+    public function includeStates(ContractItemsPerspective $model)
     {
         $states = States::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -88,7 +95,7 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($states, new StatesTransformer());
     }
 
-    public function includeActions(Transactions $model)
+    public function includeActions(ContractItemsPerspective $model)
     {
         $input = get_class($model);
         $input = str_replace('\\Database\\Models', '', $input);
@@ -100,7 +107,7 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($actions, new AvailableActionsTransformer());
     }
 
-    public function includeMedia(Transactions $model)
+    public function includeMedia(ContractItemsPerspective $model)
     {
         $media = Media::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -109,7 +116,7 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($media, new MediaTransformer());
     }
 
-    public function includeSocialMedia(Transactions $model)
+    public function includeSocialMedia(ContractItemsPerspective $model)
     {
         $socialMedia = SocialMedia::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -118,7 +125,7 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($socialMedia, new SocialMediaTransformer());
     }
 
-    public function includeComments(Transactions $model)
+    public function includeComments(ContractItemsPerspective $model)
     {
         $comments = Comments::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -127,7 +134,7 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($comments, new CommentsTransformer());
     }
 
-    public function includeVotes(Transactions $model)
+    public function includeVotes(ContractItemsPerspective $model)
     {
         $votes = Votes::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -136,7 +143,7 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($votes, new VotesTransformer());
     }
 
-    public function includeMeta(Transactions $model)
+    public function includeMeta(ContractItemsPerspective $model)
     {
         $meta = Meta::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -145,7 +152,7 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($meta, new MetaTransformer());
     }
 
-    public function includePhoneNumbers(Transactions $model)
+    public function includePhoneNumbers(ContractItemsPerspective $model)
     {
         $phoneNumbers = PhoneNumbers::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -154,7 +161,7 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($phoneNumbers, new PhoneNumbersTransformer());
     }
 
-    public function includeAddresses(Transactions $model)
+    public function includeAddresses(ContractItemsPerspective $model)
     {
         $addresses = Addresses::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -163,30 +170,4 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

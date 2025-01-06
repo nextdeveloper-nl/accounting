@@ -74,6 +74,7 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             'accounting_invoice_items:read',
             'accounting_contracts:read',
             'accounting_contracts:create',
+            'accounting_contracts:update',
             'accounting_contract_items:read',
             'accounting_contract_items:create',
             'accounting_contract_items:update',

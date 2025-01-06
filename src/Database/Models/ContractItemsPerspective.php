@@ -3,39 +3,49 @@
 namespace NextDeveloper\Accounting\Database\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use NextDeveloper\Commons\Database\Traits\HasStates;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Accounting\Database\Observers\PaymentGatewaysObserver;
+use NextDeveloper\Accounting\Database\Observers\ContractItemsPerspectiveObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * PaymentGateways model.
+ * ContractItemsPerspective model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property string $name
- * @property string $gateway
- * @property boolean $is_active
- * @property integer $common_country_id
+ * @property string $object_type
+ * @property integer $object_id
+ * @property \Carbon\Carbon $term_starts
+ * @property \Carbon\Carbon $term_ends
+ * @property $price_fixed
+ * @property integer $discount_fixed
+ * @property boolean $is_signed
+ * @property boolean $is_approved
+ * @property string $account_name
  * @property integer $iam_account_id
+ * @property integer $iam_user_id
+ * @property integer $iam_account_type_id
+ * @property string $accounting_identifier
+ * @property $credit
+ * @property integer $common_currency_id
+ * @property integer $accounting_account_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
- * @property $parameters
  */
-class PaymentGateways extends Model
+class ContractItemsPerspective extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'accounting_payment_gateways';
+    protected $table = 'accounting_contract_items_perspective';
 
 
     /**
@@ -44,12 +54,22 @@ class PaymentGateways extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'name',
-            'gateway',
-            'is_active',
-            'common_country_id',
+            'object_type',
+            'object_id',
+            'term_starts',
+            'term_ends',
+            'price_fixed',
+            'discount_fixed',
+            'is_signed',
+            'is_approved',
+            'account_name',
             'iam_account_id',
-            'parameters',
+            'iam_user_id',
+            'iam_account_type_id',
+            'accounting_identifier',
+            'credit',
+            'common_currency_id',
+            'accounting_account_id',
     ];
 
     /**
@@ -73,14 +93,21 @@ class PaymentGateways extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'name' => 'string',
-    'gateway' => 'string',
-    'is_active' => 'boolean',
-    'common_country_id' => 'integer',
+    'object_type' => 'string',
+    'object_id' => 'integer',
+    'term_starts' => 'datetime',
+    'term_ends' => 'datetime',
+    'discount_fixed' => 'integer',
+    'is_signed' => 'boolean',
+    'is_approved' => 'boolean',
+    'account_name' => 'string',
+    'iam_account_type_id' => 'integer',
+    'accounting_identifier' => 'string',
+    'common_currency_id' => 'integer',
+    'accounting_account_id' => 'integer',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-    'parameters' => 'array',
     ];
 
     /**
@@ -89,6 +116,8 @@ class PaymentGateways extends Model
      @var array
      */
     protected $dates = [
+    'term_starts',
+    'term_ends',
     'created_at',
     'updated_at',
     'deleted_at',
@@ -114,7 +143,7 @@ class PaymentGateways extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(PaymentGatewaysObserver::class);
+        parent::observe(ContractItemsPerspectiveObserver::class);
 
         self::registerScopes();
     }
@@ -122,7 +151,7 @@ class PaymentGateways extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_payment_gateways');
+        $modelScopes = config('accounting.scopes.accounting_contract_items_perspective');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -141,44 +170,5 @@ class PaymentGateways extends Model
         }
     }
 
-    public function countries() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\Commons\Database\Models\Countries::class);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
