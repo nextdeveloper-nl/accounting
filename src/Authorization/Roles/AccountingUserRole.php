@@ -35,13 +35,21 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
     {
         if(
             $model->getTable() == 'accounting_invoices' ||
-            $model->getTable() == 'accounting_transactions'
+            $model->getTable() == 'accounting_invoices_perspective' ||
+            $model->getTable() == 'accounting_transactions' ||
+            $model->getTable() == 'accounting_contracts' ||
+            $model->getTable() == 'accounting_contracts_perspective'
         ) {
             $myAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
                 ->where('iam_account_id', UserHelper::currentAccount()->id)
                 ->first();
 
-            $builder->where('accounting_account_id', $myAccount->id);
+            $builder->where(function($query) use ($myAccount) {
+                $query->where('accounting_account_id', $myAccount->id)
+                ->orWhere('iam_account_id', UserHelper::currentAccount()->id);
+            });
+
+            return;
         }
 
         if(
@@ -53,7 +61,10 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             $model->getTable() == 'accounting_payment_gateways'
         ) {
             $builder->where('iam_account_id', UserHelper::currentAccount()->id);
+            return;
         }
+
+        $builder->where('iam_account_id', UserHelper::currentAccount()->id);
     }
 
     public function getModule()

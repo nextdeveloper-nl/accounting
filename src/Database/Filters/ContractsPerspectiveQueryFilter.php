@@ -30,6 +30,17 @@ class ContractsPerspectiveQueryFilter extends AbstractQueryFilter
     }
 
         
+    public function contractType($value)
+    {
+        return $this->builder->where('contract_type', 'like', '%' . $value . '%');
+    }
+
+        //  This is an alias function of contractType
+    public function contract_type($value)
+    {
+        return $this->contractType($value);
+    }
+        
     public function accountName($value)
     {
         return $this->builder->where('account_name', 'like', '%' . $value . '%');
@@ -288,6 +299,7 @@ class ContractsPerspectiveQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 }
