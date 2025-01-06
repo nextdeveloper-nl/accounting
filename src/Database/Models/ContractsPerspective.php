@@ -24,6 +24,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $term_ends
  * @property $price_fixed
  * @property integer $discount_fixed
+ * @property string $contract_type
  * @property boolean $is_signed
  * @property boolean $is_approved
  * @property integer $contract_item_count
@@ -61,6 +62,7 @@ class ContractsPerspective extends Model
             'term_ends',
             'price_fixed',
             'discount_fixed',
+            'contract_type',
             'is_signed',
             'is_approved',
             'contract_item_count',
@@ -100,6 +102,7 @@ class ContractsPerspective extends Model
     'term_starts' => 'datetime',
     'term_ends' => 'datetime',
     'discount_fixed' => 'integer',
+    'contract_type' => 'string',
     'is_signed' => 'boolean',
     'is_approved' => 'boolean',
     'contract_item_count' => 'integer',
@@ -174,6 +177,7 @@ class ContractsPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 }
