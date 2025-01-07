@@ -75,6 +75,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
             'price'  =>  $model->price,
             'discount'  =>  $model->discount,
             'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+            'contract_type'  =>  $model->contract_type,
             ]
         );
     }
@@ -163,5 +164,6 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 }

@@ -20,6 +20,7 @@ class ContractItemsCreateRequest extends AbstractFormRequest
         'price' => '',
         'discount' => 'nullable|integer',
         'common_currency_id' => 'nullable|exists:common_currencies,uuid|uuid',
+        'contract_type' => 'string',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

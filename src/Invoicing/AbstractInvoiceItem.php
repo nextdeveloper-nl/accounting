@@ -79,7 +79,7 @@ abstract class AbstractInvoiceItem
 
         if($contract) {
             //  If we have fixed price, we are running this
-            if($contract->price > 0) {
+            if($contract->contract_type = 'price') {
                 $details[] = 'We set the price to ' . $contract->price
                     . CurrenciesService::getCurrencyById($contract->common_currency_id)->code
                     . ' because of the contract: '

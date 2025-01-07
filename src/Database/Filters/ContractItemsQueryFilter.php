@@ -28,6 +28,17 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->objectType($value);
     }
+        
+    public function contractType($value)
+    {
+        return $this->builder->where('contract_type', 'like', '%' . $value . '%');
+    }
+
+        //  This is an alias function of contractType
+    public function contract_type($value)
+    {
+        return $this->contractType($value);
+    }
     
     public function discount($value)
     {
@@ -175,6 +186,7 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
