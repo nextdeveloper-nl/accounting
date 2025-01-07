@@ -77,6 +77,7 @@ class AbstractInvoiceItemsPerspectiveTransformer extends AbstractTransformer
             'accounting_identifier'  =>  $model->accounting_identifier,
             'credit'  =>  $model->credit,
             'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+            'common_currency_code'  =>  $model->common_currency_code,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
@@ -168,6 +169,8 @@ class AbstractInvoiceItemsPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 }
