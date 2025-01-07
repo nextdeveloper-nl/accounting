@@ -10,6 +10,7 @@ use NextDeveloper\Accounting\Database\Models\ContractItemsPerspective;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Services\InvoiceItemsService;
 use NextDeveloper\Commons\Database\Models\Currencies;
+use NextDeveloper\Commons\Services\CurrenciesService;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
@@ -77,19 +78,47 @@ abstract class AbstractInvoiceItem
         $contract = $this->getItemContract();
 
         if($contract) {
-            $cost = $cost * ((100 - $contract->discount_fixed) / 100);
-            $details[] = 'We applied %' . $contract->discount_fixed . ' discount because of the contract: '
-                . $contract->uuid;
+            //  If we have fixed price, we are running this
+            if($contract->price > 0) {
+                $details[] = 'We set the price to ' . $contract->price
+                    . CurrenciesService::getCurrencyById($contract->common_currency_id)->code
+                    . ' because of the contract: '
+                    . $contract->uuid;
 
-            Log::info('[##HAS DISCOUNT##] We applied %' . $contract->discount_fixed . ' discount because of the contract: '
-                . $contract->uuid);
+                $item->update([
+                    'unit_price'    =>  $contract->price,
+                    'details'   =>  $details
+                ]);
+
+                if($contract->common_currency_id) {
+                    $item->update(['common_currency_id'    =>  $contract->common_currency_id]);
+                }
+
+                Log::info('[##HAS FIXED PRICE DISCOUNT##] We set the price to ' . $contract->price
+                    . CurrenciesService::getCurrencyById($contract->common_currency_id)->code
+                    . ' because of the contract: '
+                    . $contract->uuid);
+            } else {
+                //  If we have discount only we apply this.
+                $cost = $cost * ((100 - $contract->discount_fixed) / 100);
+                $details[] = 'We applied %' . $contract->discount_fixed . ' discount because of the contract: '
+                    . $contract->uuid;
+
+                Log::info('[##HAS DISCOUNT##] We applied %' . $contract->discount_fixed . ' discount because of the contract: '
+                    . $contract->uuid);
+
+                $item->update([
+                    'unit_price'    =>  $cost,
+                    'details'   =>  $details
+                ]);
+            }
+        } else {
+            $item->update([
+                'unit_price'    =>  $cost,
+                'details'   =>  $details,
+                'accounting_account_id' =>  $this->invoice->accounting_account_id
+            ]);
         }
-
-        $item->update([
-            'unit_price'    =>  $cost,
-            'details'   =>  $details,
-            'accounting_account_id' =>  $this->invoice->accounting_account_id
-        ]);
 
         Events::fire('updated:NextDeveloper\Accounting\InvoiceItems', $item);
 

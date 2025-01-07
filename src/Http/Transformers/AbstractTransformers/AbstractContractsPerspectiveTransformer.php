@@ -67,9 +67,6 @@ class AbstractContractsPerspectiveTransformer extends AbstractTransformer
             'description'  =>  $model->description,
             'term_starts'  =>  $model->term_starts,
             'term_ends'  =>  $model->term_ends,
-            'price_fixed'  =>  $model->price_fixed,
-            'discount_fixed'  =>  $model->discount_fixed,
-            'contract_type'  =>  $model->contract_type,
             'is_signed'  =>  $model->is_signed,
             'is_approved'  =>  $model->is_approved,
             'contract_item_count'  =>  $model->contract_item_count,
@@ -172,7 +169,5 @@ class AbstractContractsPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
 
 }

@@ -22,8 +22,9 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property integer $object_id
  * @property \Carbon\Carbon $term_starts
  * @property \Carbon\Carbon $term_ends
- * @property $price_fixed
- * @property integer $discount_fixed
+ * @property $price
+ * @property integer $discount
+ * @property integer $common_currency_id
  * @property boolean $is_signed
  * @property boolean $is_approved
  * @property string $account_name
@@ -32,7 +33,6 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property integer $iam_account_type_id
  * @property string $accounting_identifier
  * @property $credit
- * @property integer $common_currency_id
  * @property integer $accounting_account_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -58,8 +58,9 @@ class ContractItemsPerspective extends Model
             'object_id',
             'term_starts',
             'term_ends',
-            'price_fixed',
-            'discount_fixed',
+            'price',
+            'discount',
+            'common_currency_id',
             'is_signed',
             'is_approved',
             'account_name',
@@ -68,7 +69,6 @@ class ContractItemsPerspective extends Model
             'iam_account_type_id',
             'accounting_identifier',
             'credit',
-            'common_currency_id',
             'accounting_account_id',
     ];
 
@@ -97,13 +97,13 @@ class ContractItemsPerspective extends Model
     'object_id' => 'integer',
     'term_starts' => 'datetime',
     'term_ends' => 'datetime',
-    'discount_fixed' => 'integer',
+    'discount' => 'integer',
+    'common_currency_id' => 'integer',
     'is_signed' => 'boolean',
     'is_approved' => 'boolean',
     'account_name' => 'string',
     'iam_account_type_id' => 'integer',
     'accounting_identifier' => 'string',
-    'common_currency_id' => 'integer',
     'accounting_account_id' => 'integer',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
@@ -171,5 +171,7 @@ class ContractItemsPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 }

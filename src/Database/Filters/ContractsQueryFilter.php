@@ -29,36 +29,6 @@ class ContractsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('description', 'like', '%' . $value . '%');
     }
 
-        
-    public function contractType($value)
-    {
-        return $this->builder->where('contract_type', 'like', '%' . $value . '%');
-    }
-
-        //  This is an alias function of contractType
-    public function contract_type($value)
-    {
-        return $this->contractType($value);
-    }
-    
-    public function discountFixed($value)
-    {
-        $operator = substr($value, 0, 1);
-
-        if ($operator != '<' || $operator != '>') {
-            $operator = '=';
-        } else {
-            $value = substr($value, 1);
-        }
-
-        return $this->builder->where('discount_fixed', $operator, $value);
-    }
-
-        //  This is an alias function of discountFixed
-    public function discount_fixed($value)
-    {
-        return $this->discountFixed($value);
-    }
     
     public function isApproved($value)
     {
@@ -228,6 +198,8 @@ class ContractsQueryFilter extends AbstractQueryFilter
 
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

@@ -51,7 +51,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->accountingIdentifier($value);
     }
     
-    public function discountFixed($value)
+    public function discount($value)
     {
         $operator = substr($value, 0, 1);
 
@@ -61,14 +61,9 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('discount_fixed', $operator, $value);
+        return $this->builder->where('discount', $operator, $value);
     }
 
-        //  This is an alias function of discountFixed
-    public function discount_fixed($value)
-    {
-        return $this->discountFixed($value);
-    }
     
     public function isSigned($value)
     {
@@ -202,6 +197,21 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->deletedAtEnd($value);
     }
 
+    public function commonCurrencyId($value)
+    {
+            $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
+
+        if($commonCurrency) {
+            return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
+        }
+    }
+
+        //  This is an alias function of commonCurrency
+    public function common_currency_id($value)
+    {
+        return $this->commonCurrency($value);
+    }
+    
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -237,21 +247,6 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->iamAccountType($value);
     }
     
-    public function commonCurrencyId($value)
-    {
-            $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
-
-        if($commonCurrency) {
-            return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
-        }
-    }
-
-        //  This is an alias function of commonCurrency
-    public function common_currency_id($value)
-    {
-        return $this->commonCurrency($value);
-    }
-    
     public function accountingAccountId($value)
     {
             $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -268,5 +263,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 }

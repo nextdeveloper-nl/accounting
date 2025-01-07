@@ -18,10 +18,7 @@ class ContractsUpdateRequest extends AbstractFormRequest
         'description' => 'nullable|string',
         'term_starts' => 'nullable|date',
         'term_ends' => 'nullable|date',
-        'contract_type' => 'string',
         'is_approved' => 'boolean',
-        'price_fixed' => '',
-        'discount_fixed' => 'integer',
         'is_signed' => 'boolean',
         ];
     }
