@@ -30,6 +30,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property $price
  * @property integer $discount
  * @property integer $common_currency_id
+ * @property string $contract_type
  */
 class ContractItems extends Model
 {
@@ -56,6 +57,7 @@ class ContractItems extends Model
             'price',
             'discount',
             'common_currency_id',
+            'contract_type',
     ];
 
     /**
@@ -88,6 +90,7 @@ class ContractItems extends Model
     'accounting_account_id' => 'integer',
     'discount' => 'integer',
     'common_currency_id' => 'integer',
+    'contract_type' => 'string',
     ];
 
     /**
@@ -159,6 +162,7 @@ class ContractItems extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

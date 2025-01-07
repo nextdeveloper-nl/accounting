@@ -25,6 +25,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property $price
  * @property integer $discount
  * @property integer $common_currency_id
+ * @property string $contract_type
  * @property boolean $is_signed
  * @property boolean $is_approved
  * @property string $account_name
@@ -61,6 +62,7 @@ class ContractItemsPerspective extends Model
             'price',
             'discount',
             'common_currency_id',
+            'contract_type',
             'is_signed',
             'is_approved',
             'account_name',
@@ -99,6 +101,7 @@ class ContractItemsPerspective extends Model
     'term_ends' => 'datetime',
     'discount' => 'integer',
     'common_currency_id' => 'integer',
+    'contract_type' => 'string',
     'is_signed' => 'boolean',
     'is_approved' => 'boolean',
     'account_name' => 'string',
@@ -171,6 +174,7 @@ class ContractItemsPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
