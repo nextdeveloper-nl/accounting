@@ -17,6 +17,9 @@ class ContractItemsUpdateRequest extends AbstractFormRequest
         'object_id' => 'nullable',
         'accounting_contract_id' => 'nullable|exists:accounting_contracts,uuid|uuid',
         'accounting_account_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
+        'price' => '',
+        'discount' => 'nullable|integer',
+        'common_currency_id' => 'nullable|exists:common_currencies,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

@@ -23,15 +23,12 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property string $description
  * @property \Carbon\Carbon $term_starts
  * @property \Carbon\Carbon $term_ends
- * @property string $contract_type
  * @property integer $iam_account_id
  * @property integer $iam_user_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
  * @property boolean $is_approved
- * @property $price_fixed
- * @property integer $discount_fixed
  * @property boolean $is_signed
  */
 class Contracts extends Model
@@ -55,12 +52,9 @@ class Contracts extends Model
             'description',
             'term_starts',
             'term_ends',
-            'contract_type',
             'iam_account_id',
             'iam_user_id',
             'is_approved',
-            'price_fixed',
-            'discount_fixed',
             'is_signed',
     ];
 
@@ -90,12 +84,10 @@ class Contracts extends Model
     'description' => 'string',
     'term_starts' => 'datetime',
     'term_ends' => 'datetime',
-    'contract_type' => 'string',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
     'is_approved' => 'boolean',
-    'discount_fixed' => 'integer',
     'is_signed' => 'boolean',
     ];
 
@@ -170,6 +162,8 @@ class Contracts extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

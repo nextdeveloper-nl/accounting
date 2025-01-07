@@ -18,10 +18,7 @@ class ContractsCreateRequest extends AbstractFormRequest
         'description' => 'nullable|string',
         'term_starts' => 'required|date',
         'term_ends' => 'required|date',
-        'contract_type' => 'string',
         'is_approved' => 'boolean',
-        'price_fixed' => '',
-        'discount_fixed' => 'integer',
         'is_signed' => 'boolean',
         ];
     }

@@ -59,6 +59,7 @@ trait AccountingContractItemTestTraits
             'POST', '/accounting/accountingcontractitem', [
             'form_params'   =>  [
                 'object_type'  =>  'a',
+                'discount'  =>  '1',
                             ],
                 ['http_errors' => false]
             ]
@@ -347,6 +348,25 @@ trait AccountingContractItemTestTraits
             $request = new Request(
                 [
                 'object_type'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingContractItemQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingContractItem::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingcontractitem_event_discount_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'discount'  =>  '1'
                 ]
             );
 

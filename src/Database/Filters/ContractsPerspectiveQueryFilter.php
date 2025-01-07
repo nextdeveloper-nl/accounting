@@ -30,17 +30,6 @@ class ContractsPerspectiveQueryFilter extends AbstractQueryFilter
     }
 
         
-    public function contractType($value)
-    {
-        return $this->builder->where('contract_type', 'like', '%' . $value . '%');
-    }
-
-        //  This is an alias function of contractType
-    public function contract_type($value)
-    {
-        return $this->contractType($value);
-    }
-        
     public function accountName($value)
     {
         return $this->builder->where('account_name', 'like', '%' . $value . '%');
@@ -61,25 +50,6 @@ class ContractsPerspectiveQueryFilter extends AbstractQueryFilter
     public function accounting_identifier($value)
     {
         return $this->accountingIdentifier($value);
-    }
-    
-    public function discountFixed($value)
-    {
-        $operator = substr($value, 0, 1);
-
-        if ($operator != '<' || $operator != '>') {
-            $operator = '=';
-        } else {
-            $value = substr($value, 1);
-        }
-
-        return $this->builder->where('discount_fixed', $operator, $value);
-    }
-
-        //  This is an alias function of discountFixed
-    public function discount_fixed($value)
-    {
-        return $this->discountFixed($value);
     }
     
     public function contractItemCount($value)
@@ -299,6 +269,8 @@ class ContractsPerspectiveQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

@@ -60,8 +60,6 @@ trait AccountingContractTestTraits
             'form_params'   =>  [
                 'name'  =>  'a',
                 'description'  =>  'a',
-                'contract_type'  =>  'a',
-                'discount_fixed'  =>  '1',
                     'term_starts'  =>  now(),
                     'term_ends'  =>  now(),
                             ],
@@ -371,44 +369,6 @@ trait AccountingContractTestTraits
             $request = new Request(
                 [
                 'description'  =>  'a'
-                ]
-            );
-
-            $filter = new AccountingContractQueryFilter($request);
-
-            $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::filter($filter)->first();
-        } catch (\Exception $e) {
-            $this->assertFalse(false, $e->getMessage());
-        }
-
-        $this->assertTrue(true);
-    }
-
-    public function test_accountingcontract_event_contract_type_filter()
-    {
-        try {
-            $request = new Request(
-                [
-                'contract_type'  =>  'a'
-                ]
-            );
-
-            $filter = new AccountingContractQueryFilter($request);
-
-            $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::filter($filter)->first();
-        } catch (\Exception $e) {
-            $this->assertFalse(false, $e->getMessage());
-        }
-
-        $this->assertTrue(true);
-    }
-
-    public function test_accountingcontract_event_discount_fixed_filter()
-    {
-        try {
-            $request = new Request(
-                [
-                'discount_fixed'  =>  '1'
                 ]
             );
 

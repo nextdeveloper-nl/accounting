@@ -66,15 +66,12 @@ class AbstractContractsTransformer extends AbstractTransformer
             'description'  =>  $model->description,
             'term_starts'  =>  $model->term_starts,
             'term_ends'  =>  $model->term_ends,
-            'contract_type'  =>  $model->contract_type,
             'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
             'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
             'is_approved'  =>  $model->is_approved,
-            'price_fixed'  =>  $model->price_fixed,
-            'discount_fixed'  =>  $model->discount_fixed,
             'is_signed'  =>  $model->is_signed,
             ]
         );
@@ -164,13 +161,5 @@ class AbstractContractsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
 
 }

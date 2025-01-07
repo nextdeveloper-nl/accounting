@@ -54,10 +54,10 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
      */
     public function transform(ContractItemsPerspective $model)
     {
-                                                $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
+                                                $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
+                                                            $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
-                                                            $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                         
         return $this->buildPayload(
@@ -67,8 +67,9 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
             'object_id'  =>  $model->object_id,
             'term_starts'  =>  $model->term_starts,
             'term_ends'  =>  $model->term_ends,
-            'price_fixed'  =>  $model->price_fixed,
-            'discount_fixed'  =>  $model->discount_fixed,
+            'price'  =>  $model->price,
+            'discount'  =>  $model->discount,
+            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
             'is_signed'  =>  $model->is_signed,
             'is_approved'  =>  $model->is_approved,
             'account_name'  =>  $model->account_name,
@@ -77,7 +78,6 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
             'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
             'accounting_identifier'  =>  $model->accounting_identifier,
             'credit'  =>  $model->credit,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
             'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,

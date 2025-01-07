@@ -27,6 +27,9 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $deleted_at
  * @property integer $accounting_contract_id
  * @property integer $accounting_account_id
+ * @property $price
+ * @property integer $discount
+ * @property integer $common_currency_id
  */
 class ContractItems extends Model
 {
@@ -50,6 +53,9 @@ class ContractItems extends Model
             'iam_user_id',
             'accounting_contract_id',
             'accounting_account_id',
+            'price',
+            'discount',
+            'common_currency_id',
     ];
 
     /**
@@ -80,6 +86,8 @@ class ContractItems extends Model
     'deleted_at' => 'datetime',
     'accounting_contract_id' => 'integer',
     'accounting_account_id' => 'integer',
+    'discount' => 'integer',
+    'common_currency_id' => 'integer',
     ];
 
     /**
@@ -151,6 +159,8 @@ class ContractItems extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

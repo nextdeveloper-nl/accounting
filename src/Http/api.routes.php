@@ -254,24 +254,24 @@ Route::prefix('accounting')->group(
             }
         );
 
-        Route::prefix('contract-items-perspective')->group(
+        Route::prefix('invoices-perspective')->group(
             function () {
-                Route::get('/', 'ContractItemsPerspective\ContractItemsPerspectiveController@index');
-                Route::get('/actions', 'ContractItemsPerspective\ContractItemsPerspectiveController@getActions');
+                Route::get('/', 'InvoicesPerspective\InvoicesPerspectiveController@index');
+                Route::get('/actions', 'InvoicesPerspective\InvoicesPerspectiveController@getActions');
 
-                Route::get('{acip}/tags ', 'ContractItemsPerspective\ContractItemsPerspectiveController@tags');
-                Route::post('{acip}/tags ', 'ContractItemsPerspective\ContractItemsPerspectiveController@saveTags');
-                Route::get('{acip}/addresses ', 'ContractItemsPerspective\ContractItemsPerspectiveController@addresses');
-                Route::post('{acip}/addresses ', 'ContractItemsPerspective\ContractItemsPerspectiveController@saveAddresses');
+                Route::get('{accounting_invoices_perspective}/tags ', 'InvoicesPerspective\InvoicesPerspectiveController@tags');
+                Route::post('{accounting_invoices_perspective}/tags ', 'InvoicesPerspective\InvoicesPerspectiveController@saveTags');
+                Route::get('{accounting_invoices_perspective}/addresses ', 'InvoicesPerspective\InvoicesPerspectiveController@addresses');
+                Route::post('{accounting_invoices_perspective}/addresses ', 'InvoicesPerspective\InvoicesPerspectiveController@saveAddresses');
 
-                Route::get('/{acip}/{subObjects}', 'ContractItemsPerspective\ContractItemsPerspectiveController@relatedObjects');
-                Route::get('/{acip}', 'ContractItemsPerspective\ContractItemsPerspectiveController@show');
+                Route::get('/{accounting_invoices_perspective}/{subObjects}', 'InvoicesPerspective\InvoicesPerspectiveController@relatedObjects');
+                Route::get('/{accounting_invoices_perspective}', 'InvoicesPerspective\InvoicesPerspectiveController@show');
 
-                Route::post('/', 'ContractItemsPerspective\ContractItemsPerspectiveController@store');
-                Route::post('/{acip}/do/{action}', 'ContractItemsPerspective\ContractItemsPerspectiveController@doAction');
+                Route::post('/', 'InvoicesPerspective\InvoicesPerspectiveController@store');
+                Route::post('/{accounting_invoices_perspective}/do/{action}', 'InvoicesPerspective\InvoicesPerspectiveController@doAction');
 
-                Route::patch('/{acip}', 'ContractItemsPerspective\ContractItemsPerspectiveController@update');
-                Route::delete('/{acip}', 'ContractItemsPerspective\ContractItemsPerspectiveController@destroy');
+                Route::patch('/{accounting_invoices_perspective}', 'InvoicesPerspective\InvoicesPerspectiveController@update');
+                Route::delete('/{accounting_invoices_perspective}', 'InvoicesPerspective\InvoicesPerspectiveController@destroy');
             }
         );
 
@@ -296,24 +296,24 @@ Route::prefix('accounting')->group(
             }
         );
 
-        Route::prefix('invoices-perspective')->group(
+        Route::prefix('contract-items-perspective')->group(
             function () {
-                Route::get('/', 'InvoicesPerspective\InvoicesPerspectiveController@index');
-                Route::get('/actions', 'InvoicesPerspective\InvoicesPerspectiveController@getActions');
+                Route::get('/', 'ContractItemsPerspective\ContractItemsPerspectiveController@index');
+                Route::get('/actions', 'ContractItemsPerspective\ContractItemsPerspectiveController@getActions');
 
-                Route::get('{accounting_invoices_perspective}/tags ', 'InvoicesPerspective\InvoicesPerspectiveController@tags');
-                Route::post('{accounting_invoices_perspective}/tags ', 'InvoicesPerspective\InvoicesPerspectiveController@saveTags');
-                Route::get('{accounting_invoices_perspective}/addresses ', 'InvoicesPerspective\InvoicesPerspectiveController@addresses');
-                Route::post('{accounting_invoices_perspective}/addresses ', 'InvoicesPerspective\InvoicesPerspectiveController@saveAddresses');
+                Route::get('{acip}/tags ', 'ContractItemsPerspective\ContractItemsPerspectiveController@tags');
+                Route::post('{acip}/tags ', 'ContractItemsPerspective\ContractItemsPerspectiveController@saveTags');
+                Route::get('{acip}/addresses ', 'ContractItemsPerspective\ContractItemsPerspectiveController@addresses');
+                Route::post('{acip}/addresses ', 'ContractItemsPerspective\ContractItemsPerspectiveController@saveAddresses');
 
-                Route::get('/{accounting_invoices_perspective}/{subObjects}', 'InvoicesPerspective\InvoicesPerspectiveController@relatedObjects');
-                Route::get('/{accounting_invoices_perspective}', 'InvoicesPerspective\InvoicesPerspectiveController@show');
+                Route::get('/{acip}/{subObjects}', 'ContractItemsPerspective\ContractItemsPerspectiveController@relatedObjects');
+                Route::get('/{acip}', 'ContractItemsPerspective\ContractItemsPerspectiveController@show');
 
-                Route::post('/', 'InvoicesPerspective\InvoicesPerspectiveController@store');
-                Route::post('/{accounting_invoices_perspective}/do/{action}', 'InvoicesPerspective\InvoicesPerspectiveController@doAction');
+                Route::post('/', 'ContractItemsPerspective\ContractItemsPerspectiveController@store');
+                Route::post('/{acip}/do/{action}', 'ContractItemsPerspective\ContractItemsPerspectiveController@doAction');
 
-                Route::patch('/{accounting_invoices_perspective}', 'InvoicesPerspective\InvoicesPerspectiveController@update');
-                Route::delete('/{accounting_invoices_perspective}', 'InvoicesPerspective\InvoicesPerspectiveController@destroy');
+                Route::patch('/{acip}', 'ContractItemsPerspective\ContractItemsPerspectiveController@update');
+                Route::delete('/{acip}', 'ContractItemsPerspective\ContractItemsPerspectiveController@destroy');
             }
         );
 
@@ -617,8 +617,40 @@ Route::prefix('accounting')->group(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 );
+
+
 
 
 
