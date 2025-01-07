@@ -45,6 +45,17 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingIdentifier($value);
     }
+        
+    public function commonCurrencyCode($value)
+    {
+        return $this->builder->where('common_currency_code', 'like', '%' . $value . '%');
+    }
+
+        //  This is an alias function of commonCurrencyCode
+    public function common_currency_code($value)
+    {
+        return $this->commonCurrencyCode($value);
+    }
     
     public function termYear($value)
     {
@@ -215,6 +226,8 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

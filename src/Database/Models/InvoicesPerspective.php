@@ -34,6 +34,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property string $accounting_identifier
  * @property $credit
  * @property integer $common_currency_id
+ * @property string $common_currency_code
  * @property integer $accounting_account_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -71,6 +72,7 @@ class InvoicesPerspective extends Model
             'accounting_identifier',
             'credit',
             'common_currency_id',
+            'common_currency_code',
             'accounting_account_id',
     ];
 
@@ -107,6 +109,7 @@ class InvoicesPerspective extends Model
     'iam_account_type_id' => 'integer',
     'accounting_identifier' => 'string',
     'common_currency_id' => 'integer',
+    'common_currency_code' => 'string',
     'accounting_account_id' => 'integer',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
@@ -172,6 +175,8 @@ class InvoicesPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 
