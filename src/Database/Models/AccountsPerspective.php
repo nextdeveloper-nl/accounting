@@ -24,6 +24,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property integer $common_domain_id
  * @property integer $iam_user_id
  * @property integer $iam_account_type_id
+ * @property integer $iam_account_id
  * @property string $tax_number
  * @property string $tax_office
  * @property string $accounting_identifier
@@ -58,6 +59,7 @@ class AccountsPerspective extends Model
             'common_domain_id',
             'iam_user_id',
             'iam_account_type_id',
+            'iam_account_id',
             'tax_number',
             'tax_office',
             'accounting_identifier',
@@ -165,6 +167,8 @@ class AccountsPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

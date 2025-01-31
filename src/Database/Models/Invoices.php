@@ -37,6 +37,8 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $deleted_at
  * @property integer $term_year
  * @property integer $term_month
+ * @property boolean $is_cancelled
+ * @property string $cancellation_reason
  */
 class Invoices extends Model
 {
@@ -70,6 +72,8 @@ class Invoices extends Model
             'note',
             'term_year',
             'term_month',
+            'is_cancelled',
+            'cancellation_reason',
     ];
 
     /**
@@ -108,6 +112,8 @@ class Invoices extends Model
     'deleted_at' => 'datetime',
     'term_year' => 'integer',
     'term_month' => 'integer',
+    'is_cancelled' => 'boolean',
+    'cancellation_reason' => 'string',
     ];
 
     /**
@@ -180,6 +186,8 @@ class Invoices extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

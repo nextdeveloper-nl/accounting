@@ -30,6 +30,9 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property string $trade_office_number
  * @property string $trade_office
  * @property string $tr_mersis
+ * @property boolean $is_suspended
+ * @property $balance
+ * @property boolean $is_disabled
  */
 class Accounts extends Model
 {
@@ -56,6 +59,9 @@ class Accounts extends Model
             'trade_office_number',
             'trade_office',
             'tr_mersis',
+            'is_suspended',
+            'balance',
+            'is_disabled',
     ];
 
     /**
@@ -89,6 +95,8 @@ class Accounts extends Model
     'trade_office_number' => 'string',
     'trade_office' => 'string',
     'tr_mersis' => 'string',
+    'is_suspended' => 'boolean',
+    'is_disabled' => 'boolean',
     ];
 
     /**
@@ -160,6 +168,8 @@ class Accounts extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

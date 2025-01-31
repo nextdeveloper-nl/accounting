@@ -58,6 +58,7 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
                                                             $commonDomainId = \NextDeveloper\Commons\Database\Models\Domains::where('id', $model->common_domain_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
+                                                            $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                         
         return $this->buildPayload(
@@ -69,6 +70,7 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
             'common_domain_id'  =>  $commonDomainId ? $commonDomainId->uuid : null,
             'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
             'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
+            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
             'tax_number'  =>  $model->tax_number,
             'tax_office'  =>  $model->tax_office,
             'accounting_identifier'  =>  $model->accounting_identifier,
@@ -168,6 +170,8 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 
