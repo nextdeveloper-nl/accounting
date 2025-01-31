@@ -27,6 +27,8 @@ class InvoicesCreateRequest extends AbstractFormRequest
         'note' => 'string',
         'term_year' => 'nullable|integer',
         'term_month' => 'nullable|integer',
+        'is_cancelled' => 'boolean',
+        'cancellation_reason' => 'nullable|string',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

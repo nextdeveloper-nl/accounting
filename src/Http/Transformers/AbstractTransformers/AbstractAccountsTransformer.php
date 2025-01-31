@@ -72,6 +72,9 @@ class AbstractAccountsTransformer extends AbstractTransformer
             'trade_office_number'  =>  $model->trade_office_number,
             'trade_office'  =>  $model->trade_office,
             'tr_mersis'  =>  $model->tr_mersis,
+            'is_suspended'  =>  $model->is_suspended,
+            'balance'  =>  $model->balance,
+            'is_disabled'  =>  $model->is_disabled,
             ]
         );
     }
@@ -160,6 +163,8 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

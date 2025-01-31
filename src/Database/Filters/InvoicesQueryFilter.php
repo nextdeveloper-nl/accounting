@@ -34,6 +34,17 @@ class InvoicesQueryFilter extends AbstractQueryFilter
         return $this->builder->where('note', 'like', '%' . $value . '%');
     }
 
+        
+    public function cancellationReason($value)
+    {
+        return $this->builder->where('cancellation_reason', 'like', '%' . $value . '%');
+    }
+
+        //  This is an alias function of cancellationReason
+    public function cancellation_reason($value)
+    {
+        return $this->cancellationReason($value);
+    }
     
     public function termYear($value)
     {
@@ -115,6 +126,17 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     public function is_sealed($value)
     {
         return $this->isSealed($value);
+    }
+     
+    public function isCancelled($value)
+    {
+        return $this->builder->where('is_cancelled', $value);
+    }
+
+        //  This is an alias function of isCancelled
+    public function is_cancelled($value)
+    {
+        return $this->isCancelled($value);
     }
      
     public function dueDateStart($date)
@@ -256,6 +278,8 @@ class InvoicesQueryFilter extends AbstractQueryFilter
 
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

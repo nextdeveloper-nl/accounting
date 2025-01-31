@@ -81,6 +81,8 @@ class AbstractInvoicesTransformer extends AbstractTransformer
             'deleted_at'  =>  $model->deleted_at,
             'term_year'  =>  $model->term_year,
             'term_month'  =>  $model->term_month,
+            'is_cancelled'  =>  $model->is_cancelled,
+            'cancellation_reason'  =>  $model->cancellation_reason,
             ]
         );
     }
@@ -169,6 +171,8 @@ class AbstractInvoicesTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

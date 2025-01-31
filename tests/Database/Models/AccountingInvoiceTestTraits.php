@@ -60,6 +60,7 @@ trait AccountingInvoiceTestTraits
             'form_params'   =>  [
                 'invoice_number'  =>  'a',
                 'note'  =>  'a',
+                'cancellation_reason'  =>  'a',
                 'term_year'  =>  '1',
                 'term_month'  =>  '1',
                     'due_date'  =>  now(),
@@ -370,6 +371,25 @@ trait AccountingInvoiceTestTraits
             $request = new Request(
                 [
                 'note'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingInvoiceQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountinginvoice_event_cancellation_reason_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'cancellation_reason'  =>  'a'
                 ]
             );
 

@@ -3,6 +3,7 @@
 namespace Helpers;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
@@ -15,6 +16,16 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 
 class InvoiceHelper
 {
+    public static function getMyInvoices() : Collection
+    {
+        return Invoices::orderBy('id', 'desc')->get();
+    }
+
+    public static function getMyUnpaidInvoices() : Collection
+    {
+        return Invoices::where('is_paid', false)->orderBy('id', 'desc')->get();
+    }
+
     /**
      * This helper will return latest open invoice. If there is no open invoice, it will create a new one.
      *

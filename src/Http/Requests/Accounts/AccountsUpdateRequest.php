@@ -21,6 +21,9 @@ class AccountsUpdateRequest extends AbstractFormRequest
         'trade_office_number' => 'nullable|string',
         'trade_office' => 'nullable|string',
         'tr_mersis' => 'nullable|string',
+        'is_suspended' => 'boolean',
+        'balance' => 'nullable',
+        'is_disabled' => 'boolean',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
