@@ -18,6 +18,12 @@ class AccountingHelper
         return self::getIamAccount($accountingAccount);
     }
 
+    public static function getAccountFromIamAccountId($id) :?Accounts {
+        return Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('iam_account_id', $id)
+            ->first();
+    }
+
     /**
      * Returns the IamAccount by looking at Accounting account
      *
