@@ -10,12 +10,20 @@ use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Services\InvoicesService;
 use NextDeveloper\Commons\Database\GlobalScopes\LimitScope;
+use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
 use NextDeveloper\Commons\Services\CurrenciesService;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
 class InvoiceHelper
 {
+    public static function getAccount(Invoices $invoice)
+    {
+        return Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $invoice->accounting_account_id)
+            ->first();
+    }
+
     public static function getMyInvoices() : Collection
     {
         return Invoices::orderBy('id', 'desc')->get();
@@ -76,12 +84,42 @@ class InvoiceHelper
 
         $amount = 0;
 
+        //  Now we are finding the provider, from there we will find the invoice amount
+        $provider = AccountingHelper::getCustomerProvider(
+            InvoiceHelper::getAccount($invoice)
+        );
+
+        $providerAccountingAccount = AccountingHelper::getAccount($provider);
+
+        $providerCurrency = ExchangeRateHelper::getCurrencyFromId($providerAccountingAccount->common_currency_id);
+
         foreach($items as $item) {
-            $amount += $item->unit_price * $item->quantity;
+            $unitPrice = $item->unit_price * $item->quantity;
+
+            $itemCurrency = ExchangeRateHelper::getCurrencyFromId($item->common_currency_id);
+
+            $unitPrice = ExchangeRateHelper::convert(
+                fromCurrencyCode: $itemCurrency->code,
+                toCurrencyCode: $providerCurrency->code,
+                amount: $unitPrice
+            );
+
+            $item->updateQuietly([
+                'details'   =>  array_merge($item->details ?? [], [
+                    'amount_before'    => $item->unit_price * $item->quantity,
+                    'amount_after'     => $unitPrice,
+                    'from_currency' =>  $itemCurrency->code,
+                    'to_currency'   =>  $providerCurrency->code,
+                    'exchange_rate' =>  ($item->unit_price * $item->quantity) != 0 ? $unitPrice / ($item->unit_price * $item->quantity) : 0
+                ])
+            ]);
+
+            $amount += $unitPrice;
         }
 
         $invoice->update([
-            'amount'    =>  $amount
+            'amount'                =>  $amount,
+            'common_currency_id'    =>  $providerCurrency->id
         ]);
     }
 }

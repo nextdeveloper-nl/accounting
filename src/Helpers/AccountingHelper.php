@@ -4,6 +4,7 @@ namespace Helpers;
 
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
+use NextDeveloper\Commons\Database\Models\Countries;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
@@ -58,5 +59,38 @@ class AccountingHelper
         return Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('iam_account_id', $account->iam_account_id)
             ->first();
+    }
+
+    public static function getCustomerProvider(Accounts $accounts) : \NextDeveloper\IAM\Database\Models\Accounts
+    {
+        $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $accounts->iam_account_id)
+            ->first();
+
+        $provider = null;
+
+        //  We will find the country of the account and then we will find the provider for that country.
+        if($iamAccount->common_country_id) {
+            $country = Countries::where('id', $iamAccount->common_country_id)->first();
+            $providers = config('leo.providers.zones');
+
+            if(array_key_exists(strtolower($country->code), $providers)) {
+                $provider = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
+                    ->where('id', config('leo.providers.zones.' . strtolower($country->code)))
+                    ->first();
+            }
+        }
+
+        if(!$provider) {
+            $provider = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('id', config('leo.providers.zones.global'))
+                ->first();
+        }
+
+        if(!$provider) {
+            throw new \Exception('Cannot find the provider. Please update your configuration for provider.');
+        }
+
+        return $provider;
     }
 }
