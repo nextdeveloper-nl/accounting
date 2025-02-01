@@ -102,11 +102,11 @@ abstract class AbstractInvoiceItem
                     . $contract->uuid);
             } else {
                 //  If we have discount only we apply this.
-                $cost = $cost * ((100 - $contract->discount_fixed) / 100);
-                $details[] = 'We applied %' . $contract->discount_fixed . ' discount because of the contract: '
+                $cost = $cost * ((100 - $contract->discount) / 100);
+                $details[] = 'We applied %' . $contract->discount . ' discount because of the contract: '
                     . $contract->uuid;
 
-                Log::info('[##HAS DISCOUNT##] We applied %' . $contract->discount_fixed . ' discount because of the contract: '
+                Log::info('[##HAS DISCOUNT##] We applied %' . $contract->discount . ' discount because of the contract: '
                     . $contract->uuid);
 
                 $item->update([
