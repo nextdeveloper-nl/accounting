@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Helpers\AccountingHelper;
 use Helpers\InvoiceHelper;
 use Illuminate\Support\Facades\Log;
+use NextDeveloper\Accounting\Actions\Invoices\RecalculateInvoice;
 use NextDeveloper\Accounting\Database\Models\ContractItemsPerspective;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Services\InvoiceItemsService;
@@ -84,7 +85,7 @@ abstract class AbstractInvoiceItem
 
         //  We are removing this from here because it is creating almost infinite loop.
         //  We will be calculating invoice amounts, every hour, or just before the customer wants to pay it
-        InvoiceHelper::updateInvoiceAmount($this->invoice);
+        dispatch(new RecalculateInvoice($this->invoice));
 
         return $item;
     }
