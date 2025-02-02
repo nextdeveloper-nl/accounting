@@ -78,6 +78,10 @@ abstract class AbstractInvoiceItem
             ]);
         }
 
+        $item->update([
+            'unit_price'    =>  $cost
+        ]);
+
         $this->applyContract($item);
         $this->convertToLocalCurrency($item);
 
@@ -94,8 +98,9 @@ abstract class AbstractInvoiceItem
     {
         $contract = $this->getItemContract();
 
-        if(!$contract)
+        if(!$contract) {
             return $item;
+        }
 
         //  If we have fixed price, we are running this
         if($contract->contract_type == 'price') {
