@@ -5,6 +5,7 @@ namespace Helpers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
@@ -97,6 +98,8 @@ class InvoiceHelper
             $unitPrice = $item->unit_price * $item->quantity;
 
             $itemCurrency = ExchangeRateHelper::getCurrencyFromId($item->common_currency_id);
+
+            Log::info(__METHOD__ . ' | Trying to convert the unit price of invoice item: ' . $item->uuid);
 
             $unitPrice = ExchangeRateHelper::convert(
                 fromCurrencyCode: $itemCurrency->code,
