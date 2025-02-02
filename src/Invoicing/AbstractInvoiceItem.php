@@ -72,7 +72,6 @@ abstract class AbstractInvoiceItem
                 'object_id'     =>  is_object($this->model) ? $this->model->id : 0,
                 'quantity'      =>  1,
                 'unit_price'    =>  $cost,
-                'total_price'   =>  $cost * 1,
                 'common_currency_id'    =>  $currency->id,
                 'accounting_account_id' =>  $this->invoice->accounting_account_id
             ]);
