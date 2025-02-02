@@ -47,7 +47,7 @@ class RecalculateInvoice extends AbstractAction
 
     public function handle()
     {
-        $this->setProgress(0, 'Starting to pay the invoice');
+        $this->setProgress(0, 'Starting to recalculate the invoice');
 
         Events::fire('calculating-invoice:NextDeveloper\Accounting\Invoices', $this->model);
 
