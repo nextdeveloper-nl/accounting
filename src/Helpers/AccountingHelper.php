@@ -2,6 +2,7 @@
 
 namespace Helpers;
 
+use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
 use NextDeveloper\Commons\Database\Models\Countries;
@@ -67,6 +68,8 @@ class AccountingHelper
             ->where('id', $accounts->iam_account_id)
             ->first();
 
+        Log::info(__METHOD__ . '| Customer is in the country id: ' . $iamAccount->common_country_id);
+
         $provider = null;
 
         //  We will find the country of the account and then we will find the provider for that country.
@@ -90,6 +93,8 @@ class AccountingHelper
         if(!$provider) {
             throw new \Exception('Cannot find the provider. Please update your configuration for provider.');
         }
+
+        Log::info(__METHOD__ . '| Selecting the provider as ' . $provider->name);
 
         return $provider;
     }

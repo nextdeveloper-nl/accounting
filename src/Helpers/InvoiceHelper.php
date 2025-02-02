@@ -103,6 +103,8 @@ class InvoiceHelper
 
         $providerCurrency = ExchangeRateHelper::getCurrencyFromId($providerAccountingAccount->common_currency_id);
 
+        Log::info(__METHOD__ . '| Provider currency: ' . $providerCurrency->code);
+
         $currencyCodes = array_keys($amounts);
 
         $totalAmount = 0;
