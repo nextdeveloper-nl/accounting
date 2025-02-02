@@ -5,6 +5,7 @@ namespace Helpers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
@@ -82,7 +83,16 @@ class InvoiceHelper
             ->where('accounting_invoice_id', $invoice->id)
             ->get();
 
-        $amount = 0;
+        $amounts = [];
+
+        foreach($items as $item) {
+            $unitPrice = $item->unit_price * $item->quantity;
+
+            if(array_key_exists($item->common_currency_id, $amounts))
+                $amounts[$item->common_currency_id] += $unitPrice;
+            else
+                $amounts[$item->common_currency_id] = $unitPrice;
+        }
 
         //  Now we are finding the provider, from there we will find the invoice amount
         $provider = AccountingHelper::getCustomerProvider(
@@ -93,32 +103,34 @@ class InvoiceHelper
 
         $providerCurrency = ExchangeRateHelper::getCurrencyFromId($providerAccountingAccount->common_currency_id);
 
-        foreach($items as $item) {
-            $unitPrice = $item->unit_price * $item->quantity;
+        $currencyCodes = array_keys($amounts);
 
-            $itemCurrency = ExchangeRateHelper::getCurrencyFromId($item->common_currency_id);
+        $totalAmount = 0;
 
-            $unitPrice = ExchangeRateHelper::convert(
-                fromCurrencyCode: $itemCurrency->code,
-                toCurrencyCode: $providerCurrency->code,
-                amount: $unitPrice
-            );
+        foreach ($currencyCodes as $code) {
+            $amountCurrency = ExchangeRateHelper::getCurrencyFromId($code);
 
-            $item->updateQuietly([
-                'details'   =>  array_merge($item->details ?? [], [
-                    'amount_before'    => $item->unit_price * $item->quantity,
-                    'amount_after'     => $unitPrice,
-                    'from_currency' =>  $itemCurrency->code,
-                    'to_currency'   =>  $providerCurrency->code,
-                    'exchange_rate' =>  ($item->unit_price * $item->quantity) != 0 ? $unitPrice / ($item->unit_price * $item->quantity) : 0
-                ])
-            ]);
+            Log::info(__METHOD__ . '| Invoice (' . $invoice->uuid . ') has ' . $amounts[$code] . $amountCurrency->code);
 
-            $amount += $unitPrice;
+            if($amountCurrency->id != $providerCurrency->id)
+                $convertedAmount = ExchangeRateHelper::convert(
+                    fromCurrencyCode: $amountCurrency->code,
+                    toCurrencyCode: $providerCurrency->code,
+                    amount: $amounts[$code]
+                );
+            else
+                $convertedAmount = $amounts[$code];
+
+            Log::info(__METHOD__ . '| Invoice (' . $invoice->uuid . ') converted from '
+                . $amounts[$code] . $amountCurrency->code . ' to ' . $convertedAmount . $providerCurrency->code);
+
+            $totalAmount += $convertedAmount;
         }
 
+        Log::info(__METHOD__ . '| The total amount for invoice (' . $invoice->uuid . ') is: ' . $totalAmount . $providerCurrency->code);
+
         $invoice->update([
-            'amount'                =>  $amount,
+            'amount'                =>  $totalAmount,
             'common_currency_id'    =>  $providerCurrency->id
         ]);
     }
