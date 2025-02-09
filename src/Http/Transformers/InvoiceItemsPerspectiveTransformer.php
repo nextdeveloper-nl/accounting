@@ -8,8 +8,11 @@ use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Accounting\Database\Models\InvoiceItemsPerspective;
 use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\Accounting\Http\Transformers\AbstractTransformers\AbstractInvoiceItemsPerspectiveTransformer;
+use NextDeveloper\IAAS\Database\Models\IpAddresses;
 use NextDeveloper\IAAS\Database\Models\VirtualDiskImages;
 use NextDeveloper\IAAS\Database\Models\VirtualMachines;
+use NextDeveloper\Marketplace\Database\Models\ProductCatalogs;
+use NextDeveloper\Marketplace\Database\Models\Subscriptions;
 
 /**
  * Class InvoiceItemsPerspectiveTransformer. This class is being used to manipulate the data we are serving to the customer
@@ -46,6 +49,17 @@ class InvoiceItemsPerspectiveTransformer extends AbstractInvoiceItemsPerspective
             case 'NextDeveloper\IAAS\VirtualDiskImages':
                 $obj = VirtualDiskImages::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
                 $transformed['object_name'] = $obj?->name;
+                $transformed['object_id'] = $obj?->uuid;
+                break;
+            case 'NextDeveloper\Marketplace\Database\Models\Subscriptions':
+                $subObj = Subscriptions::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
+                $obj = ProductCatalogs::withoutGlobalScopes()->where('id', $subObj->marketplace_product_catalog_id)->first();
+                $transformed['object_name'] = $obj?->name;
+                $transformed['object_id'] = $obj?->uuid;
+                break;
+            case 'NextDeveloper\IAAS\Database\Models\IpAddresses':
+                $obj = IpAddresses::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
+                $transformed['object_name'] = $obj?->ip_addr;
                 $transformed['object_id'] = $obj?->uuid;
                 break;
             default:
