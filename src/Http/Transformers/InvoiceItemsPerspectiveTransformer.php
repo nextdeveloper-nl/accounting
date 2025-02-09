@@ -52,18 +52,18 @@ class InvoiceItemsPerspectiveTransformer extends AbstractInvoiceItemsPerspective
                 $transformed['object_name'] = $obj?->name;
                 $transformed['object_id'] = $obj?->uuid;
                 break;
-            case 'NextDeveloper\Marketplace\Database\Models\Subscriptions':
+            case 'NextDeveloper\Marketplace\Subscriptions':
                 $subObj = Subscriptions::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
                 $obj = ProductCatalogs::withoutGlobalScopes()->where('id', $subObj->marketplace_product_catalog_id)->first();
                 $transformed['object_name'] = $obj?->name;
                 $transformed['object_id'] = $obj?->uuid;
                 break;
-            case 'NextDeveloper\IAAS\Database\Models\IpAddresses':
+            case 'NextDeveloper\IAAS\IpAddresses':
                 $obj = IpAddresses::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
                 $transformed['object_name'] = $obj?->ip_addr;
                 $transformed['object_id'] = $obj?->uuid;
                 break;
-            case 'NextDeveloper\IAAS\Database\Models\VirtualNetworkCards':
+            case 'NextDeveloper\IAAS\VirtualNetworkCards':
                 $subObj = VirtualNetworkCards::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
                 $obj = VirtualMachines::withoutGlobalScopes()->where('id', $subObj->iaas_virtual_machine_id)->first();
                 $transformed['object_name'] = 'Network card of: ' . $obj?->name;
