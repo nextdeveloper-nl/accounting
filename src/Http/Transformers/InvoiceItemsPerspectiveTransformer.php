@@ -11,6 +11,7 @@ use NextDeveloper\Accounting\Http\Transformers\AbstractTransformers\AbstractInvo
 use NextDeveloper\IAAS\Database\Models\IpAddresses;
 use NextDeveloper\IAAS\Database\Models\VirtualDiskImages;
 use NextDeveloper\IAAS\Database\Models\VirtualMachines;
+use NextDeveloper\IAAS\Database\Models\VirtualNetworkCards;
 use NextDeveloper\Marketplace\Database\Models\ProductCatalogs;
 use NextDeveloper\Marketplace\Database\Models\Subscriptions;
 
@@ -60,6 +61,12 @@ class InvoiceItemsPerspectiveTransformer extends AbstractInvoiceItemsPerspective
             case 'NextDeveloper\IAAS\Database\Models\IpAddresses':
                 $obj = IpAddresses::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
                 $transformed['object_name'] = $obj?->ip_addr;
+                $transformed['object_id'] = $obj?->uuid;
+                break;
+            case 'NextDeveloper\IAAS\Database\Models\VirtualNetworkCards':
+                $subObj = VirtualNetworkCards::withoutGlobalScopes()->where('id', $transformed['object_id'])->first();
+                $obj = VirtualMachines::withoutGlobalScopes()->where('id', $subObj->iaas_virtual_machine_id)->first();
+                $transformed['object_name'] = 'Network card of: ' . $obj?->name;
                 $transformed['object_id'] = $obj?->uuid;
                 break;
             default:
