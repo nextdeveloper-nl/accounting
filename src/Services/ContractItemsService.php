@@ -3,6 +3,7 @@
 namespace NextDeveloper\Accounting\Services;
 
 use App\Helpers\ObjectHelper;
+use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractContractItemsService;
@@ -22,8 +23,16 @@ class ContractItemsService extends AbstractContractItemsService
     public static function create($data)
     {
         $data['object_id'] = ObjectHelper::getObject($data['object_type'], $data['object_id'])->id;
-        $data['accounting_contract_id'] = Contracts::withoutGlobalScope(AuthorizationScope::class)->where('uuid', $data['accounting_contract_id'])->first()->id;
-        $data['accounting_account_id'] = Accounts::withoutGlobalScope(AuthorizationScope::class)->where('uuid', $data['accounting_account_id'])->first()->id;
+
+        if(Str::isUuid($data['accounting_contract_id']))
+            $data['accounting_contract_id'] = Contracts::withoutGlobalScope(AuthorizationScope::class)->where('uuid', $data['accounting_contract_id'])->first()->id;
+        else
+            $data['accounting_contract_id'] = Contracts::withoutGlobalScope(AuthorizationScope::class)->where('id', $data['accounting_contract_id'])->first()->id;
+
+        if(Str::isUuid($data['accounting_account_id']))
+            $data['accounting_account_id'] = Accounts::withoutGlobalScope(AuthorizationScope::class)->where('uuid', $data['accounting_account_id'])->first()->id;
+        else
+            $data['accounting_account_id'] = Accounts::withoutGlobalScope(AuthorizationScope::class)->where('id', $data['accounting_account_id'])->first()->id;
 
         return parent::create($data);
     }
