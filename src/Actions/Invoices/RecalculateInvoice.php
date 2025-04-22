@@ -5,6 +5,7 @@ namespace NextDeveloper\Accounting\Actions\Invoices;
 use Carbon\Carbon;
 use Helpers\InvoiceHelper;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Database\Models\Invoices;
@@ -51,7 +52,12 @@ class RecalculateInvoice extends AbstractAction
 
         Events::fire('calculating-invoice:NextDeveloper\Accounting\Invoices', $this->model);
 
-        InvoiceHelper::updateInvoiceAmount($this->model);
+        try {
+            InvoiceHelper::updateInvoiceAmount($this->model);
+        } catch (\Exception $e) {
+            Log::error('[INVOICE-ERROR]' . $e->getMessage(), $e->getTrace());
+            return;
+        }
 
         Events::fire('invoice-calculated:NextDeveloper\Accounting\Invoices', $this->model);
 
