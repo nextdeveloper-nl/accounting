@@ -68,7 +68,9 @@ class AccountingHelper
             ->where('id', $accounts->iam_account_id)
             ->first();
 
-        Log::info(__METHOD__ . '| Customer is in the country id: ' . $iamAccount->common_country_id);
+        if($iamAccount->common_country_id != null) {
+            Log::info(__METHOD__ . '| Customer does not have a country id. Using the global provider.');
+        }
 
         $provider = null;
 

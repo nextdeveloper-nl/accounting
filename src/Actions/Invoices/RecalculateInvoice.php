@@ -20,6 +20,7 @@ use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\Accounting\Database\Models\Accounts as AccountingAccount;
+use NextDeveloper\IAM\Helpers\UserHelper;
 use Omnipay\Omnipay;
 
 /**
@@ -48,6 +49,8 @@ class RecalculateInvoice extends AbstractAction
 
     public function handle()
     {
+        UserHelper::setAdminAsCurrentUser();
+
         $this->setProgress(0, 'Starting to recalculate the invoice');
 
         Events::fire('calculating-invoice:NextDeveloper\Accounting\Invoices', $this->model);
