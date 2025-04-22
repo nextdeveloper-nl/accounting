@@ -44,13 +44,13 @@ class RecalculateInvoice extends AbstractAction
 
         $this->queue = 'accounting';
 
+        UserHelper::setAdminAsCurrentUser();
+
         parent::__construct($params, $previousAction);
     }
 
     public function handle()
     {
-        UserHelper::setAdminAsCurrentUser();
-
         $this->setProgress(0, 'Starting to recalculate the invoice');
 
         Events::fire('calculating-invoice:NextDeveloper\Accounting\Invoices', $this->model);
