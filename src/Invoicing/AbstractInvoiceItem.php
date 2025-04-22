@@ -88,7 +88,7 @@ abstract class AbstractInvoiceItem
 
         //  We are removing this from here because it is creating almost infinite loop.
         //  We will be calculating invoice amounts, every hour, or just before the customer wants to pay it
-        dispatch(new RecalculateInvoice($this->invoice));
+        InvoiceHelper::updateInvoiceAmount($this->invoice);
 
         return $item;
     }
