@@ -12,9 +12,9 @@ use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
-class AccountantRole extends AbstractRole implements IAuthorizationRole
+class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
 {
-    public const NAME = 'accountant';
+    public const NAME = 'accounting-manager';
 
     public const LEVEL = 20;
 
