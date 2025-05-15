@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-    
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,10 +17,10 @@ class PaymentGatewayMessagesQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function messageIdentifier($value)
     {
-        return $this->builder->where('message_identifier', 'like', '%' . $value . '%');
+        return $this->builder->where('message_identifier', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of messageIdentifier
@@ -28,13 +28,13 @@ class PaymentGatewayMessagesQueryFilter extends AbstractQueryFilter
     {
         return $this->messageIdentifier($value);
     }
-        
+
     public function message($value)
     {
-        return $this->builder->where('message', 'like', '%' . $value . '%');
+        return $this->builder->where('message', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -115,7 +115,7 @@ class PaymentGatewayMessagesQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingPaymentGateway($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

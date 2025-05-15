@@ -191,7 +191,26 @@ class Pay extends AbstractAction
         $this->setProgress(75, 'Sending the payment request.');
 
         //  We are giving the parameters here. These parameters are the parameters that the payment gateway needs
-        $response = $omnipay->purchase($purchaseData)->send();
+        try {
+            $response = $omnipay->purchase($purchaseData)->send();
+        } catch (\Exception $e) {
+            $transactionLog = TransactionsService::create([
+                'accounting_invoice_id'         =>  $invoice->id,
+                'amount'                        => $invoice->amount,
+                'common_currency_id'            => $invoice->common_currency_id,
+                'accounting_payment_gateway_id' =>  $gateway->id,
+                'iam_account_id'                => $invoice->iam_account_id,
+                'accounting_account_id'         => $invoice->accounting_account_id,
+                'conversation_identifier'       => $this->conversationId,
+                'is_pending' => true,
+                'gateway_response' => $e->getMessage()
+            ]);
+
+            $this->setFinishedWithError('The payment request has failed. The error message is: '
+                . $e->getMessage());
+
+            return;
+        }
 
         $transactionLog = TransactionsService::create([
             'accounting_invoice_id'         =>  $invoice->id,
