@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-            
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,16 +17,16 @@ class PromoCodesQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function code($value)
     {
-        return $this->builder->where('code', 'like', '%' . $value . '%');
+        return $this->builder->where('code', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function giftCodeData($value)
     {
-        return $this->builder->where('gift_code_data', 'like', '%' . $value . '%');
+        return $this->builder->where('gift_code_data', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of giftCodeData
@@ -34,7 +34,7 @@ class PromoCodesQueryFilter extends AbstractQueryFilter
     {
         return $this->giftCodeData($value);
     }
-    
+
     public function value($value)
     {
         $operator = substr($value, 0, 1);
@@ -48,7 +48,7 @@ class PromoCodesQueryFilter extends AbstractQueryFilter
         return $this->builder->where('value', $operator, $value);
     }
 
-    
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -124,7 +124,7 @@ class PromoCodesQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -134,7 +134,7 @@ class PromoCodesQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -149,7 +149,7 @@ class PromoCodesQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrency($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

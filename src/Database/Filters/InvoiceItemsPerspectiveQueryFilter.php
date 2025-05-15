@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,10 +17,10 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function objectType($value)
     {
-        return $this->builder->where('object_type', 'like', '%' . $value . '%');
+        return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of objectType
@@ -28,16 +28,16 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->objectType($value);
     }
-        
+
     public function name($value)
     {
-        return $this->builder->where('name', 'like', '%' . $value . '%');
+        return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function accountingIdentifier($value)
     {
-        return $this->builder->where('accounting_identifier', 'like', '%' . $value . '%');
+        return $this->builder->where('accounting_identifier', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of accountingIdentifier
@@ -45,10 +45,10 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingIdentifier($value);
     }
-        
+
     public function commonCurrencyCode($value)
     {
-        return $this->builder->where('common_currency_code', 'like', '%' . $value . '%');
+        return $this->builder->where('common_currency_code', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of commonCurrencyCode
@@ -56,7 +56,7 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrencyCode($value);
     }
-    
+
     public function termYear($value)
     {
         $operator = substr($value, 0, 1);
@@ -75,7 +75,7 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->termYear($value);
     }
-    
+
     public function termMonth($value)
     {
         $operator = substr($value, 0, 1);
@@ -94,7 +94,7 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->termMonth($value);
     }
-    
+
     public function quantity($value)
     {
         $operator = substr($value, 0, 1);
@@ -108,7 +108,7 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('quantity', $operator, $value);
     }
 
-    
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -189,7 +189,7 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingInvoice($value);
     }
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -199,7 +199,7 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -209,7 +209,7 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -224,7 +224,7 @@ class InvoiceItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrency($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

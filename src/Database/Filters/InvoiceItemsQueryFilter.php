@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                    
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,10 +17,10 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function objectType($value)
     {
-        return $this->builder->where('object_type', 'like', '%' . $value . '%');
+        return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of objectType
@@ -28,7 +28,7 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->objectType($value);
     }
-    
+
     public function quantity($value)
     {
         $operator = substr($value, 0, 1);
@@ -42,7 +42,7 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('quantity', $operator, $value);
     }
 
-    
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -123,7 +123,7 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrency($value);
     }
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -133,7 +133,7 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function accountingInvoiceId($value)
     {
             $accountingInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
@@ -148,7 +148,7 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingInvoice($value);
     }
-    
+
     public function accountingPromoCodeId($value)
     {
             $accountingPromoCode = \NextDeveloper\Accounting\Database\Models\PromoCodes::where('uuid', $value)->first();
@@ -163,7 +163,7 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingPromoCode($value);
     }
-    
+
     public function accountingAccountId($value)
     {
             $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -178,7 +178,7 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingAccount($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

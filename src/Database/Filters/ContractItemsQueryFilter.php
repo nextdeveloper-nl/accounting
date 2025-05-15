@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                    
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,10 +17,10 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function objectType($value)
     {
-        return $this->builder->where('object_type', 'like', '%' . $value . '%');
+        return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of objectType
@@ -28,10 +28,10 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->objectType($value);
     }
-        
+
     public function contractType($value)
     {
-        return $this->builder->where('contract_type', 'like', '%' . $value . '%');
+        return $this->builder->where('contract_type', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of contractType
@@ -39,7 +39,7 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->contractType($value);
     }
-    
+
     public function discount($value)
     {
         $operator = substr($value, 0, 1);
@@ -53,7 +53,7 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('discount', $operator, $value);
     }
 
-    
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -129,7 +129,7 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -139,7 +139,7 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function accountingContractId($value)
     {
             $accountingContract = \NextDeveloper\Accounting\Database\Models\Contracts::where('uuid', $value)->first();
@@ -154,7 +154,7 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingContract($value);
     }
-    
+
     public function accountingAccountId($value)
     {
             $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -169,7 +169,7 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingAccount($value);
     }
-    
+
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -184,7 +184,7 @@ class ContractItemsQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrency($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

@@ -21,7 +21,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function objectType($value)
     {
-        return $this->builder->where('object_type', 'like', '%' . $value . '%');
+        return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of objectType
@@ -32,7 +32,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function contractType($value)
     {
-        return $this->builder->where('contract_type', 'like', '%' . $value . '%');
+        return $this->builder->where('contract_type', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of contractType
@@ -43,7 +43,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function accountName($value)
     {
-        return $this->builder->where('account_name', 'like', '%' . $value . '%');
+        return $this->builder->where('account_name', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of accountName
@@ -54,7 +54,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function accountingIdentifier($value)
     {
-        return $this->builder->where('accounting_identifier', 'like', '%' . $value . '%');
+        return $this->builder->where('accounting_identifier', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of accountingIdentifier
