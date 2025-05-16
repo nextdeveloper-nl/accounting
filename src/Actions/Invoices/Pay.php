@@ -9,6 +9,7 @@ use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
+use NextDeveloper\Accounting\Database\Models\Transactions;
 use NextDeveloper\Accounting\Services\TransactionsService;
 use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Database\Models\Currencies;
@@ -194,7 +195,10 @@ class Pay extends AbstractAction
         try {
             $response = $omnipay->purchase($purchaseData)->send();
         } catch (\Exception $e) {
-            $transactionLog = TransactionsService::create([
+            $transaction = new Transactions();
+            $transaction->unsetEventDispatcher();
+
+            $transaction->create([
                 'accounting_invoice_id'         =>  $invoice->id,
                 'amount'                        => $invoice->amount,
                 'common_currency_id'            => $invoice->common_currency_id,
@@ -212,7 +216,10 @@ class Pay extends AbstractAction
             return;
         }
 
-        $transactionLog = TransactionsService::create([
+        $transaction = new Transactions();
+        $transaction->unsetEventDispatcher();
+
+        $transaction = $transaction->create([
             'accounting_invoice_id'         =>  $invoice->id,
             'amount'                        => $invoice->amount,
             'common_currency_id'            => $invoice->common_currency_id,
@@ -220,9 +227,10 @@ class Pay extends AbstractAction
             'iam_account_id'                => $invoice->iam_account_id,
             'accounting_account_id'         => $invoice->accounting_account_id,
             'conversation_identifier'       => $this->conversationId,
+            'is_pending' => true
         ]);
 
-        Events::fire('created:NextDeveloper\Accounting\Transactions', $transactionLog);
+        Events::fire('created:NextDeveloper\Accounting\Transactions', $transaction);
 
         //  Registering the received message here, because we may want to tell customer a reasonable error message
         try {
