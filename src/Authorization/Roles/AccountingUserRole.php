@@ -76,21 +76,49 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
     {
         return [
             'accounting_accounts:read',
+            'accounting_accounts:create',
             'accounting_accounts:update',
+            'accounting_accounts:delete',
+
             'accounting_credit_cards:read',
             'accounting_credit_cards:create',
             'accounting_credit_cards:update',
             'accounting_credit_cards:delete',
+
             'accounting_invoices:read',
+            'accounting_invoices:create',
+            'accounting_invoices:update',
+            'accounting_invoices:delete',
+
             'accounting_invoice_items:read',
+            'accounting_invoice_items:create',
+            'accounting_invoice_items:update',
+            'accounting_invoice_items:delete',
+
             'accounting_contracts:read',
             'accounting_contracts:create',
             'accounting_contracts:update',
+            'accounting_contracts:delete',
+
             'accounting_contract_items:read',
             'accounting_contract_items:create',
             'accounting_contract_items:update',
             'accounting_contract_items:delete',
+
+            'accounting_payment_gateways:read',
+            'accounting_payment_gateways:create',
+            'accounting_payment_gateways:update',
+            'accounting_payment_gateways:delete',
+
+            'accounting_promo_codes:read',
+            'accounting_promo_codes:create',
+            'accounting_promo_codes:update',
+            'accounting_promo_codes:delete',
+
             'accounting_transactions:read',
+            'accounting_transactions:create',
+            'accounting_transactions:update',
+            'accounting_transactions:delete',
         ];
     }
 
