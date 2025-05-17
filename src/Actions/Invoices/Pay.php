@@ -3,21 +3,26 @@
 namespace NextDeveloper\Accounting\Actions\Invoices;
 
 use Carbon\Carbon;
+use Helpers\AccountingHelper;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
-use NextDeveloper\Accounting\Services\TransactionsService;
+use NextDeveloper\Accounting\Database\Models\Transactions;
 use NextDeveloper\Commons\Actions\AbstractAction;
+use NextDeveloper\Commons\Database\Models\Addresses;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Commons\Database\Models\Languages;
+use NextDeveloper\Commons\Helpers\CountryHelper;
+use NextDeveloper\Commons\Helpers\StateHelper;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\Accounting\Database\Models\Accounts as AccountingAccount;
+use NextDeveloper\IAM\Helpers\UserHelper;
 use Omnipay\Omnipay;
 
 /**
@@ -149,14 +154,29 @@ class Pay extends AbstractAction
             ->where('id', $creditCard->iam_user_id)
             ->first();
 
+        $accountBilled = AccountingHelper::getIamAccountFromInvoice($this->model);
+
+        $address = Addresses::withoutGlobalScope(AuthorizationScope::class)
+            ->where('object_id', $accountBilled->id)
+            ->where('object_type', 'NextDeveloper\\IAM\\Database\\Models\\Accounts')
+            ->where('is_invoice_address', true)
+            ->first();
+
         $cardData = [
             'firstName' => $cardOwner->name,
             'lastName' => $cardOwner->surname,
-            'number' => Str::remove(' ', $creditCard->cc_number),
+            'number' => Str::remove(' ', decrypt($creditCard->cc_number)),
             'expiryMonth' => $creditCard->cc_month,
             'expiryYear' => $creditCard->cc_year,
             'cvv' => $creditCard->cc_cvv,
-            'email' => $accountManager->email
+            'email' => $accountManager->email,
+
+            //  We need to fix this section
+            'billingAddress1'   =>  $address->line1,
+            'billingAddress2'   =>  $address->line2,
+            'billingCity'       =>  $address->city,
+            'billingCountry'    =>  CountryHelper::getCountry($address)?->code ?? 'Türkiye',
+            'company'           =>  $accountBilled->name
         ];
 
         $currency = Currencies::withoutGlobalScope(AuthorizationScope::class)
@@ -194,7 +214,12 @@ class Pay extends AbstractAction
         try {
             $response = $omnipay->purchase($purchaseData)->send();
         } catch (\Exception $e) {
-            $transactionLog = TransactionsService::create([
+            //  We don't catch the payment exceptions here. Payment exceptions are handled down below
+
+            $transaction = new Transactions();
+            $transaction->unsetEventDispatcher();
+
+            $transactionLog = $transaction->create([
                 'accounting_invoice_id'         =>  $invoice->id,
                 'amount'                        => $invoice->amount,
                 'common_currency_id'            => $invoice->common_currency_id,
@@ -212,7 +237,10 @@ class Pay extends AbstractAction
             return;
         }
 
-        $transactionLog = TransactionsService::create([
+        $transaction = new Transactions();
+        $transaction->unsetEventDispatcher();
+
+        $transactionLog = $transaction->create([
             'accounting_invoice_id'         =>  $invoice->id,
             'amount'                        => $invoice->amount,
             'common_currency_id'            => $invoice->common_currency_id,
@@ -220,6 +248,7 @@ class Pay extends AbstractAction
             'iam_account_id'                => $invoice->iam_account_id,
             'accounting_account_id'         => $invoice->accounting_account_id,
             'conversation_identifier'       => $this->conversationId,
+            'is_pending' => true
         ]);
 
         Events::fire('created:NextDeveloper\Accounting\Transactions', $transactionLog);
@@ -238,6 +267,27 @@ class Pay extends AbstractAction
         }
 
         if(!$response['isSuccessful']) {
+            //  Here we get the payment exceptions
+
+            switch ($response['error']['code']) {
+                case 1:
+                    StateHelper::setState($creditCard, 'card-number', 'There is a system error in payment processor.');
+                    break;
+                case 13:
+                    StateHelper::setState($creditCard, 'card-number', 'Expiration date is invalid. Card owner should provide a valid expiration date.');
+                    break;
+                case 14:
+                    StateHelper::setState($creditCard, 'card-number', 'Expiration year is invalid. Card owner should provide a valid expiration year.');
+                    break;
+                case 12:
+                    StateHelper::setState($creditCard, 'card-number', 'Card number is invalid. Card owner should provide a valid card number.');
+                    StateHelper::setState($invoice, 'payment-error', 'Credit card has invalid number. Card owner should provide a valid card number.');
+                    break;
+                default:
+                    StateHelper::setState($creditCard, 'error', $response['error']['message']);
+                    StateHelper::setState($invoice, 'payment-error', 'Card error: ' . $response['error']['message']);
+            }
+
             $this->setFinishedWithError('The payment request has failed. The error message is: '
                 . $response['error']['message']);
 

@@ -5,6 +5,7 @@ namespace Helpers;
 use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
+use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Commons\Database\Models\Countries;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
@@ -24,6 +25,18 @@ class AccountingHelper
         return Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('iam_account_id', $id)
             ->first();
+    }
+
+    public static function getIamAccountFromInvoice(Invoices $invoice) : ?\NextDeveloper\IAM\Database\Models\Accounts
+    {
+        $accountingAccount = self::getAccountingAccount($invoice->accounting_account_id);
+
+        return UserHelper::getAccountById($accountingAccount->iam_account_id);
+    }
+
+    public static function getAccountingAccount(int $accountId)
+    {
+        return Accounts::where('id', $accountId)->first();
     }
 
     /**

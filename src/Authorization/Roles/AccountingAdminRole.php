@@ -89,6 +89,9 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
             'accounting_promo_codes:delete',
 
             'accounting_transactions:read',
+            'accounting_transactions:create',
+            'accounting_transactions:update',
+            'accounting_transactions:delete',
         ];
     }
 
