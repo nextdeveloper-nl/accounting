@@ -15,6 +15,7 @@ use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Database\Models\Addresses;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Commons\Database\Models\Languages;
+use NextDeveloper\Commons\Helpers\CountryHelper;
 use NextDeveloper\Commons\Helpers\StateHelper;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Database\Models\Accounts;
@@ -169,10 +170,13 @@ class Pay extends AbstractAction
             'expiryYear' => $creditCard->cc_year,
             'cvv' => $creditCard->cc_cvv,
             'email' => $accountManager->email,
-            'registrationDate'  =>  $cardOwner->created_at,
+
             //  We need to fix this section
-            'lastLoginDate' =>  Carbon::now()->subMinutes(rand(1, 100)),
-            'registrationAddress'   => $address->line1 . ' ' . $address->line2
+            'billingAddress1'   =>  $address->line1,
+            'billingAddress2'   =>  $address->line2,
+            'billingCity'       =>  $address->city,
+            'billingCountry'    =>  CountryHelper::getCountry($address)?->code ?? 'Türkiye',
+            'company'           =>  $accountBilled->name
         ];
 
         $currency = Currencies::withoutGlobalScope(AuthorizationScope::class)
@@ -266,6 +270,15 @@ class Pay extends AbstractAction
             //  Here we get the payment exceptions
 
             switch ($response['error']['code']) {
+                case 1:
+                    StateHelper::setState($creditCard, 'card-number', 'There is a system error in payment processor.');
+                    break;
+                case 13:
+                    StateHelper::setState($creditCard, 'card-number', 'Expiration date is invalid. Card owner should provide a valid expiration date.');
+                    break;
+                case 14:
+                    StateHelper::setState($creditCard, 'card-number', 'Expiration year is invalid. Card owner should provide a valid expiration year.');
+                    break;
                 case 12:
                     StateHelper::setState($creditCard, 'card-number', 'Card number is invalid. Card owner should provide a valid card number.');
                     StateHelper::setState($invoice, 'payment-error', 'Credit card has invalid number. Card owner should provide a valid card number.');
