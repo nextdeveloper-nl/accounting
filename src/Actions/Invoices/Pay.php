@@ -15,6 +15,7 @@ use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Database\Models\Addresses;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Commons\Database\Models\Languages;
+use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Commons\Helpers\CountryHelper;
 use NextDeveloper\Commons\Helpers\StateHelper;
 use NextDeveloper\Events\Services\Events;
@@ -22,7 +23,6 @@ use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\Accounting\Database\Models\Accounts as AccountingAccount;
-use NextDeveloper\IAM\Helpers\UserHelper;
 use Omnipay\Omnipay;
 
 /**
@@ -161,6 +161,13 @@ class Pay extends AbstractAction
             ->where('object_type', 'NextDeveloper\\IAM\\Database\\Models\\Accounts')
             ->where('is_invoice_address', true)
             ->first();
+
+        if(!$address) {
+            StateHelper::setState($accountingAccount, 'invoice-address', 'The invoice address is not set for the customer. Please set the invoice address for the customer.');
+
+            throw new ModelNotFoundException('Cannot find the invoice address. Please set the invoice address for the customer.');
+            return;
+        }
 
         $cardData = [
             'firstName' => $cardOwner->name,
