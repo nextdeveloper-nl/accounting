@@ -23,20 +23,20 @@ class InvoicesPerspectiveTransformer extends AbstractInvoicesPerspectiveTransfor
      */
     public function transform(InvoicesPerspective $model)
     {
-        $transformed = Cache::get(
-            CacheHelper::getKey('InvoicesPerspective', $model->uuid, 'Transformed')
-        );
+//        $transformed = Cache::get(
+//            CacheHelper::getKey('InvoicesPerspective', $model->uuid, 'Transformed')
+//        );
 
-        if($transformed) {
-            return $transformed;
-        }
+//        if($transformed) {
+//            return $transformed;
+//        }
 
         $transformed = parent::transform($model);
 
-        Cache::set(
-            CacheHelper::getKey('InvoicesPerspective', $model->uuid, 'Transformed'),
-            $transformed
-        );
+//        Cache::set(
+//            CacheHelper::getKey('InvoicesPerspective', $model->uuid, 'Transformed'),
+//            $transformed
+//        );
 
         return $transformed;
     }

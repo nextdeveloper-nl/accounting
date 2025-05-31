@@ -5,6 +5,7 @@ namespace NextDeveloper\Accounting\Actions\Invoices;
 use Carbon\Carbon;
 use Helpers\AccountingHelper;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Database\Models\Invoices;
@@ -209,7 +210,7 @@ class Pay extends AbstractAction
                     'category1' =>  'Cloud Service',
                     'itemType'  =>  'VIRTUAL',
                     'name' => $invoice->uuid,
-                    'price' => $invoice->amount,
+                    'price' => round($invoice->amount, 2, PHP_ROUND_HALF_UP),
                     'quantity' => 1
                 ]
             ]
@@ -262,12 +263,17 @@ class Pay extends AbstractAction
 
         //  Registering the received message here, because we may want to tell customer a reasonable error message
         try {
-            if(array_key_exists('error', $response)) {
+            if($response['isSuccessful'] === false) {
                 PaymentGatewayMessages::create([
                     'accounting_payment_gateway_id' => $gateway->id,
                     'message_identifier' => $response['error']['code'],
                     'message' => $response['error']['message']
                 ]);
+
+                Log::error(__METHOD__ . '| Error response: ' . $response['error']['message']);
+
+                $this->setFinishedWithError('The payment request has failed. The error message is: '
+                    . $response['error']['message']);
             }
         } catch (\Exception $e) {
             //  We are not going to do anything here.
@@ -317,6 +323,11 @@ class Pay extends AbstractAction
 
         $invoice->update(['is_paid' => true]);
         $invoice = $invoice->fresh();
+
+        $creditCard->update([
+            'is_valid'      =>  true,
+            'is_default'    =>  true
+        ]);
 
         Events::fire('payment-successful:NextDeveloper\Accounting\Invoices', $invoice);
     }
