@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Accounting\Authorization\Roles;
 
+use Helpers\AccountingHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -40,14 +41,9 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             $model->getTable() == 'accounting_contracts' ||
             $model->getTable() == 'accounting_contracts_perspective'
         ) {
-            $myAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
-                ->where('iam_account_id', UserHelper::currentAccount()->id)
-                ->first();
+            $myAccount = AccountingHelper::getAccount();
 
-            $builder->where(function($query) use ($myAccount) {
-                $query->where('accounting_account_id', $myAccount->id)
-                ->orWhere('iam_account_id', UserHelper::currentAccount()->id);
-            });
+            $builder->where('accounting_account_id', $myAccount->id);
 
             return;
         }

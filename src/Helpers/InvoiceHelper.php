@@ -58,6 +58,9 @@ class InvoiceHelper
         $invoice = $invoice->latest()->first();
 
         if(!$invoice) {
+            Log::info(__METHOD__ . ' | Creating a new invoice for account: ' . $accounts->id
+                . ' for year: ' . $year . ' month: ' . $month);
+
             $invoice = InvoicesService::create([
                 'status'    => 'open',
                 'accounting_account_id' =>  $accounts->id,
