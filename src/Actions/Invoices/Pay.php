@@ -128,13 +128,20 @@ class Pay extends AbstractAction
 
         //  We are creating the gateway here
         $omnipay = Omnipay::create($gateway->gateway);
-        $omnipay->setApiId($gateway->parameters['apiKey']);
-        $omnipay->setSecretKey($gateway->parameters['apiSecret']);
+
+        if($gateway->parameters['is_test']) {
+            $omnipay->setApiId($gateway->parameters['test_api_key']);
+            $omnipay->setSecretKey($gateway->parameters['test_api_secret']);
+        } else {
+            $omnipay->setApiId($gateway->parameters['live_api_key']);
+            $omnipay->setSecretKey($gateway->parameters['live_api_secret']);
+        }
+
         $omnipay->set3dSecure(false);
         $omnipay->setOrderId($invoice->uuid);
         $omnipay->setLocale($language->code);
 
-        if ($gateway->parameters['isTest']) {
+        if ($gateway->parameters['is_test']) {
             $omnipay->setTestMode(true);
         }
 

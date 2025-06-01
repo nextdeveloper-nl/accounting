@@ -23,20 +23,20 @@ class InvoicesTransformer extends AbstractInvoicesTransformer
      */
     public function transform(Invoices $model)
     {
-        $transformed = Cache::get(
-            CacheHelper::getKey('Invoices', $model->uuid, 'Transformed')
-        );
-
-        if($transformed) {
-            return $transformed;
-        }
+//        $transformed = Cache::get(
+//            CacheHelper::getKey('Invoices', $model->uuid, 'Transformed')
+//        );
+//
+//        if($transformed) {
+//            return $transformed;
+//        }
 
         $transformed = parent::transform($model);
 
-        Cache::set(
-            CacheHelper::getKey('Invoices', $model->uuid, 'Transformed'),
-            $transformed
-        );
+//        Cache::set(
+//            CacheHelper::getKey('Invoices', $model->uuid, 'Transformed'),
+//            $transformed
+//        );
 
         return $transformed;
     }
