@@ -288,21 +288,38 @@ class Pay extends AbstractAction
 
         if(!$response['isSuccessful']) {
             //  Here we get the payment exceptions
-
             switch ($response['error']['code']) {
                 case 1:
-                    StateHelper::setState($creditCard, 'card-number', 'There is a system error in payment processor.');
+                    StateHelper::setState($creditCard, 'card-number', 'payment-processor-error', null,'There is a system error in payment processor.');
                     break;
                 case 13:
-                    StateHelper::setState($creditCard, 'card-number', 'Expiration date is invalid. Card owner should provide a valid expiration date.');
+                    StateHelper::setState($creditCard, 'card-number', 'expiration-date-invalid', null, 'Expiration date is invalid. Card owner should provide a valid expiration date.');
                     break;
                 case 14:
-                    StateHelper::setState($creditCard, 'card-number', 'Expiration year is invalid. Card owner should provide a valid expiration year.');
+                    StateHelper::setState($creditCard, 'card-number', 'expiration-year-invalid', null, 'Expiration year is invalid. Card owner should provide a valid expiration year.');
+                    break;
+                case 10054:
+                    StateHelper::setState($creditCard, 'card-number', 'expired', null, 'Card is expired. Card owner should provide a valid card with valid expiration date.');
                     break;
                 case 12:
-                    StateHelper::setState($creditCard, 'card-number', 'Card number is invalid. Card owner should provide a valid card number.');
-                    StateHelper::setState($invoice, 'payment-error', 'Credit card has invalid number. Card owner should provide a valid card number.');
+                    StateHelper::setState($creditCard, 'card-number', 'card-number-invalid', null, 'Card number is invalid. Card owner should provide a valid card number.');
+                    StateHelper::setState($invoice, 'payment-error', 'card-number-invalid', null, 'Credit card has invalid number. Card owner should provide a valid card number.');
                     break;
+                case 10051:
+                    StateHelper::setState($creditCard, 'fund', 'not-enough-funds', null, 'There is not enough fund in the card. Card owner should provide a valid card with enough fund.');
+                    StateHelper::setState($invoice, 'payment-error', 'not-enough-funds', null,'There is not enough fund in the card. Card owner should provide a valid card with enough fund.');
+                case 10005:
+                    StateHelper::setState($creditCard, 'payment-declined', 'declined-by-issuer', null, 'Payment is declined by the card issuer. Please talk to your bank.');
+                    StateHelper::setState($invoice, 'payment-error', 'declined-by-issuer', null, 'Payment is declined by the card issuer. Please talk to your bank.');
+                case 10012:
+                    StateHelper::setState($creditCard, 'invalid-transaction', 'invalid-transcation', null, 'There is an invalid transaction. Please try again later.');
+                    StateHelper::setState($invoice, 'payment-error', 'invalid-transaction', null, 'There is an invalid transaction. Please try again later.');
+                case 6001:
+                    StateHelper::setState($creditCard, 'card-status', 'lost', null, 'Card seems to be lost or stolen, please provide a valid card or consult to your bank.');
+                    StateHelper::setState($invoice, 'payment-error', 'lost-card', null, 'Card seems to be lost or stolen, please provide a valid card or consult to your bank.');
+                case 10034:
+                    StateHelper::setState($creditCard, 'card-status', 'possible-fraud', null, 'This card seems to used in a fraud. Please provide a valid credit card.');
+                    StateHelper::setState($invoice, 'payment-error', 'lost-card', null, 'This card seems to used in a fraud. Please provide a valid credit card.');
                 default:
                     StateHelper::setState($creditCard, 'error', $response['error']['message']);
                     StateHelper::setState($invoice, 'payment-error', 'Card error: ' . $response['error']['message']);
