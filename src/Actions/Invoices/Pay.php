@@ -221,9 +221,19 @@ class Pay extends AbstractAction
             return;
         }
 
+        $calculatedPrice = $this->model->amount;
+
+        if($this->model->exchange_rate) {
+            $calculatedPrice *= $this->model->exchange_rate;
+        }
+
+        if($this->model->vat) {
+            $calculatedPrice += $this->model->vat;
+        }
+
         $purchaseData = [
             'identityNumber'    =>  $cardOwner->nin,
-            'amount' => round($invoice->amount, 2, PHP_ROUND_HALF_UP),
+            'amount' => round($calculatedPrice, 2, PHP_ROUND_HALF_UP),
             'currency' => $currency->code,
             //  This goes to the Omnipay Card data
             'card' => $cardData,
@@ -235,7 +245,7 @@ class Pay extends AbstractAction
                     'category1' =>  'Cloud Service',
                     'itemType'  =>  'VIRTUAL',
                     'name' => $invoice->uuid,
-                    'price' => round($invoice->amount, 2, PHP_ROUND_HALF_UP),
+                    'price' => round($calculatedPrice, 2, PHP_ROUND_HALF_UP),
                     'quantity' => 1
                 ]
             ]
