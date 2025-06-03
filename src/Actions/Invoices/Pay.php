@@ -18,6 +18,7 @@ use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Commons\Database\Models\Languages;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Commons\Helpers\CountryHelper;
+use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
 use NextDeveloper\Commons\Helpers\StateHelper;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Database\Models\Accounts;
@@ -113,6 +114,23 @@ class Pay extends AbstractAction
             ->where('iam_account_id', $invoice->iam_account_id)
             ->where('is_active', true)
             ->first();
+
+        //  Here we are converting the invoice amount to the currency that we are going to charge
+        if($this->model->common_currency_id != $gateway->common_currency_id) {
+            Log::info(__METHOD__ . '| Seems like the invoice amount and the gateway currency is different. We need to convert the amount to the gateway currency.');
+            $exchangeRate = ExchangeRateHelper::getLatestRateById($this->model->common_currency_id, $gateway->common_currency_id);
+
+            Log::info(__METHOD__ . '| Exchange rate from ' . $this->model->common_currency_id . ' to ' . $gateway->common_currency_id . ' is: ' . $exchangeRate);
+
+            //  We are putting VAT here because the owner of this orchestrator may have multiple partners in various different countries.
+            //  Therefor we should be able to manage the VAT according to the country of the customer.
+            $this->model->update([
+                'exchange_rate' =>  $exchangeRate,
+                'vat'   =>  $gateway->vat_rate * $this->model->amount
+            ]);
+
+            $this->model->refresh();
+        }
 
         if (!$gateway) {
             $this->setFinishedWithError('The payment gateway is not available');
@@ -287,8 +305,9 @@ class Pay extends AbstractAction
         }
 
         if(!$response['isSuccessful']) {
+            $errorCode = intval($response['error']['code']);
             //  Here we get the payment exceptions
-            switch ($response['error']['code']) {
+            switch ($errorCode) {
                 case 1:
                     StateHelper::setState($creditCard, 'card-number', 'payment-processor-error', null,'There is a system error in payment processor.');
                     break;
@@ -308,18 +327,23 @@ class Pay extends AbstractAction
                 case 10051:
                     StateHelper::setState($creditCard, 'fund', 'not-enough-funds', null, 'There is not enough fund in the card. Card owner should provide a valid card with enough fund.');
                     StateHelper::setState($invoice, 'payment-error', 'not-enough-funds', null,'There is not enough fund in the card. Card owner should provide a valid card with enough fund.');
+                    break;
                 case 10005:
                     StateHelper::setState($creditCard, 'payment-declined', 'declined-by-issuer', null, 'Payment is declined by the card issuer. Please talk to your bank.');
                     StateHelper::setState($invoice, 'payment-error', 'declined-by-issuer', null, 'Payment is declined by the card issuer. Please talk to your bank.');
+                    break;
                 case 10012:
                     StateHelper::setState($creditCard, 'invalid-transaction', 'invalid-transcation', null, 'There is an invalid transaction. Please try again later.');
                     StateHelper::setState($invoice, 'payment-error', 'invalid-transaction', null, 'There is an invalid transaction. Please try again later.');
+                    break;
                 case 6001:
                     StateHelper::setState($creditCard, 'card-status', 'lost', null, 'Card seems to be lost or stolen, please provide a valid card or consult to your bank.');
                     StateHelper::setState($invoice, 'payment-error', 'lost-card', null, 'Card seems to be lost or stolen, please provide a valid card or consult to your bank.');
+                    break;
                 case 10034:
                     StateHelper::setState($creditCard, 'card-status', 'possible-fraud', null, 'This card seems to used in a fraud. Please provide a valid credit card.');
                     StateHelper::setState($invoice, 'payment-error', 'lost-card', null, 'This card seems to used in a fraud. Please provide a valid credit card.');
+                    break;
                 default:
                     StateHelper::setState($creditCard, 'error', $response['error']['message']);
                     StateHelper::setState($invoice, 'payment-error', 'Card error: ' . $response['error']['message']);
