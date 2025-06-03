@@ -124,7 +124,7 @@ class Pay extends AbstractAction
 
             //  We are putting VAT here because the owner of this orchestrator may have multiple partners in various different countries.
             //  Therefor we should be able to manage the VAT according to the country of the customer.
-            $this->model->update([
+            $this->model->updateQuietly([
                 'exchange_rate' =>  $exchangeRate,
                 'vat'   =>  $gateway->vat_rate * $this->model->amount
             ]);
