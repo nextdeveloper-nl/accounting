@@ -374,6 +374,8 @@ class Pay extends AbstractAction
             return;
         }
 
+        StateHelper::clearStates($this->model);
+
         $transactionLog->update([
             'gateway_response'  =>  'The payment has successfully processed.',
             'is_pending' => false
