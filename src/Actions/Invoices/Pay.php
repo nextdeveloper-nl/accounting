@@ -172,6 +172,8 @@ class Pay extends AbstractAction
             ->first();
 
         if(!$creditCard) {
+            StateHelper::setState($this->model, 'payment-error', 'no-credit-card', null, 'There is no credit card available for the customer. Please add a credit card to this account.');
+
             $this->setFinishedWithError('The credit card is not available for the customer');
             return;
         }
