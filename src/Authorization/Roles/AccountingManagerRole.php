@@ -31,7 +31,12 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
      */
     public function apply(Builder $builder, Model $model)
     {
-        // An accountant can see all accounting data
+        if(
+            $model->getTable() == 'accounting_credit_cards'
+        ) {
+            $builder->where('iam_account_id', UserHelper::currentAccount()->id);
+            return;
+        }
     }
 
     public function checkPrivileges(Users $users = null)
