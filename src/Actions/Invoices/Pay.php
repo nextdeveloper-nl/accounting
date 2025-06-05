@@ -125,12 +125,17 @@ class Pay extends AbstractAction
             //  We are putting VAT here because the owner of this orchestrator may have multiple partners in various different countries.
             //  Therefor we should be able to manage the VAT according to the country of the customer.
             $this->model->updateQuietly([
-                'exchange_rate' =>  $exchangeRate,
-                'vat'   =>  $gateway->vat_rate * $this->model->amount
+                'exchange_rate' =>  $exchangeRate
             ]);
 
             $this->model->refresh();
         }
+
+        $this->model->updateQuietly([
+            'vat'   =>  $gateway->vat_rate * $this->model->amount
+        ]);
+
+        $this->model->refresh();
 
         if (!$gateway) {
             $this->setFinishedWithError('The payment gateway is not available');
@@ -172,6 +177,8 @@ class Pay extends AbstractAction
             ->first();
 
         if(!$creditCard) {
+            StateHelper::setState($this->model, 'payment-error', 'no-credit-card', null, 'There is no credit card available for the customer. Please add a credit card to this account.');
+
             $this->setFinishedWithError('The credit card is not available for the customer');
             return;
         }
@@ -371,6 +378,8 @@ class Pay extends AbstractAction
 
             return;
         }
+
+        StateHelper::clearStates($this->model);
 
         $transactionLog->update([
             'gateway_response'  =>  'The payment has successfully processed.',

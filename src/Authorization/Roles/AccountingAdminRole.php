@@ -30,9 +30,12 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
      */
     public function apply(Builder $builder, Model $model)
     {
-        /**
-         * Here user will be able to list all models, because by default, sales manager can see everybody.
-         */
+        if(
+            $model->getTable() == 'accounting_credit_cards'
+        ) {
+            $builder->where('iam_account_id', UserHelper::currentAccount()->id);
+            return;
+        }
     }
 
     public function checkPrivileges(Users $users = null)
