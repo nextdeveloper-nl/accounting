@@ -391,6 +391,8 @@ class Pay extends AbstractAction
         $invoice->update(['is_paid' => true]);
         $invoice = $invoice->fresh();
 
+        StateHelper::deleteState($invoice, 'payment-error');
+
         $creditCard->update([
             'is_valid'      =>  true,
             'is_default'    =>  true
