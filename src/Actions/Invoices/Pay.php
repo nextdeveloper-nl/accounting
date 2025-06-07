@@ -48,13 +48,13 @@ class Pay extends AbstractAction
         ]
     ];
 
-    private $this->accountManager;
+    private $accountManager;
 
-    private $this->accountingAccount;
+    private $accountingAccount;
 
     private $paymentGateway;
 
-    private $this->customer;
+    private $customer;
 
     private $language;
 
@@ -126,7 +126,14 @@ class Pay extends AbstractAction
             ->where('is_active', true)
             ->first();
 
-
+        switch ($this->paymentGateway->name) {
+            case 'iyzico':
+                $this->setProgress(30, 'Payment gateway is Iyzico. We will use Iyzico payment gateway to charge the customer.');
+                $this->payWithIyzico();
+                break;
+            case 'stripe':
+                break;
+        }
 
         Events::fire('payment-successful:NextDeveloper\Accounting\Invoices', $invoice);
     }
