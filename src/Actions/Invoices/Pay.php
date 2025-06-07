@@ -48,6 +48,17 @@ class Pay extends AbstractAction
         ]
     ];
 
+    private $this->accountManager;
+
+    private $this->accountingAccount;
+
+    private $paymentGateway;
+
+    private $this->customer;
+
+    private $language;
+
+
     /**
      * @param Invoices $invoice
      */
@@ -82,24 +93,24 @@ class Pay extends AbstractAction
 
         $this->setProgress(10, 'Checking the customer country and which payment gateway to use');
 
-        $accountingAccount = AccountingAccount::withoutGlobalScope(AuthorizationScope::class)
+        $this->accountingAccount = AccountingAccount::withoutGlobalScope(AuthorizationScope::class)
             ->where('id', $invoice->accounting_account_id)
             ->first();
 
-        $customer = Accounts::withoutGlobalScope(AuthorizationScope::class)
-            ->where('id', $accountingAccount->iam_account_id)
+        $this->customer = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $this->accountingAccount->iam_account_id)
             ->first();
 
-        $language = Languages::withoutGlobalScope(AuthorizationScope::class)
-            ->where('id', $customer->common_language_id)
+        $this->language = Languages::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $this->customer->common_language_id)
             ->first();
 
-        $accountManager = Users::withoutGlobalScope(AuthorizationScope::class)
-            ->where('id', $customer->iam_user_id)
+        $this->accountManager = Users::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $this->customer->iam_user_id)
             ->first();
 
-        if (!$language) {
-            $language = Languages::withoutGlobalScope(AuthorizationScope::class)
+        if (!$this->language) {
+            $this->language = Languages::withoutGlobalScope(AuthorizationScope::class)
                 ->where('code', App::getLocale())
                 ->first();
         }
@@ -109,18 +120,26 @@ class Pay extends AbstractAction
         //  Here we are finding the payment gateway by using the country of the customer
         //  and the provider (who creates the invoice) of the customer. Because in multiple accounting system
         //  There can be more than one payment gateways and we may need to charge customers from that payment gateways
-        $gateway = PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
-            ->where('common_country_id', $customer->common_country_id)
+        $this->paymentGateway = PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
+            ->where('common_country_id', $this->customer->common_country_id)
             ->where('iam_account_id', $invoice->iam_account_id)
             ->where('is_active', true)
             ->first();
 
-        //  Here we are converting the invoice amount to the currency that we are going to charge
-        if($this->model->common_currency_id != $gateway->common_currency_id) {
-            Log::info(__METHOD__ . '| Seems like the invoice amount and the gateway currency is different. We need to convert the amount to the gateway currency.');
-            $exchangeRate = ExchangeRateHelper::getLatestRateById($this->model->common_currency_id, $gateway->common_currency_id);
 
-            Log::info(__METHOD__ . '| Exchange rate from ' . $this->model->common_currency_id . ' to ' . $gateway->common_currency_id . ' is: ' . $exchangeRate);
+
+        Events::fire('payment-successful:NextDeveloper\Accounting\Invoices', $invoice);
+    }
+
+    public function payWithIyzico() {
+        $invoice = $this->model;
+
+        //  Here we are converting the invoice amount to the currency that we are going to charge
+        if($this->model->common_currency_id != $this->paymentGateway->common_currency_id) {
+            Log::info(__METHOD__ . '| Seems like the invoice amount and the gateway currency is different. We need to convert the amount to the gateway currency.');
+            $exchangeRate = ExchangeRateHelper::getLatestRateById($this->model->common_currency_id, $this->paymentGateway->common_currency_id);
+
+            Log::info(__METHOD__ . '| Exchange rate from ' . $this->model->common_currency_id . ' to ' . $this->paymentGateway->common_currency_id . ' is: ' . $exchangeRate);
 
             //  We are putting VAT here because the owner of this orchestrator may have multiple partners in various different countries.
             //  Therefor we should be able to manage the VAT according to the country of the customer.
@@ -132,17 +151,17 @@ class Pay extends AbstractAction
         }
 
         $this->model->updateQuietly([
-            'vat'   =>  $gateway->vat_rate * $this->model->amount
+            'vat'   =>  $this->paymentGateway->vat_rate * $this->model->amount
         ]);
 
         $this->model->refresh();
 
-        if (!$gateway) {
+        if (!$this->paymentGateway) {
             $this->setFinishedWithError('The payment gateway is not available');
             return;
         }
 
-        if (!class_exists($gateway->gateway)) {
+        if (!class_exists($this->paymentGateway->gateway)) {
             $this->setFinishedWithError('The payment gateway class does not exist');
             return;
         }
@@ -150,27 +169,27 @@ class Pay extends AbstractAction
         $this->setProgress(50, 'Building the payment request for payment processor.');
 
         //  We are creating the gateway here
-        $omnipay = Omnipay::create($gateway->gateway);
+        $omnipay = Omnipay::create($this->paymentGateway->gateway);
 
-        if($gateway->parameters['is_test']) {
-            $omnipay->setApiId($gateway->parameters['test_api_key']);
-            $omnipay->setSecretKey($gateway->parameters['test_api_secret']);
+        if($this->paymentGateway->parameters['is_test']) {
+            $omnipay->setApiId($this->paymentGateway->parameters['test_api_key']);
+            $omnipay->setSecretKey($this->paymentGateway->parameters['test_api_secret']);
         } else {
-            $omnipay->setApiId($gateway->parameters['live_api_key']);
-            $omnipay->setSecretKey($gateway->parameters['live_api_secret']);
+            $omnipay->setApiId($this->paymentGateway->parameters['live_api_key']);
+            $omnipay->setSecretKey($this->paymentGateway->parameters['live_api_secret']);
         }
 
         $omnipay->set3dSecure(false);
-        $omnipay->setOrderId($invoice->uuid);
-        $omnipay->setLocale($language->code);
+        $omnipay->setOrderId($this->model->uuid);
+        $omnipay->setLocale($this->language->code);
 
-        if ($gateway->parameters['is_test']) {
+        if ($this->paymentGateway->parameters['is_test']) {
             $omnipay->setTestMode(true);
         }
 
         $creditCard = CreditCards::withoutGlobalScope(AuthorizationScope::class)
-            ->where('iam_account_id', $customer->id)
-            ->where('iam_user_id', $customer->iam_user_id)
+            ->where('iam_account_id', $this->customer->id)
+            ->where('iam_user_id', $this->customer->iam_user_id)
             //  We will use the default credit card for the customer but we will use the latest one first.
             //->where('is_default', true)
             ->orderBy('id', 'desc')
@@ -196,7 +215,7 @@ class Pay extends AbstractAction
             ->first();
 
         if(!$address) {
-            StateHelper::setState($accountingAccount, 'invoice-address', 'The invoice address is not set for the customer. Please set the invoice address for the customer.');
+            StateHelper::setState($this->accountingAccount, 'invoice-address', 'The invoice address is not set for the customer. Please set the invoice address for the customer.');
 
             throw new ModelNotFoundException('Cannot find the invoice address. Please set the invoice address for the customer.');
             return;
@@ -209,7 +228,7 @@ class Pay extends AbstractAction
             'expiryMonth' => $creditCard->cc_month,
             'expiryYear' => $creditCard->cc_year,
             'cvv' => $creditCard->cc_cvv,
-            'email' => $accountManager->email,
+            'email' => $cardOwner->email,
 
             //  We need to fix this section
             'billingAddress1'   =>  $address->line1,
@@ -273,7 +292,7 @@ class Pay extends AbstractAction
                 'accounting_invoice_id'         =>  $invoice->id,
                 'amount'                        => $invoice->amount,
                 'common_currency_id'            => $invoice->common_currency_id,
-                'accounting_payment_gateway_id' =>  $gateway->id,
+                'accounting_payment_gateway_id' =>  $this->paymentGateway->id,
                 'iam_account_id'                => $invoice->iam_account_id,
                 'accounting_account_id'         => $invoice->accounting_account_id,
                 'conversation_identifier'       => $this->conversationId,
@@ -294,7 +313,7 @@ class Pay extends AbstractAction
             'accounting_invoice_id'         =>  $invoice->id,
             'amount'                        => $invoice->amount,
             'common_currency_id'            => $invoice->common_currency_id,
-            'accounting_payment_gateway_id' =>  $gateway->id,
+            'accounting_payment_gateway_id' =>  $this->paymentGateway->id,
             'iam_account_id'                => $invoice->iam_account_id,
             'accounting_account_id'         => $invoice->accounting_account_id,
             'conversation_identifier'       => $this->conversationId,
@@ -307,7 +326,7 @@ class Pay extends AbstractAction
         try {
             if($response['isSuccessful'] === false) {
                 PaymentGatewayMessages::create([
-                    'accounting_payment_gateway_id' => $gateway->id,
+                    'accounting_payment_gateway_id' => $this->paymentGateway->id,
                     'message_identifier' => $response['error']['code'],
                     'message' => $response['error']['message']
                 ]);
@@ -397,7 +416,5 @@ class Pay extends AbstractAction
             'is_valid'      =>  true,
             'is_default'    =>  true
         ]);
-
-        Events::fire('payment-successful:NextDeveloper\Accounting\Invoices', $invoice);
     }
 }
