@@ -54,7 +54,8 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
      */
     public function transform(ContractItemsPerspective $model)
     {
-                                                $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
+                                                $accountingContractId = \NextDeveloper\Accounting\Database\Models\Contracts::where('id', $model->accounting_contract_id)->first();
+                                                            $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
@@ -65,6 +66,7 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
             'id'  =>  $model->uuid,
             'object_type'  =>  $model->object_type,
             'object_id'  =>  $model->object_id,
+            'accounting_contract_id'  =>  $accountingContractId ? $accountingContractId->uuid : null,
             'term_starts'  =>  $model->term_starts,
             'term_ends'  =>  $model->term_ends,
             'price'  =>  $model->price,
@@ -171,6 +173,9 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

@@ -4,6 +4,7 @@ namespace NextDeveloper\Accounting\Actions\Invoices;
 
 use Carbon\Carbon;
 use Helpers\AccountingHelper;
+use Helpers\InvoiceHelper;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -12,6 +13,7 @@ use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Database\Models\Transactions;
+use Nextdeveloper\Accounting\PaymentGateways\Stripe;
 use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Database\Models\Addresses;
 use NextDeveloper\Commons\Database\Models\Currencies;
@@ -97,6 +99,8 @@ class Pay extends AbstractAction
             ->where('id', $invoice->accounting_account_id)
             ->first();
 
+        AccountingHelper::fixDistributorId($this->accountingAccount);
+
         $this->customer = Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('id', $this->accountingAccount->iam_account_id)
             ->first();
@@ -126,19 +130,26 @@ class Pay extends AbstractAction
             ->where('is_active', true)
             ->first();
 
+        Log::info(__METHOD__ . '| Payment gateway for the customer is: ' . ($this->paymentGateway ? $this->paymentGateway->name : 'not found'));
+
         switch ($this->paymentGateway->name) {
             case 'iyzico':
                 $this->setProgress(30, 'Payment gateway is Iyzico. We will use Iyzico payment gateway to charge the customer.');
                 $this->payWithIyzico();
                 break;
-            case 'stripe':
+            case 'stripe-usa':
+                $this->setProgress(30, 'Payment gateway is Stripe USA. We will use Stripe USA payment gateway to charge the customer.');
+                $this->payWithStripe();
                 break;
         }
 
         Events::fire('payment-successful:NextDeveloper\Accounting\Invoices', $invoice);
     }
 
-    public function payWithIyzico() {
+    public function payWithStripe()
+    {
+        trigger_error('The Stripe payment gateway is not implemented yet. Please use Iyzico payment gateway instead.', E_USER_WARNING);
+
         $invoice = $this->model;
 
         //  Here we are converting the invoice amount to the currency that we are going to charge
@@ -175,6 +186,29 @@ class Pay extends AbstractAction
 
         $this->setProgress(50, 'Building the payment request for payment processor.');
 
+        $gateway = new Stripe($this->paymentGateway);
+
+        dd($gateway);
+    }
+
+    public function payWithIyzico() {
+        $invoice = $this->model;
+
+        //  Here we are converting the invoice amount to the currency that we are going to charge
+        $invoice = InvoiceHelper::calculateByGateway($invoice);
+
+        if (!$this->paymentGateway) {
+            $this->setFinishedWithError('The payment gateway is not available');
+            return;
+        }
+
+        if (!class_exists($this->paymentGateway->gateway)) {
+            $this->setFinishedWithError('The payment gateway class does not exist');
+            return;
+        }
+
+        $this->setProgress(50, 'Building the payment request for payment processor.');
+
         //  We are creating the gateway here
         $omnipay = Omnipay::create($this->paymentGateway->gateway);
 
@@ -192,6 +226,8 @@ class Pay extends AbstractAction
 
         if ($this->paymentGateway->parameters['is_test']) {
             $omnipay->setTestMode(true);
+        } else {
+            $omnipay->setTestMode(false);
         }
 
         $creditCard = CreditCards::withoutGlobalScope(AuthorizationScope::class)

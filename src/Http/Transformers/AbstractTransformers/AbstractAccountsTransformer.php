@@ -56,6 +56,9 @@ class AbstractAccountsTransformer extends AbstractTransformer
     {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
+                                                            $distributorId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->distributor_id)->first();
+                                                            $salesPartnerId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->sales_partner_id)->first();
+                                                            $integratorPartnerId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
                         
         return $this->buildPayload(
             [
@@ -75,6 +78,9 @@ class AbstractAccountsTransformer extends AbstractTransformer
             'is_suspended'  =>  $model->is_suspended,
             'balance'  =>  $model->balance,
             'is_disabled'  =>  $model->is_disabled,
+            'distributor_id'  =>  $distributorId ? $distributorId->uuid : null,
+            'sales_partner_id'  =>  $salesPartnerId ? $salesPartnerId->uuid : null,
+            'integrator_partner_id'  =>  $integratorPartnerId ? $integratorPartnerId->uuid : null,
             ]
         );
     }
@@ -163,6 +169,9 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

@@ -11,6 +11,7 @@ use NextDeveloper\Accounting\Database\Observers\AccountsObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
  * Accounts model.
@@ -33,10 +34,13 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property boolean $is_suspended
  * @property $balance
  * @property boolean $is_disabled
+ * @property integer $distributor_id
+ * @property integer $sales_partner_id
+ * @property integer $integrator_partner_id
  */
 class Accounts extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -62,6 +66,9 @@ class Accounts extends Model
             'is_suspended',
             'balance',
             'is_disabled',
+            'distributor_id',
+            'sales_partner_id',
+            'integrator_partner_id',
     ];
 
     /**
@@ -97,6 +104,9 @@ class Accounts extends Model
     'tr_mersis' => 'string',
     'is_suspended' => 'boolean',
     'is_disabled' => 'boolean',
+    'distributor_id' => 'integer',
+    'sales_partner_id' => 'integer',
+    'integrator_partner_id' => 'integer',
     ];
 
     /**
@@ -157,17 +167,20 @@ class Accounts extends Model
         }
     }
 
-    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
-    }
-    
     public function invoices() : \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\NextDeveloper\Accounting\Database\Models\Invoices::class);
     }
 
+    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
+    }
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

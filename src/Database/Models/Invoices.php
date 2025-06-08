@@ -11,6 +11,7 @@ use NextDeveloper\Accounting\Database\Observers\InvoicesObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
  * Invoices model.
@@ -42,7 +43,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  */
 class Invoices extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -177,7 +178,7 @@ class Invoices extends Model
 
     public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(\NextDeveloper\Accounting\Database\Models\Accounts::class);
+        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
     }
     
     public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -186,6 +187,9 @@ class Invoices extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

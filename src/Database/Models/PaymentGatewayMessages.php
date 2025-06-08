@@ -11,6 +11,7 @@ use NextDeveloper\Accounting\Database\Observers\PaymentGatewayMessagesObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
  * PaymentGatewayMessages model.
@@ -27,7 +28,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  */
 class PaymentGatewayMessages extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -134,6 +135,9 @@ class PaymentGatewayMessages extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

@@ -24,6 +24,9 @@ class AccountsUpdateRequest extends AbstractFormRequest
         'is_suspended' => 'boolean',
         'balance' => 'nullable',
         'is_disabled' => 'boolean',
+        'distributor_id' => 'nullable|exists:partnership_accounts,uuid|uuid',
+        'sales_partner_id' => 'nullable|exists:partnership_accounts,uuid|uuid',
+        'integrator_partner_id' => 'nullable|exists:partnership_accounts,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
