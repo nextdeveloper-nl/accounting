@@ -13,6 +13,7 @@ use NextDeveloper\Accounting\Database\Observers\CreditCardsObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
  * CreditCards model.
@@ -39,7 +40,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  */
 class CreditCards extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -183,6 +184,9 @@ class CreditCards extends Model
             },
         );
     }
+
+
+
 
 
 

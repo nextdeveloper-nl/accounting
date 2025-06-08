@@ -60,6 +60,7 @@ trait AccountingPaymentGatewayTestTraits
             'form_params'   =>  [
                 'name'  =>  'a',
                 'gateway'  =>  'a',
+                'vat_rate'  =>  '1',
                             ],
                 ['http_errors' => false]
             ]
@@ -367,6 +368,25 @@ trait AccountingPaymentGatewayTestTraits
             $request = new Request(
                 [
                 'gateway'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingPaymentGatewayQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGateway::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingpaymentgateway_event_vat_rate_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'vat_rate'  =>  '1'
                 ]
             );
 

@@ -6,9 +6,11 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
+use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Services\InvoicesService;
 use NextDeveloper\Commons\Database\GlobalScopes\LimitScope;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
@@ -18,6 +20,21 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 
 class InvoiceHelper
 {
+    public static function fixCurrencyCode(Invoices $invoice) : Invoices
+    {
+        //  This is a helper to fix the currency code of the invoice.
+        //  We are doing this because we are using the common_currency_id in the invoices table.
+        //  But we need to use the currency code in the invoice items table.
+        $account = self::getAccount($invoice);
+        $accountingAccount = AccountingHelper::getAccountFromIamAccountId($account->id);
+
+        $invoice->updateQuietly([
+            'common_currency_id' => $accountingAccount->common_currency_id
+        ]);
+
+        return $invoice;
+    }
+
     public static function getAccount(Invoices $invoice)
     {
         return Accounts::withoutGlobalScope(AuthorizationScope::class)
@@ -138,5 +155,54 @@ class InvoiceHelper
             'amount'                =>  $totalAmount,
             'common_currency_id'    =>  $providerCurrency->id
         ]);
+    }
+
+    public static function getInvoiceById($id)
+    {
+        if(Str::isUuid($id)) {
+            return Invoices::withoutGlobalScope(AuthorizationScope::class)
+                ->where('uuid', $id)
+                ->first();
+        }
+
+        return Invoices::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $id)
+            ->first();
+    }
+
+    public static function getGatewayForInvoice(Invoices $invoice) : ?PaymentGateways
+    {
+        $invoiceOwnerAccountingAccount = self::getAccount($invoice);
+        $account = AccountingHelper::getIamAccount($invoiceOwnerAccountingAccount);
+
+        return PaymentGateways::where('common_country_id', $account->common_country_id)
+            ->where('is_active', true)
+            ->first();
+    }
+
+    public static function calculateByGateway(Invoices $invoice) : Invoices
+    {
+        $gateway = self::getGatewayForInvoice($invoice);
+
+        if($invoice->common_currency_id != $gateway->common_currency_id) {
+            Log::info(__METHOD__ . '| Seems like the invoice amount and the gateway currency is different. We need to convert the amount to the gateway currency.');
+            $exchangeRate = ExchangeRateHelper::getLatestRateById($invoice->common_currency_id, $gateway->common_currency_id);
+
+            Log::info(__METHOD__ . '| Exchange rate from ' . $invoice->common_currency_id . ' to ' . $gateway->common_currency_id . ' is: ' . $exchangeRate);
+
+            $invoice->updateQuietly([
+                'exchange_rate' =>  $exchangeRate
+            ]);
+
+            $invoice->refresh();
+        }
+
+        //  We are putting VAT here because the owner of this orchestrator may have multiple partners in various different countries.
+        //  Therefor we should be able to manage the VAT according to the country of the customer.
+        $invoice->updateQuietly([
+            'vat'   =>  $gateway->vat_rate * $invoice->amount
+        ]);
+
+        return $invoice;
     }
 }

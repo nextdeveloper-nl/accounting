@@ -7,11 +7,58 @@ use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Commons\Database\Models\Countries;
+use NextDeveloper\Commons\Helpers\CountryHelper;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
+use NextDeveloper\Partnership\Helpers\PartnerHelper;
 
 class AccountingHelper
 {
+    /**
+     * Here we are trying to find the suitable distributor for the customer and then assign the customer
+     * to the related distributor
+     *
+     * @param Accounts $account
+     * @return Accounts
+     */
+    public static function fixDistributorId(Accounts $account) : Accounts
+    {
+        if($account->distributor_id){
+            Log::info(__METHOD__ . '| Distributor ID is already set. No need to fix it.');
+            return $account;
+        }
+
+        //  First we need to understand where the customer is actually from
+        $iamAccount = self::getIamAccount($account);
+        $country = CountryHelper::getCountryById($iamAccount->common_country_id);
+
+        $provider = null;
+
+        //  If the country is not set, we will use the global provider because we dont know where the customer is from.
+        if(!$country) {
+            $defaultProviderId = config('leo.providers.zones.global');
+            $provider = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('id', $defaultProviderId)
+                ->first();
+        } else {
+            //  If we know where the customer is then we should assign the related distributor
+            //  For temporary we are assigning the default distributor
+
+            $defaultProviderId = config('leo.providers.zones.global');
+            $provider = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('id', $defaultProviderId)
+                ->first();
+        }
+
+        $partner = PartnerHelper::getPartnerByIamAccount($provider);
+
+        $account->updateQuietly([
+            'distributor_id'    =>  $partner->id
+        ]);
+
+        return $account->fresh();
+    }
+
     public static function getIamAccountFromContract(Contracts $contract) : ?\NextDeveloper\IAM\Database\Models\Accounts
     {
         $accountingAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
@@ -36,7 +83,13 @@ class AccountingHelper
 
     public static function getAccountingAccount(int $accountId)
     {
-        return Accounts::where('id', $accountId)->first();
+        $accountingAccount = Accounts::where('id', $accountId)->first();
+
+        if(!$accountingAccount->distributor_id) {
+            self::fixDistributorId($accountingAccount);
+        }
+
+        return $accountingAccount->fresh();
     }
 
     /**

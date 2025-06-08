@@ -11,6 +11,7 @@ use NextDeveloper\Accounting\Database\Observers\ContractItemsPerspectiveObserver
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
  * ContractItemsPerspective model.
@@ -20,6 +21,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property string $uuid
  * @property string $object_type
  * @property integer $object_id
+ * @property integer $accounting_contract_id
  * @property \Carbon\Carbon $term_starts
  * @property \Carbon\Carbon $term_ends
  * @property $price
@@ -41,7 +43,7 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  */
 class ContractItemsPerspective extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -57,6 +59,7 @@ class ContractItemsPerspective extends Model
     protected $fillable = [
             'object_type',
             'object_id',
+            'accounting_contract_id',
             'term_starts',
             'term_ends',
             'price',
@@ -97,6 +100,7 @@ class ContractItemsPerspective extends Model
     'id' => 'integer',
     'object_type' => 'string',
     'object_id' => 'integer',
+    'accounting_contract_id' => 'integer',
     'term_starts' => 'datetime',
     'term_ends' => 'datetime',
     'discount' => 'integer',
@@ -174,6 +178,9 @@ class ContractItemsPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

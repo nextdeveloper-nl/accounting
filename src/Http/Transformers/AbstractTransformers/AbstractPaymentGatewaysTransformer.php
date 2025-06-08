@@ -56,6 +56,8 @@ class AbstractPaymentGatewaysTransformer extends AbstractTransformer
     {
                                                 $commonCountryId = \NextDeveloper\Commons\Database\Models\Countries::where('id', $model->common_country_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
+                                                            $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
+                                                            $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                         
         return $this->buildPayload(
             [
@@ -69,6 +71,9 @@ class AbstractPaymentGatewaysTransformer extends AbstractTransformer
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
             'parameters'  =>  $model->parameters,
+            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+            'vat_rate'  =>  $model->vat_rate,
+            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
             ]
         );
     }
@@ -157,6 +162,9 @@ class AbstractPaymentGatewaysTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 
