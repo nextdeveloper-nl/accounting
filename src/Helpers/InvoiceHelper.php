@@ -93,6 +93,8 @@ class InvoiceHelper
             ]);
         }
 
+        AccountingHelper::getDistributor();
+
         return $invoice->fresh();
     }
 

@@ -59,6 +59,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
                                                             $distributorId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->distributor_id)->first();
                                                             $salesPartnerId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->sales_partner_id)->first();
                                                             $integratorPartnerId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
+                                                            $affiliatePartnerId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->affiliate_partner_id)->first();
                         
         return $this->buildPayload(
             [
@@ -81,6 +82,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
             'distributor_id'  =>  $distributorId ? $distributorId->uuid : null,
             'sales_partner_id'  =>  $salesPartnerId ? $salesPartnerId->uuid : null,
             'integrator_partner_id'  =>  $integratorPartnerId ? $integratorPartnerId->uuid : null,
+            'affiliate_partner_id'  =>  $affiliatePartnerId ? $affiliatePartnerId->uuid : null,
             ]
         );
     }
@@ -169,6 +171,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
