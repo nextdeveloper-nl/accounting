@@ -14,6 +14,30 @@ use NextDeveloper\Partnership\Helpers\PartnerHelper;
 
 class AccountingHelper
 {
+    public static function getPaymentGatewayOfDistributor(Accounts $account)
+    {
+        return \NextDeveloper\Accounting\Database\Models\PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
+            ->where('accounting_account_id', $account->id)
+            ->where('is_active', true)
+            ->first();
+    }
+
+    public static function getDistributorAccount(Accounts $account) {
+        $distributorAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $account->distributor_id)
+            ->first();
+
+        if(!$distributorAccount) {
+            self::fixDistributorId($account);
+
+            $distributorAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('id', $account->distributor_id)
+                ->first();
+        }
+
+        return $distributorAccount;
+    }
+
     /**
      * Here we are trying to find the suitable distributor for the customer and then assign the customer
      * to the related distributor

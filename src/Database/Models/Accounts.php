@@ -37,6 +37,7 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
  * @property integer $distributor_id
  * @property integer $sales_partner_id
  * @property integer $integrator_partner_id
+ * @property integer $affiliate_partner_id
  */
 class Accounts extends Model
 {
@@ -69,6 +70,7 @@ class Accounts extends Model
             'distributor_id',
             'sales_partner_id',
             'integrator_partner_id',
+            'affiliate_partner_id',
     ];
 
     /**
@@ -107,6 +109,7 @@ class Accounts extends Model
     'distributor_id' => 'integer',
     'sales_partner_id' => 'integer',
     'integrator_partner_id' => 'integer',
+    'affiliate_partner_id' => 'integer',
     ];
 
     /**
@@ -178,6 +181,7 @@ class Accounts extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

@@ -27,6 +27,7 @@ class AccountsUpdateRequest extends AbstractFormRequest
         'distributor_id' => 'nullable|exists:partnership_accounts,uuid|uuid',
         'sales_partner_id' => 'nullable|exists:partnership_accounts,uuid|uuid',
         'integrator_partner_id' => 'nullable|exists:partnership_accounts,uuid|uuid',
+        'affiliate_partner_id' => 'nullable|exists:partnership_accounts,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
