@@ -177,7 +177,7 @@ class InvoiceHelper
         $invoiceOwnerAccountingAccount = self::getAccount($invoice);
         $account = AccountingHelper::getIamAccount($invoiceOwnerAccountingAccount);
 
-        return PaymentGateways::withoutGlobalScopes(AuthorizationScope::class)
+        return PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
             ->where('common_country_id', $account->common_country_id)
             ->where('is_active', true)
             ->first();
