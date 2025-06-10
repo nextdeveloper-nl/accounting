@@ -199,7 +199,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     
     public function distributorId($value)
     {
-            $distributor = \NextDeveloper\Partnership\Database\Models\Accounts::where('uuid', $value)->first();
+            $distributor = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
 
         if($distributor) {
             return $this->builder->where('distributor_id', '=', $distributor->id);
@@ -214,7 +214,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     
     public function salesPartnerId($value)
     {
-            $salesPartner = \NextDeveloper\Partnership\Database\Models\Accounts::where('uuid', $value)->first();
+            $salesPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
 
         if($salesPartner) {
             return $this->builder->where('sales_partner_id', '=', $salesPartner->id);
@@ -229,7 +229,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     
     public function integratorPartnerId($value)
     {
-            $integratorPartner = \NextDeveloper\Partnership\Database\Models\Accounts::where('uuid', $value)->first();
+            $integratorPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
 
         if($integratorPartner) {
             return $this->builder->where('integrator_partner_id', '=', $integratorPartner->id);
@@ -244,7 +244,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     
     public function affiliatePartnerId($value)
     {
-            $affiliatePartner = \NextDeveloper\Partnership\Database\Models\Accounts::where('uuid', $value)->first();
+            $affiliatePartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
 
         if($affiliatePartner) {
             return $this->builder->where('affiliate_partner_id', '=', $affiliatePartner->id);
@@ -258,6 +258,9 @@ class AccountsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

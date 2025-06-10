@@ -304,4 +304,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
 
 
 
+
+
+
 }

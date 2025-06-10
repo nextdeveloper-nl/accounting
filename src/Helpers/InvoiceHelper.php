@@ -11,6 +11,8 @@ use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
+use NextDeveloper\Accounting\Exceptions\AccountingException;
+use NextDeveloper\Accounting\PaymentGateways\Stripe;
 use NextDeveloper\Accounting\Services\InvoicesService;
 use NextDeveloper\Commons\Database\GlobalScopes\LimitScope;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
@@ -26,13 +28,32 @@ class InvoiceHelper
         //  We are doing this because we are using the common_currency_id in the invoices table.
         //  But we need to use the currency code in the invoice items table.
         $account = self::getAccount($invoice);
-        $accountingAccount = AccountingHelper::getAccountFromIamAccountId($account->id);
+        $distributor = AccountingHelper::getDistributorAccount($account);
+
+        if(!$distributor->common_currency_id) {
+            throw new AccountingException(
+                'Distributor account does not have a common currency ID. Please set it up in the distributor account.'
+            );
+        }
 
         $invoice->updateQuietly([
-            'common_currency_id' => $accountingAccount->common_currency_id
+            'common_currency_id' => $distributor->common_currency_id
         ]);
 
         return $invoice;
+    }
+
+    public static function hasInvoice(Accounts $account) : bool
+    {
+        $invoices = Invoices::withoutGlobalScope(AuthorizationScope::class)
+            ->where('accounting_account_id', $account->id)
+            ->where('is_sealed', false)
+            ->get();
+
+        if($invoices->isEmpty())
+            return false;
+
+        return true;
     }
 
     public static function getAccount(Invoices $invoice)
@@ -93,7 +114,17 @@ class InvoiceHelper
             ]);
         }
 
-        AccountingHelper::getDistributor();
+        $distributor = AccountingHelper::getDistributorAccount($accounts);
+
+        $paymentGateway = AccountingHelper::getPaymentGatewayOfDistributor($distributor);
+
+        //  If the gateway has stripe in its name, we need to create the checkout session for the invoice.
+        if(Str::contains($paymentGateway->name, 'stripe')) {
+            $stripe = new Stripe($paymentGateway);
+            $checkoutSession = $stripe->getCheckoutSession($accounts);
+
+            dd($checkoutSession);
+        }
 
         return $invoice->fresh();
     }

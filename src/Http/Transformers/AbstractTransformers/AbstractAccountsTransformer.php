@@ -56,10 +56,10 @@ class AbstractAccountsTransformer extends AbstractTransformer
     {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
-                                                            $distributorId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->distributor_id)->first();
-                                                            $salesPartnerId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->sales_partner_id)->first();
-                                                            $integratorPartnerId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
-                                                            $affiliatePartnerId = \NextDeveloper\Partnership\Database\Models\Accounts::where('id', $model->affiliate_partner_id)->first();
+                                                            $distributorId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->distributor_id)->first();
+                                                            $salesPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->sales_partner_id)->first();
+                                                            $integratorPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
+                                                            $affiliatePartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->affiliate_partner_id)->first();
                         
         return $this->buildPayload(
             [
@@ -171,6 +171,9 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 
