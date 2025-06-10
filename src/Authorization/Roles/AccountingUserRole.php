@@ -115,6 +115,11 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             'accounting_transactions:create',
             'accounting_transactions:update',
             'accounting_transactions:delete',
+
+            'accounting_payment_checkout_sessions:read',
+            'accounting_payment_checkout_sessions:create',
+            'accounting_payment_checkout_sessions:update',
+            'accounting_payment_checkout_sessions:delete',
         ];
     }
 

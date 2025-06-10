@@ -23,6 +23,7 @@ class AccountingHelper
     }
 
     public static function getDistributorAccount(Accounts $account) {
+        //  We are trying to find the accounting_account of the distributor
         $distributorAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('id', $account->distributor_id)
             ->first();
@@ -48,8 +49,19 @@ class AccountingHelper
     public static function fixDistributorId(Accounts $account) : Accounts
     {
         if($account->distributor_id){
-            Log::info(__METHOD__ . '| Distributor ID is already set. No need to fix it.');
-            return $account;
+            //  Not using this because it create infinite loop
+            //$distributorAccount = self::getDistributorAccount($account);
+
+            $distributorAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('id', $account->distributor_id)
+                ->first();
+
+            if(!$distributorAccount) {
+                Log::info(__METHOD__ . '| Distributor ID is not valid. Fixing it.');
+            } else {
+                Log::info(__METHOD__ . '| Distributor ID is valid. No need to fix it.');
+                return $account;
+            }
         }
 
         //  First we need to understand where the customer is actually from
@@ -61,23 +73,28 @@ class AccountingHelper
         //  If the country is not set, we will use the global provider because we dont know where the customer is from.
         if(!$country) {
             $defaultProviderId = config('leo.providers.zones.global');
-            $provider = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
-                ->where('id', $defaultProviderId)
+            $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('iam_account_id', $defaultProviderId)
                 ->first();
         } else {
             //  If we know where the customer is then we should assign the related distributor
             //  For temporary we are assigning the default distributor
+            $defaultProviderId = config('leo.providers.zones.' . strtolower($country->code));
 
-            $defaultProviderId = config('leo.providers.zones.global');
-            $provider = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
-                ->where('id', $defaultProviderId)
-                ->first();
+            if($defaultProviderId) {
+                $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                    ->where('iam_account_id', $defaultProviderId)
+                    ->first();
+            } else {
+                $defaultProviderId = config('leo.providers.zones.global');
+                $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                    ->where('iam_account_id', $defaultProviderId)
+                    ->first();
+            }
         }
 
-        $partner = PartnerHelper::getPartnerByIamAccount($provider);
-
         $account->updateQuietly([
-            'distributor_id'    =>  $partner->id
+            'distributor_id'    =>  $provider->id
         ]);
 
         return $account->fresh();

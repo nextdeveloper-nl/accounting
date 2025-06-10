@@ -2,12 +2,17 @@
 
 namespace NextDeveloper\Accounting\PaymentGateways;
 
+use Helpers\AccountingHelper;
 use Helpers\InvoiceHelper;
+use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
+use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Exceptions\CheckoutSessionException;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
+use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
+use NextDeveloper\IAM\Helpers\UserHelper;
 
 class Stripe implements PaymentGatewaysInterface
 {
@@ -22,25 +27,75 @@ class Stripe implements PaymentGatewaysInterface
         }
     }
 
-    public function createCheckoutSession(Invoices $invoice): \NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions
+    public function getCheckoutSession(Accounts $account): \NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions
     {
-        $lineItems = InvoiceItems::where('accounting_invoice_id', $invoice->id)->get();
+        $checkoutSession = PaymentCheckoutSessions::withoutGlobalScope(AuthorizationScope::class)
+            ->where('accounting_account_id', $account->id)
+            ->first();
 
-        $invoice = InvoiceHelper::fixCurrencyCode($invoice);
-        $invoice = InvoiceHelper::calculateByGateway($invoice->fresh());
+        $iamAccount = AccountingHelper::getIamAccount($account);
+        $iamUser = UserHelper::getAccountOwner($iamAccount);
 
-//        if($lineItems->isEmpty()) {
-//            throw new CheckoutSessionException('Cannot create checkout session, ' .
-//                'since this invoice has no products inside. Please try to make wire transfer or consult ' .
-//                'to your financial advisor.');
-//        }
+        if(!$checkoutSession) {
+            $stripeCustomer = $this->getStripeCustomer($account);
 
-        $session = $this->gateway->checkout->sessions->create([
-            'success_url' => 'https://example.com/success',
-            //'line_items' =>$lineItems,
-            'mode' => 'subscription',
+            //  Here this means that we dont have a checkout session. We need to create a checkout session with predefined Membership product
+            $session = $this->gateway->checkout->sessions->create([
+                'success_url' => 'https://example.com/success',
+                'cancel_url' => 'https://example.com/cancel',
+                'customer'  => $stripeCustomer->id,
+                'line_items' => [
+                    [
+                        'price' => config('leo.payment.stripe.default_membership_product_id'), // Assuming product_id is the Stripe price ID
+                        'quantity' => 1,
+                    ],
+                ],
+                'mode' => 'subscription',
+            ]);
+
+            $distributorAccount = AccountingHelper::getDistributorAccount($account);
+            $gateway = AccountingHelper::getPaymentGatewayOfDistributor($distributorAccount);
+
+            $checkoutSession = PaymentCheckoutSessions::create([
+                'accounting_account_id' => $account->id,
+                'accounting_payment_gateway_id' => $gateway->id,
+                'session_data' => [
+                    'id' => $session->id,
+                    'customer' => $stripeCustomer->id,
+                    'status' => $session->status,
+                    'expires_at' => $session->expires_at,
+                    'approval_url'   =>  $session->url
+                ]
+            ]);
+        }
+
+        return $checkoutSession;
+    }
+
+    public function getStripeCustomer(Accounts $account)
+    {
+        $iamAccount = AccountingHelper::getIamAccount($account);
+        $iamUser = UserHelper::getAccountOwner($iamAccount);
+
+        $customers = $this->gateway->customers->search([
+            'query' => "email:'{$iamUser->email}'",
         ]);
 
-        dd($session);
+        if(!$customers->data || count($customers->data) == 0) {
+            //  If we don't have a customer, we need to create one
+            $customer = $this->gateway->customers->create([
+                'email' => $iamUser->email,
+                'name' => $iamUser->name,
+                'metadata' => [
+                    'account_id' => $account->id,
+                    'iam_account_id' => $iamAccount->id,
+                ],
+            ]);
+
+            return $customer;
+        } else {
+            //  If we have a customer, we will return the first one
+            return $customers->data[0];
+        }
     }
 }

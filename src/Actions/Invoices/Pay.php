@@ -297,7 +297,7 @@ class Pay extends AbstractAction
         }
 
         if($this->model->vat) {
-            $calculatedPrice += $this->model->vat;
+            $calculatedPrice += ( $this->model->vat * $this->model->exchange_rate );
         }
 
         $purchaseData = [
