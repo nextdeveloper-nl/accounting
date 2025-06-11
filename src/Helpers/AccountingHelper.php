@@ -72,21 +72,21 @@ class AccountingHelper
 
         //  If the country is not set, we will use the global provider because we dont know where the customer is from.
         if(!$country) {
-            $defaultProviderId = config('leo.providers.zones.global');
+            $defaultProviderId = config('leo.providers.zones.global.distributor');
             $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
                 ->where('iam_account_id', $defaultProviderId)
                 ->first();
         } else {
             //  If we know where the customer is then we should assign the related distributor
             //  For temporary we are assigning the default distributor
-            $defaultProviderId = config('leo.providers.zones.' . strtolower($country->code));
+            $defaultProviderId = config('leo.providers.zones.' . strtolower($country->code) . '.distributor');
 
             if($defaultProviderId) {
                 $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
                     ->where('iam_account_id', $defaultProviderId)
                     ->first();
             } else {
-                $defaultProviderId = config('leo.providers.zones.global');
+                $defaultProviderId = config('leo.providers.zones.global.distributor');
                 $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
                     ->where('iam_account_id', $defaultProviderId)
                     ->first();
@@ -188,14 +188,14 @@ class AccountingHelper
 
             if(array_key_exists(strtolower($country->code), $providers)) {
                 $provider = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
-                    ->where('id', config('leo.providers.zones.' . strtolower($country->code)))
+                    ->where('id', config('leo.providers.zones.' . strtolower($country->code). '.distributor'))
                     ->first();
             }
         }
 
         if(!$provider) {
             $provider = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
-                ->where('id', config('leo.providers.zones.global'))
+                ->where('id', config('leo.providers.zones.global.distributor'))
                 ->first();
         }
 
