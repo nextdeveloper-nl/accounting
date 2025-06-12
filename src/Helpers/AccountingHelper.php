@@ -124,7 +124,7 @@ class AccountingHelper
 
     public static function getAccountingAccount(int $accountId)
     {
-        $accountingAccount = Accounts::where('iam_account_id', $accountId)->first();
+        $accountingAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)->where('iam_account_id', $accountId)->first();
 
         if(!$accountingAccount->distributor_id) {
             self::fixDistributorId($accountingAccount);
