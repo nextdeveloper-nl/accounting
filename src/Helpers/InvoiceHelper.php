@@ -116,14 +116,26 @@ class InvoiceHelper
 
         $distributor = AccountingHelper::getDistributorAccount($accounts);
 
+        if(!$distributor) {
+            AccountingHelper::fixDistributorId(
+                Accounts::withoutGlobalScope(AuthorizationScope::class)
+                    ->where('id', $invoice->accounting_account_id)
+                    ->first()
+            );
+
+            $distributor = AccountingHelper::getDistributorAccount($accounts);
+        }
+
         $paymentGateway = AccountingHelper::getPaymentGatewayOfDistributor($distributor);
 
-        //  If the gateway has stripe in its name, we need to create the checkout session for the invoice.
-        if(Str::contains($paymentGateway->name, 'stripe')) {
-            $stripe = new Stripe($paymentGateway);
-            $checkoutSession = $stripe->getCheckoutSession($accounts);
-
-            dd($checkoutSession);
+        if($paymentGateway) {
+            //  If the gateway has stripe in its name, we need to create the checkout session for the invoice.
+            if(Str::contains($paymentGateway->name, 'stripe')) {
+//                $stripe = new Stripe($paymentGateway);
+//                $checkoutSession = $stripe->getCheckoutSession($accounts);
+//
+//                dd($checkoutSession);
+            }
         }
 
         return $invoice->fresh();
