@@ -117,7 +117,9 @@ class AccountingHelper
 
     public static function getIamAccountFromInvoice(Invoices $invoice) : ?\NextDeveloper\IAM\Database\Models\Accounts
     {
-        $accountingAccount = self::getAccountingAccount($invoice->accounting_account_id);
+        $accountingAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $invoice->accounting_account_id)
+            ->first();
 
         return UserHelper::getAccountById($accountingAccount->iam_account_id);
     }
