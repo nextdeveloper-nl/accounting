@@ -15,6 +15,18 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 
 class AccountingHelper
 {
+    public static function setAccountAsSalesPartner(Accounts $customer, Accounts $provider)
+    {
+        $salesPartnerOwner = UserHelper::getAccountOwner($provider);
+
+        //  We are also setting the sales partner for the distributor account
+        $envelope = new AssignedAsAccountManager($salesPartnerOwner,
+            AccountingHelper::getIamAccount($customer)
+        );
+
+        (new Communicate($salesPartnerOwner))->sendEnvelope($envelope);
+    }
+
     public static function setMeAsSalesPartner(Accounts $account)
     {
         $myAccountingAccount = self::getAccountingAccount(
@@ -25,14 +37,10 @@ class AccountingHelper
             'sales_partner_id'  =>  $myAccountingAccount->id
         ]);
 
-        $salesPartnerOwner = UserHelper::getAccountOwner(UserHelper::currentAccount());
-
-        //  We are also setting the sales partner for the distributor account
-        $envelope = new AssignedAsAccountManager($salesPartnerOwner,
-            AccountingHelper::getIamAccount($account)
+        return self::setAccountAsSalesPartner(
+            customer: $account,
+            provider: self::getAccountingAccount(UserHelper::currentAccount()->id)
         );
-
-        (new Communicate($salesPartnerOwner))->sendEnvelope($envelope);
     }
 
     public static function getPaymentGatewayOfDistributor(Accounts $account)
