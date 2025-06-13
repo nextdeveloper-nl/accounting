@@ -17,7 +17,9 @@ class AccountingHelper
 {
     public static function setAccountAsSalesPartner(Accounts $customer, Accounts $provider)
     {
-        $salesPartnerOwner = UserHelper::getAccountOwner($provider);
+        $salesPartnerOwner = UserHelper::getAccountOwner(
+            self::getIamAccount($provider)
+        );
 
         //  We are also setting the sales partner for the distributor account
         $envelope = new AssignedAsAccountManager($salesPartnerOwner,
