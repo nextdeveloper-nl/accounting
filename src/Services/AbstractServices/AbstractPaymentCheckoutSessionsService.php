@@ -2,19 +2,16 @@
 
 namespace NextDeveloper\Accounting\Services\AbstractServices;
 
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use NextDeveloper\IAM\Helpers\UserHelper;
-use NextDeveloper\Commons\Common\Cache\CacheHelper;
-use NextDeveloper\Commons\Helpers\DatabaseHelper;
-use NextDeveloper\Commons\Database\Models\AvailableActions;
-use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Filters\PaymentCheckoutSessionsQueryFilter;
+use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
+use NextDeveloper\Commons\Database\Models\AvailableActions;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
-use NextDeveloper\Events\Services\Events;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
+use NextDeveloper\Commons\Helpers\DatabaseHelper;
 
 /**
  * This class is responsible from managing the data for PaymentCheckoutSessions
@@ -196,7 +193,7 @@ class AbstractPaymentCheckoutSessionsService
                 $data['accounting_invoice_id']
             );
         }
-                        
+
         try {
             $model = PaymentCheckoutSessions::create($data);
         } catch(\Exception $e) {
@@ -254,7 +251,7 @@ class AbstractPaymentCheckoutSessionsService
                 $data['accounting_invoice_id']
             );
         }
-    
+
         try {
             $isUpdated = $model->update($data);
             $model = $model->fresh();

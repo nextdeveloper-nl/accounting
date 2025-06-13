@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\Contracts;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\Contracts\ContractsUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\ContractsQueryFilter;
 use NextDeveloper\Accounting\Database\Models\Contracts;
-use NextDeveloper\Accounting\Services\ContractsService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\Contracts\ContractsCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Accounting\Http\Requests\Contracts\ContractsUpdateRequest;
+use NextDeveloper\Accounting\Services\ContractsService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;
+
 class ContractsController extends AbstractController
 {
     private $model = Contracts::class;

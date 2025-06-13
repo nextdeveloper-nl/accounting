@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\AccountsPerspective;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\AccountsPerspective\AccountsPerspectiveUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\AccountsPerspectiveQueryFilter;
 use NextDeveloper\Accounting\Database\Models\AccountsPerspective;
-use NextDeveloper\Accounting\Services\AccountsPerspectiveService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\AccountsPerspective\AccountsPerspectiveCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Accounting\Http\Requests\AccountsPerspective\AccountsPerspectiveUpdateRequest;
+use NextDeveloper\Accounting\Services\AccountsPerspectiveService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;
+
 class AccountsPerspectiveController extends AbstractController
 {
     private $model = AccountsPerspective::class;

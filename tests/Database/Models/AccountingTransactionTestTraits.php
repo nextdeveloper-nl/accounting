@@ -2,14 +2,13 @@
 
 namespace NextDeveloper\Accounting\Tests\Database\Models;
 
-use Tests\TestCase;
 use GuzzleHttp\Client;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Database\Filters\AccountingTransactionQueryFilter;
-use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountingTransactionService;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
+use NextDeveloper\Accounting\Database\Filters\AccountingTransactionQueryFilter;
+use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountingTransactionService;
 
 trait AccountingTransactionTestTraits
 {

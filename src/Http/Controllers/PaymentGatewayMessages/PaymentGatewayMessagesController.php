@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\PaymentGatewayMessages;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\PaymentGatewayMessages\PaymentGatewayMessagesUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\PaymentGatewayMessagesQueryFilter;
 use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
-use NextDeveloper\Accounting\Services\PaymentGatewayMessagesService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\PaymentGatewayMessages\PaymentGatewayMessagesCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Accounting\Http\Requests\PaymentGatewayMessages\PaymentGatewayMessagesUpdateRequest;
+use NextDeveloper\Accounting\Services\PaymentGatewayMessagesService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Commons\Http\Traits\Tags;
+
 class PaymentGatewayMessagesController extends AbstractController
 {
     private $model = PaymentGatewayMessages::class;

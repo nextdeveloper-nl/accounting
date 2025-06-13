@@ -3,9 +3,8 @@
 namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
-use NextDeveloper\Accounting\Database\Models\Contracts;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                        
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -18,7 +17,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function objectType($value)
     {
         return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
@@ -29,7 +28,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->objectType($value);
     }
-        
+
     public function contractType($value)
     {
         return $this->builder->where('contract_type', 'ilike', '%' . $value . '%');
@@ -40,7 +39,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->contractType($value);
     }
-        
+
     public function accountName($value)
     {
         return $this->builder->where('account_name', 'ilike', '%' . $value . '%');
@@ -51,7 +50,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->accountName($value);
     }
-        
+
     public function accountingIdentifier($value)
     {
         return $this->builder->where('accounting_identifier', 'ilike', '%' . $value . '%');
@@ -62,7 +61,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingIdentifier($value);
     }
-    
+
     public function discount($value)
     {
         $operator = substr($value, 0, 1);
@@ -76,7 +75,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('discount', $operator, $value);
     }
 
-    
+
     public function isSigned($value)
     {
         return $this->builder->where('is_signed', $value);
@@ -87,7 +86,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->isSigned($value);
     }
-     
+
     public function isApproved($value)
     {
         return $this->builder->where('is_approved', $value);
@@ -98,7 +97,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->isApproved($value);
     }
-     
+
     public function termStartsStart($date)
     {
         return $this->builder->where('term_starts', '>=', $date);
@@ -223,7 +222,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingContract($value);
     }
-    
+
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -238,7 +237,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrency($value);
     }
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -248,7 +247,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -258,7 +257,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamAccountTypeId($value)
     {
             $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
@@ -273,7 +272,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->iamAccountType($value);
     }
-    
+
     public function accountingAccountId($value)
     {
             $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -288,7 +287,7 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingAccount($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
     public function accountingContractId($value)

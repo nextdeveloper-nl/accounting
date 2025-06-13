@@ -2,10 +2,10 @@
 
 namespace NextDeveloper\Accounting\Services;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use NextDeveloper\Accounting\Database\Filters\InvoiceItemsPerspectiveQueryFilter;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractInvoiceItemsPerspectiveService;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
  * This class is responsible from managing the data for InvoiceItemsPerspective

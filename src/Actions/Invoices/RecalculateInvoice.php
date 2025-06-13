@@ -2,26 +2,12 @@
 
 namespace NextDeveloper\Accounting\Actions\Invoices;
 
-use Carbon\Carbon;
 use Helpers\InvoiceHelper;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Database\Models\Invoices;
-use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
-use NextDeveloper\Accounting\Database\Models\PaymentGateways;
-use NextDeveloper\Accounting\Services\TransactionsService;
 use NextDeveloper\Commons\Actions\AbstractAction;
-use NextDeveloper\Commons\Database\Models\Currencies;
-use NextDeveloper\Commons\Database\Models\Languages;
 use NextDeveloper\Events\Services\Events;
-use NextDeveloper\IAM\Database\Models\Accounts;
-use NextDeveloper\IAM\Database\Models\Users;
-use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
-use NextDeveloper\Accounting\Database\Models\Accounts as AccountingAccount;
 use NextDeveloper\IAM\Helpers\UserHelper;
-use Omnipay\Omnipay;
 
 /**
  * This action tries to charge the customer for the payment, and if it is successful, it will mark the invoice as paid.

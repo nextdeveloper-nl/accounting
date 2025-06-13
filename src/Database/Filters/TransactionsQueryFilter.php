@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                    
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,7 +17,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function gatewayResponse($value)
     {
         return $this->builder->where('gateway_response', 'ilike', '%' . $value . '%');
@@ -28,7 +28,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
     {
         return $this->gatewayResponse($value);
     }
-        
+
     public function conversationIdentifier($value)
     {
         return $this->builder->where('conversation_identifier', 'ilike', '%' . $value . '%');
@@ -39,7 +39,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
     {
         return $this->conversationIdentifier($value);
     }
-    
+
     public function isPending($value)
     {
         return $this->builder->where('is_pending', $value);
@@ -50,7 +50,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
     {
         return $this->isPending($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -131,7 +131,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingInvoice($value);
     }
-    
+
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -146,7 +146,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrency($value);
     }
-    
+
     public function accountingPaymentGatewayId($value)
     {
             $accountingPaymentGateway = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('uuid', $value)->first();
@@ -161,7 +161,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingPaymentGateway($value);
     }
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -171,7 +171,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function accountingAccountId($value)
     {
             $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -186,7 +186,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingAccount($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

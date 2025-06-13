@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\Invoices;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\Invoices\InvoicesUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\InvoicesQueryFilter;
 use NextDeveloper\Accounting\Database\Models\Invoices;
-use NextDeveloper\Accounting\Services\InvoicesService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\Invoices\InvoicesCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Accounting\Http\Requests\Invoices\InvoicesUpdateRequest;
+use NextDeveloper\Accounting\Services\InvoicesService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Commons\Http\Traits\Tags;
+
 class InvoicesController extends AbstractController
 {
     private $model = Invoices::class;

@@ -3,7 +3,6 @@
 namespace NextDeveloper\Accounting\Helpers;
 
 use App\Envelopes\CRM\Accounts\AssignedAsAccountManager;
-use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
@@ -16,6 +15,18 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 
 class AccountingHelper
 {
+    public static function setAccountAsSalesPartner(Accounts $customer, Accounts $provider)
+    {
+        $salesPartnerOwner = UserHelper::getAccountOwner($provider);
+
+        //  We are also setting the sales partner for the distributor account
+        $envelope = new AssignedAsAccountManager($salesPartnerOwner,
+            AccountingHelper::getIamAccount($customer)
+        );
+
+        (new Communicate($salesPartnerOwner))->sendEnvelope($envelope);
+    }
+
     public static function setMeAsSalesPartner(Accounts $account)
     {
         $myAccountingAccount = self::getAccountingAccount(
@@ -26,11 +37,10 @@ class AccountingHelper
             'sales_partner_id'  =>  $myAccountingAccount->id
         ]);
 
-        $salesPartnerOwner = UserHelper::getAccountOwner(UserHelper::currentAccount());
-
-        //  We are also setting the sales partner for the distributor account
-        $envelope = new AssignedAsAccountManager($salesPartnerOwner, UserHelper::currentAccount());
-        (new Communicate($salesPartnerOwner))->sendEnvelope($envelope);
+        return self::setAccountAsSalesPartner(
+            customer: $account,
+            provider: self::getAccountingAccount(UserHelper::currentAccount()->id)
+        );
     }
 
     public static function getPaymentGatewayOfDistributor(Accounts $account)
@@ -92,6 +102,7 @@ class AccountingHelper
         //  If the country is not set, we will use the global provider because we dont know where the customer is from.
         if(!$country) {
             $defaultProviderId = config('leo.providers.zones.global.distributor');
+
             $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
                 ->where('iam_account_id', $defaultProviderId)
                 ->first();

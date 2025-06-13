@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-        
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,19 +17,19 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function type($value)
     {
         return $this->builder->where('type', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function ccHolderName($value)
     {
         return $this->builder->where('cc_holder_name', 'ilike', '%' . $value . '%');
@@ -40,7 +40,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->ccHolderName($value);
     }
-        
+
     public function ccNumber($value)
     {
         return $this->builder->where('cc_number', 'ilike', '%' . $value . '%');
@@ -51,7 +51,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->ccNumber($value);
     }
-        
+
     public function ccMonth($value)
     {
         return $this->builder->where('cc_month', 'ilike', '%' . $value . '%');
@@ -62,7 +62,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->ccMonth($value);
     }
-        
+
     public function ccYear($value)
     {
         return $this->builder->where('cc_year', 'ilike', '%' . $value . '%');
@@ -73,7 +73,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->ccYear($value);
     }
-        
+
     public function ccCvv($value)
     {
         return $this->builder->where('cc_cvv', 'ilike', '%' . $value . '%');
@@ -84,7 +84,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->ccCvv($value);
     }
-    
+
     public function isDefault($value)
     {
         return $this->builder->where('is_default', $value);
@@ -95,7 +95,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->isDefault($value);
     }
-     
+
     public function isValid($value)
     {
         return $this->builder->where('is_valid', $value);
@@ -106,7 +106,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->isValid($value);
     }
-     
+
     public function isActive($value)
     {
         return $this->builder->where('is_active', $value);
@@ -117,7 +117,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->isActive($value);
     }
-     
+
     public function is3dSecure($value)
     {
         return $this->builder->where('is_3d_secure', $value);
@@ -128,7 +128,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->is3dSecure($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -204,7 +204,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -214,7 +214,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

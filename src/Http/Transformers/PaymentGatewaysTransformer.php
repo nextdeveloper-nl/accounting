@@ -3,10 +3,9 @@
 namespace NextDeveloper\Accounting\Http\Transformers;
 
 use Illuminate\Support\Facades\Cache;
-use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
-use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\Accounting\Http\Transformers\AbstractTransformers\AbstractPaymentGatewaysTransformer;
+use NextDeveloper\Commons\Common\Cache\CacheHelper;
 
 /**
  * Class PaymentGatewaysTransformer. This class is being used to manipulate the data we are serving to the customer

@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\InvoicesPerspective;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\InvoicesPerspective\InvoicesPerspectiveUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\InvoicesPerspectiveQueryFilter;
 use NextDeveloper\Accounting\Database\Models\InvoicesPerspective;
-use NextDeveloper\Accounting\Services\InvoicesPerspectiveService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\InvoicesPerspective\InvoicesPerspectiveCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Accounting\Http\Requests\InvoicesPerspective\InvoicesPerspectiveUpdateRequest;
+use NextDeveloper\Accounting\Services\InvoicesPerspectiveService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;
+
 class InvoicesPerspectiveController extends AbstractController
 {
     private $model = InvoicesPerspective::class;

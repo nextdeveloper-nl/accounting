@@ -2,16 +2,15 @@
 
 namespace NextDeveloper\Accounting\Database\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-use NextDeveloper\Commons\Database\Traits\HasStates;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
-use NextDeveloper\Commons\Database\Traits\Filterable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use NextDeveloper\Accounting\Database\Observers\AccountsPerspectiveObserver;
-use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
-use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\Filterable;
+use NextDeveloper\Commons\Database\Traits\HasStates;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
+use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\UuidId;
 
 /**
  * AccountsPerspective model.

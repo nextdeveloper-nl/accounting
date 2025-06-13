@@ -2,14 +2,13 @@
 
 namespace NextDeveloper\Accounting\Tests\Database\Models;
 
-use Tests\TestCase;
 use GuzzleHttp\Client;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Database\Filters\AccountingCreditCardQueryFilter;
-use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountingCreditCardService;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
+use NextDeveloper\Accounting\Database\Filters\AccountingCreditCardQueryFilter;
+use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountingCreditCardService;
 
 trait AccountingCreditCardTestTraits
 {

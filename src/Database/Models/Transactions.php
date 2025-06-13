@@ -2,16 +2,15 @@
 
 namespace NextDeveloper\Accounting\Database\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use NextDeveloper\Accounting\Database\Observers\TransactionsObserver;
+use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Filterable;
 use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Accounting\Database\Observers\TransactionsObserver;
-use NextDeveloper\Commons\Database\Traits\UuidId;
-use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
-use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
+use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\UuidId;
 
 /**
  * Transactions model.
@@ -154,7 +153,7 @@ class Transactions extends Model
     {
         return $this->belongsTo(\NextDeveloper\Commons\Database\Models\Currencies::class);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 
