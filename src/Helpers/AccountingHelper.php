@@ -3,7 +3,6 @@
 namespace NextDeveloper\Accounting\Helpers;
 
 use App\Envelopes\CRM\Accounts\AssignedAsAccountManager;
-use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
@@ -29,7 +28,10 @@ class AccountingHelper
         $salesPartnerOwner = UserHelper::getAccountOwner(UserHelper::currentAccount());
 
         //  We are also setting the sales partner for the distributor account
-        $envelope = new AssignedAsAccountManager($salesPartnerOwner, UserHelper::currentAccount());
+        $envelope = new AssignedAsAccountManager($salesPartnerOwner,
+            AccountingHelper::getIamAccount($account)
+        );
+
         (new Communicate($salesPartnerOwner))->sendEnvelope($envelope);
     }
 
@@ -92,6 +94,7 @@ class AccountingHelper
         //  If the country is not set, we will use the global provider because we dont know where the customer is from.
         if(!$country) {
             $defaultProviderId = config('leo.providers.zones.global.distributor');
+
             $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
                 ->where('iam_account_id', $defaultProviderId)
                 ->first();

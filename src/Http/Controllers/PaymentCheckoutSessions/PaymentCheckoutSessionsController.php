@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\PaymentCheckoutSessions;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\PaymentCheckoutSessions\PaymentCheckoutSessionsUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\PaymentCheckoutSessionsQueryFilter;
 use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
-use NextDeveloper\Accounting\Services\PaymentCheckoutSessionsService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\PaymentCheckoutSessions\PaymentCheckoutSessionsCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Accounting\Http\Requests\PaymentCheckoutSessions\PaymentCheckoutSessionsUpdateRequest;
+use NextDeveloper\Accounting\Services\PaymentCheckoutSessionsService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;
+
 class PaymentCheckoutSessionsController extends AbstractController
 {
     private $model = PaymentCheckoutSessions::class;

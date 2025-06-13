@@ -4,10 +4,8 @@ namespace NextDeveloper\Accounting\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractContractsService;
-use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
 /**

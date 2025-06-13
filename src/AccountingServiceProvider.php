@@ -2,8 +2,6 @@
 
 namespace NextDeveloper\Accounting;
 
-use GuzzleHttp\Client as GuzzleClient;
-use Illuminate\Support\Facades\Log;
 use NextDeveloper\Commons\AbstractServiceProvider;
 
 /**
@@ -104,6 +102,6 @@ class AccountingServiceProvider extends AbstractServiceProvider {
             ]);
         }
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\ContractItemsPerspective;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\ContractItemsPerspective\ContractItemsPerspectiveUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\ContractItemsPerspectiveQueryFilter;
 use NextDeveloper\Accounting\Database\Models\ContractItemsPerspective;
-use NextDeveloper\Accounting\Services\ContractItemsPerspectiveService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\ContractItemsPerspective\ContractItemsPerspectiveCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Accounting\Http\Requests\ContractItemsPerspective\ContractItemsPerspectiveUpdateRequest;
+use NextDeveloper\Accounting\Services\ContractItemsPerspectiveService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;
+
 class ContractItemsPerspectiveController extends AbstractController
 {
     private $model = ContractItemsPerspective::class;

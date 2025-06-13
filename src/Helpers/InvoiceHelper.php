@@ -4,7 +4,6 @@ namespace Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\Accounts;
@@ -12,7 +11,7 @@ use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Exceptions\AccountingException;
-use NextDeveloper\Accounting\PaymentGateways\Stripe;
+use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use NextDeveloper\Accounting\Services\InvoicesService;
 use NextDeveloper\Commons\Database\GlobalScopes\LimitScope;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;

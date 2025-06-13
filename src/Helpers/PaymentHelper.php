@@ -2,10 +2,7 @@
 
 namespace Helpers;
 
-use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
-use NextDeveloper\Accounting\Services\InvoiceItemsService;
-use NextDeveloper\Accounting\Services\InvoicesService;
 use NextDeveloper\Commons\Database\Models\Currencies;
 
 class PaymentHelper

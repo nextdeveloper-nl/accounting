@@ -2,15 +2,10 @@
 
 namespace NextDeveloper\Accounting\PaymentGateways;
 
-use NextDeveloper\Accounting\Helpers\AccountingHelper;
-use Helpers\InvoiceHelper;
 use NextDeveloper\Accounting\Database\Models\Accounts;
-use NextDeveloper\Accounting\Database\Models\InvoiceItems;
-use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
-use NextDeveloper\Accounting\Exceptions\CheckoutSessionException;
-use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
+use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 

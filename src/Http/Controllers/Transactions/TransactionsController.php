@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\Transactions;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\Transactions\TransactionsUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\TransactionsQueryFilter;
 use NextDeveloper\Accounting\Database\Models\Transactions;
-use NextDeveloper\Accounting\Services\TransactionsService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\Transactions\TransactionsCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Accounting\Http\Requests\Transactions\TransactionsUpdateRequest;
+use NextDeveloper\Accounting\Services\TransactionsService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Commons\Http\Traits\Tags;
+
 class TransactionsController extends AbstractController
 {
     private $model = Transactions::class;

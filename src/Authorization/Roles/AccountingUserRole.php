@@ -2,16 +2,13 @@
 
 namespace NextDeveloper\Accounting\Authorization\Roles;
 
-use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use NextDeveloper\Accounting\Database\Models\Accounts;
-use NextDeveloper\CRM\Database\Models\AccountManagers;
+use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use NextDeveloper\IAM\Authorization\Roles\AbstractRole;
 use NextDeveloper\IAM\Authorization\Roles\IAuthorizationRole;
 use NextDeveloper\IAM\Database\Models\Users;
-use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
 class AccountingUserRole extends AbstractRole implements IAuthorizationRole

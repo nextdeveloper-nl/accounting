@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\CreditCards;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\CreditCards\CreditCardsUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\CreditCardsQueryFilter;
 use NextDeveloper\Accounting\Database\Models\CreditCards;
-use NextDeveloper\Accounting\Services\CreditCardsService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\CreditCards\CreditCardsCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Accounting\Http\Requests\CreditCards\CreditCardsUpdateRequest;
+use NextDeveloper\Accounting\Services\CreditCardsService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Commons\Http\Traits\Tags;
+
 class CreditCardsController extends AbstractController
 {
     private $model = CreditCards::class;

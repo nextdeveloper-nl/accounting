@@ -3,14 +3,16 @@
 namespace NextDeveloper\Accounting\Http\Controllers\PromoCodes;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Accounting\Http\Controllers\AbstractController;
-use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\PromoCodes\PromoCodesUpdateRequest;
 use NextDeveloper\Accounting\Database\Filters\PromoCodesQueryFilter;
 use NextDeveloper\Accounting\Database\Models\PromoCodes;
-use NextDeveloper\Accounting\Services\PromoCodesService;
+use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Accounting\Http\Requests\PromoCodes\PromoCodesCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Accounting\Http\Requests\PromoCodes\PromoCodesUpdateRequest;
+use NextDeveloper\Accounting\Services\PromoCodesService;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
+use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Commons\Http\Traits\Tags;
+
 class PromoCodesController extends AbstractController
 {
     private $model = PromoCodes::class;
