@@ -2,7 +2,7 @@
 
 namespace NextDeveloper\Accounting\Authorization\Roles;
 
-use Helpers\AccountingHelper;
+use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;

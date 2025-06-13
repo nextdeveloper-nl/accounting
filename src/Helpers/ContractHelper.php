@@ -2,7 +2,7 @@
 
 namespace NextDeveloper\Accounting\Helpers;
 
-use Helpers\AccountingHelper;
+use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;

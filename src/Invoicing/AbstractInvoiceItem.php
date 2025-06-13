@@ -3,7 +3,7 @@
 namespace NextDeveloper\Accounting\Invoicing;
 
 use Carbon\Carbon;
-use Helpers\AccountingHelper;
+use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use Helpers\InvoiceHelper;
 use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Actions\Invoices\RecalculateInvoice;

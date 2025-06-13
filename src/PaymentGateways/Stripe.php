@@ -2,7 +2,7 @@
 
 namespace NextDeveloper\Accounting\PaymentGateways;
 
-use Helpers\AccountingHelper;
+use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use Helpers\InvoiceHelper;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;

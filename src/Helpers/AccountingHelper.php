@@ -1,19 +1,38 @@
 <?php
 
-namespace Helpers;
+namespace NextDeveloper\Accounting\Helpers;
 
+use App\Envelopes\CRM\Accounts\AssignedAsAccountManager;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Commons\Database\Models\Countries;
 use NextDeveloper\Commons\Helpers\CountryHelper;
+use NextDeveloper\Communication\Helpers\Communicate;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
-use NextDeveloper\Partnership\Helpers\PartnerHelper;
 
 class AccountingHelper
 {
+    public static function setMeAsSalesPartner(Accounts $account)
+    {
+        $myAccountingAccount = self::getAccountingAccount(
+            UserHelper::currentAccount()->id
+        );
+
+        $account->updateQuietly([
+            'sales_partner_id'  =>  $myAccountingAccount->id
+        ]);
+
+        $salesPartnerOwner = UserHelper::getAccountOwner(UserHelper::currentAccount());
+
+        //  We are also setting the sales partner for the distributor account
+        $envelope = new AssignedAsAccountManager($salesPartnerOwner, UserHelper::currentAccount());
+        (new Communicate($salesPartnerOwner))->sendEnvelope($envelope);
+    }
+
     public static function getPaymentGatewayOfDistributor(Accounts $account)
     {
         return \NextDeveloper\Accounting\Database\Models\PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
