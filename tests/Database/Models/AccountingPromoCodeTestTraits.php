@@ -9,6 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
 use NextDeveloper\Accounting\Database\Filters\AccountingPromoCodeQueryFilter;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountingPromoCodeService;
+use Tests\TestCase;
 
 trait AccountingPromoCodeTestTraits
 {
@@ -573,4 +574,5 @@ trait AccountingPromoCodeTestTraits
         $this->assertTrue(true);
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

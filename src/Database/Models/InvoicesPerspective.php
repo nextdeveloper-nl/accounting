@@ -11,6 +11,7 @@ use NextDeveloper\Commons\Database\Traits\HasStates;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\UuidId;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * InvoicesPerspective model.
@@ -175,6 +176,9 @@ class InvoicesPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

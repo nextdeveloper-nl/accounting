@@ -56,7 +56,7 @@ class AbstractPaymentCheckoutSessionsTransformer extends AbstractTransformer
     {
                                                 $accountingPaymentGatewayId = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('id', $model->accounting_payment_gateway_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
-
+                        
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
@@ -156,6 +156,9 @@ class AbstractPaymentCheckoutSessionsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

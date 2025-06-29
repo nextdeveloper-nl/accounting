@@ -11,6 +11,7 @@ use NextDeveloper\Commons\Database\Traits\HasStates;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\UuidId;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Accounts model.
@@ -178,8 +179,11 @@ class Accounts extends Model
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
     }
-
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

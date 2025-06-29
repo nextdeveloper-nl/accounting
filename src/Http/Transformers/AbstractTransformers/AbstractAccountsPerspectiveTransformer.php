@@ -60,7 +60,7 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
-
+                        
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
@@ -79,6 +79,10 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
             'tr_mersis'  =>  $model->tr_mersis,
             'trade_office'  =>  $model->trade_office,
             'trade_office_number'  =>  $model->trade_office_number,
+            'distributor_partner'  =>  $model->distributor_partner,
+            'integrator_partner'  =>  $model->integrator_partner,
+            'sales_partner'  =>  $model->sales_partner,
+            'affiliate_partner'  =>  $model->affiliate_partner,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
@@ -170,6 +174,9 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-
+                        
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,7 +17,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-
+    
     public function taxOffice($value)
     {
         return $this->builder->where('tax_office', 'ilike', '%' . $value . '%');
@@ -28,7 +28,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->taxOffice($value);
     }
-
+        
     public function taxNumber($value)
     {
         return $this->builder->where('tax_number', 'ilike', '%' . $value . '%');
@@ -39,7 +39,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->taxNumber($value);
     }
-
+        
     public function accountingIdentifier($value)
     {
         return $this->builder->where('accounting_identifier', 'ilike', '%' . $value . '%');
@@ -50,7 +50,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingIdentifier($value);
     }
-
+        
     public function tradeOfficeNumber($value)
     {
         return $this->builder->where('trade_office_number', 'ilike', '%' . $value . '%');
@@ -61,7 +61,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->tradeOfficeNumber($value);
     }
-
+        
     public function tradeOffice($value)
     {
         return $this->builder->where('trade_office', 'ilike', '%' . $value . '%');
@@ -72,7 +72,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->tradeOffice($value);
     }
-
+        
     public function trMersis($value)
     {
         return $this->builder->where('tr_mersis', 'ilike', '%' . $value . '%');
@@ -83,7 +83,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->trMersis($value);
     }
-
+    
     public function isSuspended($value)
     {
         return $this->builder->where('is_suspended', $value);
@@ -94,7 +94,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->isSuspended($value);
     }
-
+     
     public function isDisabled($value)
     {
         return $this->builder->where('is_disabled', $value);
@@ -105,7 +105,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->isDisabled($value);
     }
-
+     
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -181,7 +181,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         }
     }
 
-
+    
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -196,7 +196,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrency($value);
     }
-
+    
     public function distributorId($value)
     {
             $distributor = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -211,7 +211,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->distributor($value);
     }
-
+    
     public function salesPartnerId($value)
     {
             $salesPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -226,7 +226,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->salesPartner($value);
     }
-
+    
     public function integratorPartnerId($value)
     {
             $integratorPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -241,7 +241,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->integratorPartner($value);
     }
-
+    
     public function affiliatePartnerId($value)
     {
             $affiliatePartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -256,8 +256,11 @@ class AccountsQueryFilter extends AbstractQueryFilter
     {
         return $this->affiliatePartner($value);
     }
-
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

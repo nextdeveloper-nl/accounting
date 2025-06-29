@@ -60,7 +60,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
                                                             $salesPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->sales_partner_id)->first();
                                                             $integratorPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
                                                             $affiliatePartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->affiliate_partner_id)->first();
-
+                        
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
@@ -171,6 +171,9 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

@@ -9,6 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
 use NextDeveloper\Accounting\Database\Filters\AccountingPaymentGatewayMessageQueryFilter;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountingPaymentGatewayMessageService;
+use Tests\TestCase;
 
 trait AccountingPaymentGatewayMessageTestTraits
 {
@@ -553,4 +554,5 @@ trait AccountingPaymentGatewayMessageTestTraits
         $this->assertTrue(true);
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }
