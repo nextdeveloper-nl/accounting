@@ -9,6 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
 use NextDeveloper\Accounting\Database\Filters\AccountingCreditCardQueryFilter;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountingCreditCardService;
+use Tests\TestCase;
 
 trait AccountingCreditCardTestTraits
 {
@@ -653,4 +654,5 @@ trait AccountingCreditCardTestTraits
         $this->assertTrue(true);
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-
+                
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,19 +17,19 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-
+    
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-
+        
     public function gateway($value)
     {
         return $this->builder->where('gateway', 'ilike', '%' . $value . '%');
     }
 
-
+    
     public function vatRate($value)
     {
         $operator = substr($value, 0, 1);
@@ -48,7 +48,7 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
     {
         return $this->vatRate($value);
     }
-
+    
     public function isActive($value)
     {
         return $this->builder->where('is_active', $value);
@@ -59,7 +59,7 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
     {
         return $this->isActive($value);
     }
-
+     
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -140,7 +140,7 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCountry($value);
     }
-
+    
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -150,7 +150,7 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         }
     }
 
-
+    
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -165,7 +165,7 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCurrency($value);
     }
-
+    
     public function accountingAccountId($value)
     {
             $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -180,8 +180,11 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
     {
         return $this->accountingAccount($value);
     }
-
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

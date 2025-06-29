@@ -9,6 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
 use NextDeveloper\Accounting\Database\Filters\AccountingTransactionQueryFilter;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountingTransactionService;
+use Tests\TestCase;
 
 trait AccountingTransactionTestTraits
 {
@@ -553,4 +554,5 @@ trait AccountingTransactionTestTraits
         $this->assertTrue(true);
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

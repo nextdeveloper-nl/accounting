@@ -55,7 +55,7 @@ class AbstractPaymentGatewayMessagesTransformer extends AbstractTransformer
     public function transform(PaymentGatewayMessages $model)
     {
                                                 $accountingPaymentGatewayId = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('id', $model->accounting_payment_gateway_id)->first();
-
+                        
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
@@ -153,6 +153,9 @@ class AbstractPaymentGatewayMessagesTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 
