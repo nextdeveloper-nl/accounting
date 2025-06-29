@@ -59,6 +59,13 @@ class AccountsPerspectiveTransformer extends AbstractAccountsPerspectiveTransfor
         $transformed['sales_partner_id'] = $salesPartner ? $salesPartner->uuid : null;
         $transformed['affiliate_partner_id'] = $affiliate ? $affiliate->uuid : null;
 
+        $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $model->iam_account_id)
+            ->withTrashed()
+            ->first();
+
+        $transformed['accounting_code'] = 'YS-' . $iamAccount->id;
+
         Cache::set(
             CacheHelper::getKey('AccountsPerspective', $model->uuid, 'Transformed'),
             $transformed
@@ -76,8 +83,10 @@ class AccountsPerspectiveTransformer extends AbstractAccountsPerspectiveTransfor
                     ->first();
 
                 $transformed['distributor_crm_account_id'] = $crmAccountDistributor->uuid;
+                $transformed['distributor_crm_account_name'] = $crmAccountDistributor->name;
             } else {
                 $transformed['distributor_crm_account_id'] = null;
+                $transformed['distributor_crm_account_name'] = null;
             }
 
             if($integrator) {
@@ -91,8 +100,10 @@ class AccountsPerspectiveTransformer extends AbstractAccountsPerspectiveTransfor
                     ->first();
 
                 $transformed['integrator_crm_account_id'] = $crmAccountIntegrator->uuid;
+                $transformed['integrator_crm_account_name'] = $crmAccountIntegrator->name;
             } else {
                 $transformed['integrator_crm_account_id'] = null;
+                $transformed['integrator_crm_account_name'] = null;
             }
 
             if($salesPartner) {
@@ -106,8 +117,10 @@ class AccountsPerspectiveTransformer extends AbstractAccountsPerspectiveTransfor
                     ->first();
 
                 $transformed['sales_partner_crm_account_id'] = $crmAccountSalesPartner->uuid;
+                $transformed['sales_partner_crm_account_name'] = $crmAccountSalesPartner->name;
             } else {
                 $transformed['sales_partner_crm_account_id'] = null;
+                $transformed['sales_partner_crm_account_name'] = null;
             }
 
             if($affiliate) {
@@ -121,8 +134,10 @@ class AccountsPerspectiveTransformer extends AbstractAccountsPerspectiveTransfor
                     ->first();
 
                 $transformed['affiliate_partner_crm_account_id'] = $crmAccountAffiliate->uuid;
+                $transformed['affiliate_partner_crm_account_name'] = $crmAccountAffiliate->name;
             } else {
                 $transformed['affiliate_partner_crm_account_id'] = null;
+                $transformed['affiliate_partner_crm_account_name'] = null;
             }
         }
 
