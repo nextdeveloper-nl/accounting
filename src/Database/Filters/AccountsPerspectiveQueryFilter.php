@@ -68,6 +68,17 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->accountingIdentifier($value);
     }
         
+    public function commonCurrencyCode($value)
+    {
+        return $this->builder->where('common_currency_code', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of commonCurrencyCode
+    public function common_currency_code($value)
+    {
+        return $this->commonCurrencyCode($value);
+    }
+        
     public function trMersis($value)
     {
         return $this->builder->where('tr_mersis', 'ilike', '%' . $value . '%');
@@ -292,6 +303,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

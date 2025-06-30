@@ -31,6 +31,7 @@ use Illuminate\Notifications\Notifiable;
  * @property string $accounting_identifier
  * @property $credit
  * @property integer $common_currency_id
+ * @property string $common_currency_code
  * @property string $tr_mersis
  * @property string $trade_office
  * @property string $trade_office_number
@@ -70,6 +71,7 @@ class AccountsPerspective extends Model
             'accounting_identifier',
             'credit',
             'common_currency_id',
+            'common_currency_code',
             'tr_mersis',
             'trade_office',
             'trade_office_number',
@@ -109,6 +111,7 @@ class AccountsPerspective extends Model
     'tax_office' => 'string',
     'accounting_identifier' => 'string',
     'common_currency_id' => 'integer',
+    'common_currency_code' => 'string',
     'tr_mersis' => 'string',
     'trade_office' => 'string',
     'trade_office_number' => 'string',
@@ -180,6 +183,7 @@ class AccountsPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
