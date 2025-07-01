@@ -38,6 +38,12 @@ use Illuminate\Notifications\Notifiable;
  * @property integer $sales_partner_id
  * @property integer $integrator_partner_id
  * @property integer $affiliate_partner_id
+ * @property boolean $is_distributor
+ * @property boolean $is_integrator
+ * @property boolean $is_vendor
+ * @property boolean $is_reseller
+ * @property boolean $is_affiliate
+ * @property integer $affiliate_level
  */
 class Accounts extends Model
 {
@@ -71,6 +77,12 @@ class Accounts extends Model
             'sales_partner_id',
             'integrator_partner_id',
             'affiliate_partner_id',
+            'is_distributor',
+            'is_integrator',
+            'is_vendor',
+            'is_reseller',
+            'is_affiliate',
+            'affiliate_level',
     ];
 
     /**
@@ -110,6 +122,12 @@ class Accounts extends Model
     'sales_partner_id' => 'integer',
     'integrator_partner_id' => 'integer',
     'affiliate_partner_id' => 'integer',
+    'is_distributor' => 'boolean',
+    'is_integrator' => 'boolean',
+    'is_vendor' => 'boolean',
+    'is_reseller' => 'boolean',
+    'is_affiliate' => 'boolean',
+    'affiliate_level' => 'integer',
     ];
 
     /**
@@ -181,6 +199,9 @@ class Accounts extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

@@ -317,6 +317,111 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('integrators-perspective')->group(
+            function () {
+                Route::get('/', 'IntegratorsPerspective\IntegratorsPerspectiveController@index');
+                Route::get('/actions', 'IntegratorsPerspective\IntegratorsPerspectiveController@getActions');
+
+                Route::get('{aip}/tags ', 'IntegratorsPerspective\IntegratorsPerspectiveController@tags');
+                Route::post('{aip}/tags ', 'IntegratorsPerspective\IntegratorsPerspectiveController@saveTags');
+                Route::get('{aip}/addresses ', 'IntegratorsPerspective\IntegratorsPerspectiveController@addresses');
+                Route::post('{aip}/addresses ', 'IntegratorsPerspective\IntegratorsPerspectiveController@saveAddresses');
+
+                Route::get('/{aip}/{subObjects}', 'IntegratorsPerspective\IntegratorsPerspectiveController@relatedObjects');
+                Route::get('/{aip}', 'IntegratorsPerspective\IntegratorsPerspectiveController@show');
+
+                Route::post('/', 'IntegratorsPerspective\IntegratorsPerspectiveController@store');
+                Route::post('/{aip}/do/{action}', 'IntegratorsPerspective\IntegratorsPerspectiveController@doAction');
+
+                Route::patch('/{aip}', 'IntegratorsPerspective\IntegratorsPerspectiveController@update');
+                Route::delete('/{aip}', 'IntegratorsPerspective\IntegratorsPerspectiveController@destroy');
+            }
+        );
+
+        Route::prefix('sales-partners-perspective')->group(
+            function () {
+                Route::get('/', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@index');
+                Route::get('/actions', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@getActions');
+
+                Route::get('{aspp}/tags ', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@tags');
+                Route::post('{aspp}/tags ', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@saveTags');
+                Route::get('{aspp}/addresses ', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@addresses');
+                Route::post('{aspp}/addresses ', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@saveAddresses');
+
+                Route::get('/{aspp}/{subObjects}', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@relatedObjects');
+                Route::get('/{aspp}', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@show');
+
+                Route::post('/', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@store');
+                Route::post('/{aspp}/do/{action}', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@doAction');
+
+                Route::patch('/{aspp}', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@update');
+                Route::delete('/{aspp}', 'SalesPartnersPerspective\SalesPartnersPerspectiveController@destroy');
+            }
+        );
+
+        Route::prefix('affiliates-perspective')->group(
+            function () {
+                Route::get('/', 'AffiliatesPerspective\AffiliatesPerspectiveController@index');
+                Route::get('/actions', 'AffiliatesPerspective\AffiliatesPerspectiveController@getActions');
+
+                Route::get('{aap}/tags ', 'AffiliatesPerspective\AffiliatesPerspectiveController@tags');
+                Route::post('{aap}/tags ', 'AffiliatesPerspective\AffiliatesPerspectiveController@saveTags');
+                Route::get('{aap}/addresses ', 'AffiliatesPerspective\AffiliatesPerspectiveController@addresses');
+                Route::post('{aap}/addresses ', 'AffiliatesPerspective\AffiliatesPerspectiveController@saveAddresses');
+
+                Route::get('/{aap}/{subObjects}', 'AffiliatesPerspective\AffiliatesPerspectiveController@relatedObjects');
+                Route::get('/{aap}', 'AffiliatesPerspective\AffiliatesPerspectiveController@show');
+
+                Route::post('/', 'AffiliatesPerspective\AffiliatesPerspectiveController@store');
+                Route::post('/{aap}/do/{action}', 'AffiliatesPerspective\AffiliatesPerspectiveController@doAction');
+
+                Route::patch('/{aap}', 'AffiliatesPerspective\AffiliatesPerspectiveController@update');
+                Route::delete('/{aap}', 'AffiliatesPerspective\AffiliatesPerspectiveController@destroy');
+            }
+        );
+
+        Route::prefix('vendors-perspective')->group(
+            function () {
+                Route::get('/', 'VendorsPerspective\VendorsPerspectiveController@index');
+                Route::get('/actions', 'VendorsPerspective\VendorsPerspectiveController@getActions');
+
+                Route::get('{accounting_vendors_perspective}/tags ', 'VendorsPerspective\VendorsPerspectiveController@tags');
+                Route::post('{accounting_vendors_perspective}/tags ', 'VendorsPerspective\VendorsPerspectiveController@saveTags');
+                Route::get('{accounting_vendors_perspective}/addresses ', 'VendorsPerspective\VendorsPerspectiveController@addresses');
+                Route::post('{accounting_vendors_perspective}/addresses ', 'VendorsPerspective\VendorsPerspectiveController@saveAddresses');
+
+                Route::get('/{accounting_vendors_perspective}/{subObjects}', 'VendorsPerspective\VendorsPerspectiveController@relatedObjects');
+                Route::get('/{accounting_vendors_perspective}', 'VendorsPerspective\VendorsPerspectiveController@show');
+
+                Route::post('/', 'VendorsPerspective\VendorsPerspectiveController@store');
+                Route::post('/{accounting_vendors_perspective}/do/{action}', 'VendorsPerspective\VendorsPerspectiveController@doAction');
+
+                Route::patch('/{accounting_vendors_perspective}', 'VendorsPerspective\VendorsPerspectiveController@update');
+                Route::delete('/{accounting_vendors_perspective}', 'VendorsPerspective\VendorsPerspectiveController@destroy');
+            }
+        );
+
+        Route::prefix('distributors-perspective')->group(
+            function () {
+                Route::get('/', 'DistributorsPerspective\DistributorsPerspectiveController@index');
+                Route::get('/actions', 'DistributorsPerspective\DistributorsPerspectiveController@getActions');
+
+                Route::get('{adp}/tags ', 'DistributorsPerspective\DistributorsPerspectiveController@tags');
+                Route::post('{adp}/tags ', 'DistributorsPerspective\DistributorsPerspectiveController@saveTags');
+                Route::get('{adp}/addresses ', 'DistributorsPerspective\DistributorsPerspectiveController@addresses');
+                Route::post('{adp}/addresses ', 'DistributorsPerspective\DistributorsPerspectiveController@saveAddresses');
+
+                Route::get('/{adp}/{subObjects}', 'DistributorsPerspective\DistributorsPerspectiveController@relatedObjects');
+                Route::get('/{adp}', 'DistributorsPerspective\DistributorsPerspectiveController@show');
+
+                Route::post('/', 'DistributorsPerspective\DistributorsPerspectiveController@store');
+                Route::post('/{adp}/do/{action}', 'DistributorsPerspective\DistributorsPerspectiveController@doAction');
+
+                Route::patch('/{adp}', 'DistributorsPerspective\DistributorsPerspectiveController@update');
+                Route::delete('/{adp}', 'DistributorsPerspective\DistributorsPerspectiveController@destroy');
+            }
+        );
+
         Route::prefix('contract-items-perspective')->group(
             function () {
                 Route::get('/', 'ContractItemsPerspective\ContractItemsPerspectiveController@index');
@@ -923,8 +1028,68 @@ Route::prefix('accounting')->group(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 );
+
+
+
 
 
 
