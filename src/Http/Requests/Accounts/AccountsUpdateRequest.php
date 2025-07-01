@@ -28,6 +28,12 @@ class AccountsUpdateRequest extends AbstractFormRequest
         'sales_partner_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
         'integrator_partner_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
         'affiliate_partner_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
+        'is_distributor' => 'boolean',
+        'is_integrator' => 'boolean',
+        'is_vendor' => 'boolean',
+        'is_reseller' => 'boolean',
+        'is_affiliate' => 'boolean',
+        'affiliate_level' => 'integer',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

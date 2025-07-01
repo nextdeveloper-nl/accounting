@@ -84,6 +84,25 @@ class AccountsQueryFilter extends AbstractQueryFilter
         return $this->trMersis($value);
     }
     
+    public function affiliateLevel($value)
+    {
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('affiliate_level', $operator, $value);
+    }
+
+        //  This is an alias function of affiliateLevel
+    public function affiliate_level($value)
+    {
+        return $this->affiliateLevel($value);
+    }
+    
     public function isSuspended($value)
     {
         return $this->builder->where('is_suspended', $value);
@@ -104,6 +123,61 @@ class AccountsQueryFilter extends AbstractQueryFilter
     public function is_disabled($value)
     {
         return $this->isDisabled($value);
+    }
+     
+    public function isDistributor($value)
+    {
+        return $this->builder->where('is_distributor', $value);
+    }
+
+        //  This is an alias function of isDistributor
+    public function is_distributor($value)
+    {
+        return $this->isDistributor($value);
+    }
+     
+    public function isIntegrator($value)
+    {
+        return $this->builder->where('is_integrator', $value);
+    }
+
+        //  This is an alias function of isIntegrator
+    public function is_integrator($value)
+    {
+        return $this->isIntegrator($value);
+    }
+     
+    public function isVendor($value)
+    {
+        return $this->builder->where('is_vendor', $value);
+    }
+
+        //  This is an alias function of isVendor
+    public function is_vendor($value)
+    {
+        return $this->isVendor($value);
+    }
+     
+    public function isReseller($value)
+    {
+        return $this->builder->where('is_reseller', $value);
+    }
+
+        //  This is an alias function of isReseller
+    public function is_reseller($value)
+    {
+        return $this->isReseller($value);
+    }
+     
+    public function isAffiliate($value)
+    {
+        return $this->builder->where('is_affiliate', $value);
+    }
+
+        //  This is an alias function of isAffiliate
+    public function is_affiliate($value)
+    {
+        return $this->isAffiliate($value);
     }
      
     public function createdAtStart($date)
@@ -258,6 +332,9 @@ class AccountsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 

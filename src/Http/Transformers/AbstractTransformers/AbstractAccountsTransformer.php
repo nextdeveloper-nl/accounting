@@ -83,6 +83,12 @@ class AbstractAccountsTransformer extends AbstractTransformer
             'sales_partner_id'  =>  $salesPartnerId ? $salesPartnerId->uuid : null,
             'integrator_partner_id'  =>  $integratorPartnerId ? $integratorPartnerId->uuid : null,
             'affiliate_partner_id'  =>  $affiliatePartnerId ? $affiliatePartnerId->uuid : null,
+            'is_distributor'  =>  $model->is_distributor,
+            'is_integrator'  =>  $model->is_integrator,
+            'is_vendor'  =>  $model->is_vendor,
+            'is_reseller'  =>  $model->is_reseller,
+            'is_affiliate'  =>  $model->is_affiliate,
+            'affiliate_level'  =>  $model->affiliate_level,
             ]
         );
     }
@@ -171,6 +177,9 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
 
 
 
