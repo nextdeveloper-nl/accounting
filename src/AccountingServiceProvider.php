@@ -3,6 +3,7 @@
 namespace NextDeveloper\Accounting;
 
 use NextDeveloper\Commons\AbstractServiceProvider;
+use NextDeveloper\Accounting\Console\Commands\AssignPartners;
 
 /**
  * Class CRMServiceProvider
@@ -98,7 +99,7 @@ class AccountingServiceProvider extends AbstractServiceProvider {
     protected function registerCommands() {
         if ($this->app->runningInConsole()) {
             $this->commands([
-
+                AssignPartners::class
             ]);
         }
     }
