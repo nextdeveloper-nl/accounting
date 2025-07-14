@@ -97,7 +97,13 @@ class AccountingHelper
 
         //  First we need to understand where the customer is actually from
         $iamAccount = self::getIamAccount($account);
-        $country = CountryHelper::getCountryById($iamAccount->common_country_id);
+
+        if($iamAccount->common_country_id) {
+            $country = CountryHelper::getCountryById($iamAccount->common_country_id);
+        } else {
+            $country = null;
+            Log::info(__METHOD__ . '| Customer (' . $iamAccount->name . ' | ' . $iamAccount->uuid . ') does not have a country id. Using the global provider.');
+        }
 
         $provider = null;
 
