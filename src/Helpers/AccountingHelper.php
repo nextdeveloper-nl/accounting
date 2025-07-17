@@ -98,6 +98,11 @@ class AccountingHelper
         //  First we need to understand where the customer is actually from
         $iamAccount = self::getIamAccount($account);
 
+        if(!$iamAccount) {
+            Log::error(__METHOD__ . '| Cannot find the IAM account for the accounting account: ' . $account->id);
+            return $account;
+        }
+
         if($iamAccount->common_country_id) {
             $country = CountryHelper::getCountryById($iamAccount->common_country_id);
         } else {
