@@ -191,6 +191,27 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('partnerships')->group(
+            function () {
+                Route::get('/', 'Partnerships\PartnershipsController@index');
+                Route::get('/actions', 'Partnerships\PartnershipsController@getActions');
+
+                Route::get('{accounting_partnerships}/tags ', 'Partnerships\PartnershipsController@tags');
+                Route::post('{accounting_partnerships}/tags ', 'Partnerships\PartnershipsController@saveTags');
+                Route::get('{accounting_partnerships}/addresses ', 'Partnerships\PartnershipsController@addresses');
+                Route::post('{accounting_partnerships}/addresses ', 'Partnerships\PartnershipsController@saveAddresses');
+
+                Route::get('/{accounting_partnerships}/{subObjects}', 'Partnerships\PartnershipsController@relatedObjects');
+                Route::get('/{accounting_partnerships}', 'Partnerships\PartnershipsController@show');
+
+                Route::post('/', 'Partnerships\PartnershipsController@store');
+                Route::post('/{accounting_partnerships}/do/{action}', 'Partnerships\PartnershipsController@doAction');
+
+                Route::patch('/{accounting_partnerships}', 'Partnerships\PartnershipsController@update');
+                Route::delete('/{accounting_partnerships}', 'Partnerships\PartnershipsController@destroy');
+            }
+        );
+
         Route::prefix('accounts')->group(
             function () {
                 Route::get('/', 'Accounts\AccountsController@index');
@@ -1085,8 +1106,31 @@ Route::prefix('accounting')->group(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 );
+
 
 
 

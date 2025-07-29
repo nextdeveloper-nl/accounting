@@ -46,6 +46,16 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
         }
 
         if(
+            $model->getTable() == 'accounting_affiliates_perspective' ||
+            $model->getTable() == 'accounting_distributors_perspective' ||
+            $model->getTable() == 'accounting_sales_partners_perspective' ||
+            $model->getTable() == 'accounting_vendors_perspective' ||
+            $model->getTable() == 'accounting_integrators_perspective'
+        ) {
+            return;
+        }
+
+        if(
             $model->getTable() == 'accounting_accounts' ||
             $model->getTable() == 'accounting_credit_cards' ||
 
@@ -117,6 +127,10 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             'accounting_payment_checkout_sessions:create',
             'accounting_payment_checkout_sessions:update',
             'accounting_payment_checkout_sessions:delete',
+
+            'accounting_partnerships:read',
+            'accounting_partnerships:create',
+            'accounting_partnerships:update',
         ];
     }
 
