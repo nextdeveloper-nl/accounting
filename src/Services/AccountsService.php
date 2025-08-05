@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Accounting\Services;
 
+use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountsService;
 
 /**

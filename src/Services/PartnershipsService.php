@@ -3,6 +3,7 @@
 namespace NextDeveloper\Accounting\Services;
 
 use NextDeveloper\Accounting\Database\Models\Partnerships;
+use NextDeveloper\Accounting\Helpers\PartnershipHelper;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractPartnershipsService;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
@@ -10,8 +11,6 @@ use Illuminate\Support\Str;
 use NextDeveloper\IAM\Helpers\RoleHelper;
 use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Database\Models\Accounts;
-
-
 
 /**
  * This class is responsible from managing the data for Partnerships
@@ -54,7 +53,10 @@ class PartnershipsService extends AbstractPartnershipsService
             $data['partner_code'] = $randomString;
         }
 
-        RoleHelper::addUserToRole(UserHelper::me(), 'accounting-user');
+        $data['customer_count'] = 0;
+        $data['level'] = 1;
+
+        self::addPartnerRoles($partnership);
 
         $model = parent::create($data);
 
@@ -74,5 +76,15 @@ class PartnershipsService extends AbstractPartnershipsService
         if ($user) {
             RoleHelper::addUserToRole($user, 'partnership-user');
         }
+    }
+
+    public static function approvePartnership(Accounts $account)
+    {
+        $partnership = PartnershipHelper::getPartnership($account);
+
+        //  Here your partnership is approved email will be sent.
+
+        $partnership->is_approved = true;
+        $partnership->save();
     }
 }
