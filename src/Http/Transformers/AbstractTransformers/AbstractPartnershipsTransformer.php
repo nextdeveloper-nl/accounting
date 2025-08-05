@@ -2,34 +2,34 @@
 
 namespace NextDeveloper\Accounting\Http\Transformers\AbstractTransformers;
 
-use NextDeveloper\Accounting\Database\Models\ContractItems;
 use NextDeveloper\Commons\Database\Models\Addresses;
-use NextDeveloper\Commons\Database\Models\AvailableActions;
 use NextDeveloper\Commons\Database\Models\Comments;
-use NextDeveloper\Commons\Database\Models\Media;
 use NextDeveloper\Commons\Database\Models\Meta;
 use NextDeveloper\Commons\Database\Models\PhoneNumbers;
 use NextDeveloper\Commons\Database\Models\SocialMedia;
-use NextDeveloper\Commons\Database\Models\States;
 use NextDeveloper\Commons\Database\Models\Votes;
-use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
-use NextDeveloper\Commons\Http\Transformers\AddressesTransformer;
-use NextDeveloper\Commons\Http\Transformers\AvailableActionsTransformer;
-use NextDeveloper\Commons\Http\Transformers\CommentsTransformer;
+use NextDeveloper\Commons\Database\Models\Media;
 use NextDeveloper\Commons\Http\Transformers\MediaTransformer;
-use NextDeveloper\Commons\Http\Transformers\MetaTransformer;
-use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
-use NextDeveloper\Commons\Http\Transformers\SocialMediaTransformer;
+use NextDeveloper\Commons\Database\Models\AvailableActions;
+use NextDeveloper\Commons\Http\Transformers\AvailableActionsTransformer;
+use NextDeveloper\Commons\Database\Models\States;
 use NextDeveloper\Commons\Http\Transformers\StatesTransformer;
+use NextDeveloper\Commons\Http\Transformers\CommentsTransformer;
+use NextDeveloper\Commons\Http\Transformers\SocialMediaTransformer;
+use NextDeveloper\Commons\Http\Transformers\MetaTransformer;
 use NextDeveloper\Commons\Http\Transformers\VotesTransformer;
+use NextDeveloper\Commons\Http\Transformers\AddressesTransformer;
+use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
+use NextDeveloper\Accounting\Database\Models\Partnerships;
+use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
 /**
- * Class ContractItemsTransformer. This class is being used to manipulate the data we are serving to the customer
+ * Class PartnershipsTransformer. This class is being used to manipulate the data we are serving to the customer
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractContractItemsTransformer extends AbstractTransformer
+class AbstractPartnershipsTransformer extends AbstractTransformer
 {
 
     /**
@@ -48,39 +48,42 @@ class AbstractContractItemsTransformer extends AbstractTransformer
     ];
 
     /**
-     * @param ContractItems $model
+     * @param Partnerships $model
      *
      * @return array
      */
-    public function transform(ContractItems $model)
+    public function transform(Partnerships $model)
     {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
-                                                            $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
-                                                            $accountingContractId = \NextDeveloper\Accounting\Database\Models\Contracts::where('id', $model->accounting_contract_id)->first();
-                                                            $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
-                                                            $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                         
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
-            'object_type'  =>  $model->object_type,
-            'object_id'  =>  $model->object_id,
             'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
+            'partner_code'  =>  $model->partner_code,
+            'is_brand_ambassador'  =>  $model->is_brand_ambassador,
+            'customer_count'  =>  $model->customer_count,
+            'level'  =>  $model->level,
+            'reward_points'  =>  $model->reward_points,
+            'boosts'  =>  $model->boosts,
+            'mystery_box'  =>  $model->mystery_box,
+            'badges'  =>  $model->badges,
+            'is_approved'  =>  $model->is_approved,
+            'technical_capabilities'  =>  $model->technical_capabilities,
+            'industry'  =>  $model->industry,
+            'sector_focus'  =>  $model->sector_focus,
+            'special_interest'  =>  $model->special_interest,
+            'compliance_certifications'  =>  $model->compliance_certifications,
+            'target_group'  =>  $model->target_group,
+            'meeting_link'  =>  $model->meeting_link,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
-            'accounting_contract_id'  =>  $accountingContractId ? $accountingContractId->uuid : null,
-            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            'price'  =>  $model->price,
-            'discount'  =>  $model->discount,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'contract_type'  =>  $model->contract_type,
             ]
         );
     }
 
-    public function includeStates(ContractItems $model)
+    public function includeStates(Partnerships $model)
     {
         $states = States::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -89,7 +92,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($states, new StatesTransformer());
     }
 
-    public function includeActions(ContractItems $model)
+    public function includeActions(Partnerships $model)
     {
         $input = get_class($model);
         $input = str_replace('\\Database\\Models', '', $input);
@@ -101,7 +104,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($actions, new AvailableActionsTransformer());
     }
 
-    public function includeMedia(ContractItems $model)
+    public function includeMedia(Partnerships $model)
     {
         $media = Media::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -110,7 +113,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($media, new MediaTransformer());
     }
 
-    public function includeSocialMedia(ContractItems $model)
+    public function includeSocialMedia(Partnerships $model)
     {
         $socialMedia = SocialMedia::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -119,7 +122,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($socialMedia, new SocialMediaTransformer());
     }
 
-    public function includeComments(ContractItems $model)
+    public function includeComments(Partnerships $model)
     {
         $comments = Comments::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -128,7 +131,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($comments, new CommentsTransformer());
     }
 
-    public function includeVotes(ContractItems $model)
+    public function includeVotes(Partnerships $model)
     {
         $votes = Votes::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -137,7 +140,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($votes, new VotesTransformer());
     }
 
-    public function includeMeta(ContractItems $model)
+    public function includeMeta(Partnerships $model)
     {
         $meta = Meta::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -146,7 +149,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($meta, new MetaTransformer());
     }
 
-    public function includePhoneNumbers(ContractItems $model)
+    public function includePhoneNumbers(Partnerships $model)
     {
         $phoneNumbers = PhoneNumbers::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -155,7 +158,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($phoneNumbers, new PhoneNumbersTransformer());
     }
 
-    public function includeAddresses(ContractItems $model)
+    public function includeAddresses(Partnerships $model)
     {
         $addresses = Addresses::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -164,26 +167,4 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

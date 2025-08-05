@@ -2,45 +2,52 @@
 
 namespace NextDeveloper\Accounting\Database\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use NextDeveloper\Accounting\Database\Observers\ContractItemsObserver;
-use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
-use NextDeveloper\Commons\Database\Traits\Filterable;
 use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
-use NextDeveloper\Commons\Database\Traits\Taggable;
-use NextDeveloper\Commons\Database\Traits\UuidId;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
+use NextDeveloper\Commons\Database\Traits\Filterable;
+use NextDeveloper\Accounting\Database\Observers\PartnershipsObserver;
+use NextDeveloper\Commons\Database\Traits\UuidId;
+use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
+use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
- * ContractItems model.
+ * Partnerships model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property string $object_type
- * @property integer $object_id
  * @property integer $iam_account_id
- * @property integer $iam_user_id
+ * @property string $partner_code
+ * @property boolean $is_brand_ambassador
+ * @property integer $customer_count
+ * @property integer $level
+ * @property integer $reward_points
+ * @property $boosts
+ * @property $mystery_box
+ * @property $badges
+ * @property boolean $is_approved
+ * @property array $technical_capabilities
+ * @property string $industry
+ * @property array $sector_focus
+ * @property array $special_interest
+ * @property array $compliance_certifications
+ * @property array $target_group
+ * @property string $meeting_link
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
- * @property integer $accounting_contract_id
- * @property integer $accounting_account_id
- * @property $price
- * @property integer $discount
- * @property integer $common_currency_id
- * @property string $contract_type
  */
-class ContractItems extends Model
+class Partnerships extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'accounting_contract_items';
+    protected $table = 'accounting_partnerships';
 
 
     /**
@@ -49,16 +56,23 @@ class ContractItems extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'object_type',
-            'object_id',
             'iam_account_id',
-            'iam_user_id',
-            'accounting_contract_id',
-            'accounting_account_id',
-            'price',
-            'discount',
-            'common_currency_id',
-            'contract_type',
+            'partner_code',
+            'is_brand_ambassador',
+            'customer_count',
+            'level',
+            'reward_points',
+            'boosts',
+            'mystery_box',
+            'badges',
+            'is_approved',
+            'technical_capabilities',
+            'industry',
+            'sector_focus',
+            'special_interest',
+            'compliance_certifications',
+            'target_group',
+            'meeting_link',
     ];
 
     /**
@@ -82,16 +96,25 @@ class ContractItems extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'object_type' => 'string',
-    'object_id' => 'integer',
+    'partner_code' => 'string',
+    'is_brand_ambassador' => 'boolean',
+    'customer_count' => 'integer',
+    'level' => 'integer',
+    'reward_points' => 'integer',
+    'boosts' => 'array',
+    'mystery_box' => 'array',
+    'badges' => 'array',
+    'is_approved' => 'boolean',
+    'technical_capabilities' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
+    'industry' => 'string',
+    'sector_focus' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
+    'special_interest' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
+    'compliance_certifications' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
+    'target_group' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
+    'meeting_link' => 'string',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-    'accounting_contract_id' => 'integer',
-    'accounting_account_id' => 'integer',
-    'discount' => 'integer',
-    'common_currency_id' => 'integer',
-    'contract_type' => 'string',
     ];
 
     /**
@@ -125,7 +148,7 @@ class ContractItems extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(ContractItemsObserver::class);
+        parent::observe(PartnershipsObserver::class);
 
         self::registerScopes();
     }
@@ -133,7 +156,7 @@ class ContractItems extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_contract_items');
+        $modelScopes = config('accounting.scopes.accounting_partnerships');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -157,42 +180,5 @@ class ContractItems extends Model
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
     }
     
-    public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
