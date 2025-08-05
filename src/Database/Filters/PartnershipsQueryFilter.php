@@ -4,13 +4,13 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                
+    
 
 /**
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class PaymentGatewaysQueryFilter extends AbstractQueryFilter
+class PartnershipsQueryFilter extends AbstractQueryFilter
 {
 
     /**
@@ -18,19 +18,35 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
     
-    public function name($value)
+    public function partnerCode($value)
     {
-        return $this->builder->where('name', 'ilike', '%' . $value . '%');
+        return $this->builder->where('partner_code', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of partnerCode
+    public function partner_code($value)
+    {
+        return $this->partnerCode($value);
+    }
+        
+    public function industry($value)
+    {
+        return $this->builder->where('industry', 'ilike', '%' . $value . '%');
     }
 
         
-    public function gateway($value)
+    public function meetingLink($value)
     {
-        return $this->builder->where('gateway', 'ilike', '%' . $value . '%');
+        return $this->builder->where('meeting_link', 'ilike', '%' . $value . '%');
     }
 
+        //  This is an alias function of meetingLink
+    public function meeting_link($value)
+    {
+        return $this->meetingLink($value);
+    }
     
-    public function vatRate($value)
+    public function customerCount($value)
     {
         $operator = substr($value, 0, 1);
 
@@ -40,24 +56,68 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('vat_rate', $operator, $value);
+        return $this->builder->where('customer_count', $operator, $value);
     }
 
-        //  This is an alias function of vatRate
-    public function vat_rate($value)
+        //  This is an alias function of customerCount
+    public function customer_count($value)
     {
-        return $this->vatRate($value);
+        return $this->customerCount($value);
     }
     
-    public function isActive($value)
+    public function level($value)
     {
-        return $this->builder->where('is_active', $value);
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('level', $operator, $value);
     }
 
-        //  This is an alias function of isActive
-    public function is_active($value)
+    
+    public function rewardPoints($value)
     {
-        return $this->isActive($value);
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('reward_points', $operator, $value);
+    }
+
+        //  This is an alias function of rewardPoints
+    public function reward_points($value)
+    {
+        return $this->rewardPoints($value);
+    }
+    
+    public function isBrandAmbassador($value)
+    {
+        return $this->builder->where('is_brand_ambassador', $value);
+    }
+
+        //  This is an alias function of isBrandAmbassador
+    public function is_brand_ambassador($value)
+    {
+        return $this->isBrandAmbassador($value);
+    }
+     
+    public function isApproved($value)
+    {
+        return $this->builder->where('is_approved', $value);
+    }
+
+        //  This is an alias function of isApproved
+    public function is_approved($value)
+    {
+        return $this->isApproved($value);
     }
      
     public function createdAtStart($date)
@@ -126,21 +186,6 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         return $this->deletedAtEnd($value);
     }
 
-    public function commonCountryId($value)
-    {
-            $commonCountry = \NextDeveloper\Commons\Database\Models\Countries::where('uuid', $value)->first();
-
-        if($commonCountry) {
-            return $this->builder->where('common_country_id', '=', $commonCountry->id);
-        }
-    }
-
-        //  This is an alias function of commonCountry
-    public function common_country_id($value)
-    {
-        return $this->commonCountry($value);
-    }
-    
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -151,90 +196,5 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
     }
 
     
-    public function commonCurrencyId($value)
-    {
-            $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
-
-        if($commonCurrency) {
-            return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
-        }
-    }
-
-        //  This is an alias function of commonCurrency
-    public function common_currency_id($value)
-    {
-        return $this->commonCurrency($value);
-    }
-    
-    public function accountingAccountId($value)
-    {
-            $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
-
-        if($accountingAccount) {
-            return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
-        }
-    }
-
-        //  This is an alias function of accountingAccount
-    public function accounting_account_id($value)
-    {
-        return $this->accountingAccount($value);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
