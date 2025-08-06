@@ -26,12 +26,19 @@ class PartnershipsService extends AbstractPartnershipsService
 
     public static function create(array $data)
     {
-        $partnership = Partnerships::withoutGlobalScope(AuthorizationScope::class)
-            ->where('iam_account_id', UserHelper::currentAccount()->id)
-            ->first();
+        $partnership = null;
 
-        if ($partnership) {
-            self::addPartnerRoles($partnership);
+        if(array_key_exists('iam_account_id', $data)) {
+            $partnership = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+                ->where('iam_account_id', $data['iam_account_id'])
+                ->first();
+        } else {
+            $partnership = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+                ->where('iam_account_id', UserHelper::currentAccount()->id)
+                ->first();
+        }
+
+        if($partnership) {
             return $partnership;
         }
 
@@ -56,8 +63,6 @@ class PartnershipsService extends AbstractPartnershipsService
         $data['customer_count'] = 0;
         $data['level'] = 1;
 
-        self::addPartnerRoles($partnership);
-
         $model = parent::create($data);
 
         return $model;
@@ -74,7 +79,7 @@ class PartnershipsService extends AbstractPartnershipsService
             ->first();
 
         if ($user) {
-            RoleHelper::addUserToRole($user, 'partnership-user');
+            RoleHelper::addUserToRole($user, 'accounting-partner');
         }
     }
 
