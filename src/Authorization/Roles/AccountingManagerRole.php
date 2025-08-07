@@ -107,6 +107,16 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
         ];
     }
 
+    //  This means that the accounting manager can update any model in the accounting module.
+    //  This is a very powerful role, so be careful with it.
+    public function checkUpdatePolicy(Model $model, Users $user): bool
+    {
+        if($model->getTable() == 'accounting_account')
+            return true;
+
+        return parent::checkUpdatePolicy($model, $user);
+    }
+
     public function getLevel(): int
     {
         return self::LEVEL;
