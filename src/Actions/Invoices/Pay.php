@@ -344,7 +344,7 @@ class Pay extends AbstractAction
 
             $transactionLog = $transaction->create([
                 'accounting_invoice_id'         =>  $invoice->id,
-                'amount'                        => $invoice->amount,
+                'amount'                        => $calculatedPrice,
                 'common_currency_id'            => $invoice->common_currency_id,
                 'accounting_payment_gateway_id' =>  $this->paymentGateway->id,
                 'iam_account_id'                => $invoice->iam_account_id,
@@ -357,6 +357,8 @@ class Pay extends AbstractAction
             $this->setFinishedWithError('The payment request has failed. The error message is: '
                 . $e->getMessage());
 
+            StateHelper::setState($this->model, 'payment-error', 'payment-processor-error', StateHelper::STATE_WARNING, $e->getMessage());
+
             return;
         }
 
@@ -365,7 +367,7 @@ class Pay extends AbstractAction
 
         $transactionLog = $transaction->create([
             'accounting_invoice_id'         =>  $invoice->id,
-            'amount'                        => $invoice->amount,
+            'amount'                        => $calculatedPrice,
             'common_currency_id'            => $invoice->common_currency_id,
             'accounting_payment_gateway_id' =>  $this->paymentGateway->id,
             'iam_account_id'                => $invoice->iam_account_id,
