@@ -251,6 +251,12 @@ class Pay extends AbstractAction
 
         $accountBilled = AccountingHelper::getIamAccountFromInvoice($this->model);
 
+        if($accountBilled->common_country_id != $this->paymentGateway->common_country_id) {
+            StateHelper::setState($this->model, 'payment-error', 'country-not-supported', null, 'The payment gateway does not support the country of the customer. Please use a different payment gateway.');
+            $this->setFinishedWithError('The payment gateway does not support the country of the customer');
+            return;
+        }
+
         $address = Addresses::withoutGlobalScope(AuthorizationScope::class)
             ->where('object_id', $accountBilled->id)
             ->where('object_type', 'NextDeveloper\\IAM\\Database\\Models\\Accounts')
@@ -291,6 +297,11 @@ class Pay extends AbstractAction
         }
 
         $calculatedPrice = $this->model->amount;
+
+        if($this->model->common_currency_id == 1) {
+            $this->model->exchange_rate = 1;
+            $this->model->save();
+        }
 
         if($this->model->exchange_rate) {
             $calculatedPrice *= $this->model->exchange_rate;
@@ -402,6 +413,9 @@ class Pay extends AbstractAction
                 case 12:
                     StateHelper::setState($creditCard, 'card-number', 'card-number-invalid', null, 'Card number is invalid. Card owner should provide a valid card number.');
                     StateHelper::setState($invoice, 'payment-error', 'card-number-invalid', null, 'Credit card has invalid number. Card owner should provide a valid card number.');
+                    break;
+                case 5008:
+                    StateHelper::setState($invoice, 'payment-error', 'card-number-invalid', null, 'The amount is more than 100.000 TL, therefore we cannot process the payment. Please reduce the number.');
                     break;
                 case 10051:
                     StateHelper::setState($creditCard, 'fund', 'not-enough-funds', null, 'There is not enough fund in the card. Card owner should provide a valid card with enough fund.');
