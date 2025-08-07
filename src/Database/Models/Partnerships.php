@@ -20,6 +20,7 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
  * @property integer $id
  * @property string $uuid
  * @property integer $iam_account_id
+ * @property integer $accounting_account_id
  * @property string $partner_code
  * @property boolean $is_brand_ambassador
  * @property integer $customer_count
@@ -57,6 +58,7 @@ class Partnerships extends Model
 
     protected $fillable = [
             'iam_account_id',
+            'accounting_account_id',
             'partner_code',
             'is_brand_ambassador',
             'customer_count',
@@ -96,6 +98,7 @@ class Partnerships extends Model
      */
     protected $casts = [
     'id' => 'integer',
+    'accounting_account_id' => 'integer',
     'partner_code' => 'string',
     'is_brand_ambassador' => 'boolean',
     'customer_count' => 'integer',
@@ -181,4 +184,5 @@ class Partnerships extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }
