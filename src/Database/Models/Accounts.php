@@ -196,12 +196,18 @@ class Accounts extends Model
         return $this->hasMany(\NextDeveloper\Accounting\Database\Models\Invoices::class);
     }
 
+    public function partnerships() : \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\NextDeveloper\Accounting\Database\Models\Partnerships::class);
+    }
+
     public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
