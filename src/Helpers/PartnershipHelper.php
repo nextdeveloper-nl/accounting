@@ -23,30 +23,26 @@ class PartnershipHelper
         }
     }
 
-    public static function getPartnerAccountOwner(Accounts|\NextDeveloper\IAM\Database\Models\Accounts|string $account)
+    public static function getPartnerAccountOwner(Accounts|string $account)
     {
-        if(Str::isUuid($account)) {
-            $account = Accounts::withoutGlobalScopes()
-                ->where('uuid', $account)
-                ->first();
-        }
-
-        if(is_int($account)) {
-            $account = Accounts::withoutGlobalScopes()
-                ->where('id', $account)
-                ->first();
-        }
-
-        if(get_class($account) == 'NextDeveloper\IAM\Database\Models\Accounts') {
-            return Users::withoutGlobalScopes()
-                ->where('id', $account->iam_user_id)
-                ->first();
+        if(is_string($account)) {
+            if(Str::isUuid($account)) {
+                $account = Accounts::withoutGlobalScopes()
+                    ->where('uuid', $account)
+                    ->first();
+            } else {
+                $account = Accounts::withoutGlobalScopes()
+                    ->where('id', $account)
+                    ->first();
+            }
         }
 
         $account = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScopes()
             ->where('id', $account->iam_account_id)
             ->first();
 
-        return self::getPartnerAccountOwner($account);
+        return Users::withoutGlobalScopes()
+            ->where('id', $account->iam_user_id)
+            ->first();
     }
 }
