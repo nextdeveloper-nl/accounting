@@ -99,7 +99,7 @@ class AccountsService extends AbstractAccountsService
             ->first();
 
         $ownerOfDistributor = \NextDeveloper\IAM\Database\Models\Users::withoutGlobalScope(AuthorizationScope::class)
-            ->where('id', $iamAccountOfDistributor->iam_account_id)
+            ->where('id', $iamAccountOfDistributor->iam_user_id)
             ->first();
 
         CrmHelper::addAccountManager($crmAccountOfAccountingAccount, $iamAccountOfDistributor, $ownerOfDistributor, $ownerOfDistributor);
