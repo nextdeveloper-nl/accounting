@@ -34,6 +34,18 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
             'accounting_distributors_perspective',
             'accounting_sales_partners_perspective',
             'accounting_affiliates_perspective',
+            'accounting_vendors_perspective',
+
+            'accounting_accounts_perspective',
+            'accounting_affiliates_perspective',
+            'accounting_contract_items_perspective',
+            'accounting_contracts_perspective',
+            'accounting_distributors_perspective',
+            'accounting_integrators_perspective',
+            'accounting_invoice_items_perspective',
+            'accounting_invoices_perspective',
+            'accounting_partnerships_perspective',
+            'accounting_sales_partners_perspective',
             'accounting_vendors_perspective'
         ];
 
@@ -66,6 +78,18 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
             'accounting_distributors_perspective:read',
             'accounting_sales_partners_perspective:read',
             'accounting_affiliates_perspective:read',
+            'accounting_vendors_perspective:read',
+
+            'accounting_accounts_perspective:read',
+            'accounting_affiliates_perspective:read',
+            'accounting_contract_items_perspective:read',
+            'accounting_contracts_perspective:read',
+            'accounting_distributors_perspective:read',
+            'accounting_integrators_perspective:read',
+            'accounting_invoice_items_perspective:read',
+            'accounting_invoices_perspective:read',
+            'accounting_partnerships_perspective:read',
+            'accounting_sales_partners_perspective:read',
             'accounting_vendors_perspective:read',
 
             'accounting_accounts:read',
@@ -129,7 +153,7 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
     //  This is a very powerful role, so be careful with it.
     public function checkUpdatePolicy(Model $model, Users $user): bool
     {
-        if($model->getTable() == 'accounting_account')
+        if($model->getTable() == 'accounting_accounts')
             return true;
 
         return parent::checkUpdatePolicy($model, $user);

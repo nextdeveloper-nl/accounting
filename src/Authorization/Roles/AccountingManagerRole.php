@@ -34,14 +34,26 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
             'accounting_distributors_perspective',
             'accounting_sales_partners_perspective',
             'accounting_affiliates_perspective',
+            'accounting_vendors_perspective',
+
+            'accounting_accounts_perspective',
+            'accounting_affiliates_perspective',
+            'accounting_contract_items_perspective',
+            'accounting_contracts_perspective',
+            'accounting_distributors_perspective',
+            'accounting_integrators_perspective',
+            'accounting_invoice_items_perspective',
+            'accounting_invoices_perspective',
+            'accounting_partnerships_perspective',
+            'accounting_sales_partners_perspective',
             'accounting_vendors_perspective'
         ];
 
-        if(in_array($model->getTable(), $partners)) {
+        if (in_array($model->getTable(), $partners)) {
             return;
         }
 
-        if(
+        if (
             $model->getTable() == 'accounting_credit_cards'
         ) {
             $builder->where('iam_account_id', UserHelper::currentAccount()->id);
@@ -59,13 +71,25 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
         return 'accounting';
     }
 
-    public function allowedOperations() :array
+    public function allowedOperations(): array
     {
         return [
             'accounting_integrators_perspective:read',
             'accounting_distributors_perspective:read',
             'accounting_sales_partners_perspective:read',
             'accounting_affiliates_perspective:read',
+            'accounting_vendors_perspective:read',
+
+            'accounting_accounts_perspective:read',
+            'accounting_affiliates_perspective:read',
+            'accounting_contract_items_perspective:read',
+            'accounting_contracts_perspective:read',
+            'accounting_distributors_perspective:read',
+            'accounting_integrators_perspective:read',
+            'accounting_invoice_items_perspective:read',
+            'accounting_invoices_perspective:read',
+            'accounting_partnerships_perspective:read',
+            'accounting_sales_partners_perspective:read',
             'accounting_vendors_perspective:read',
 
             'accounting_accounts:read',
@@ -129,7 +153,7 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
     //  This is a very powerful role, so be careful with it.
     public function checkUpdatePolicy(Model $model, Users $user): bool
     {
-        if($model->getTable() == 'accounting_account')
+        if ($model->getTable() == 'accounting_accounts')
             return true;
 
         return parent::checkUpdatePolicy($model, $user);
@@ -152,11 +176,11 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
 
     public function canBeApplied($column)
     {
-        if(self::DB_PREFIX === '*') {
+        if (self::DB_PREFIX === '*') {
             return true;
         }
 
-        if(Str::startsWith($column, self::DB_PREFIX)) {
+        if (Str::startsWith($column, self::DB_PREFIX)) {
             return true;
         }
 
