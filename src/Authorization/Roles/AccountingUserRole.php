@@ -31,6 +31,18 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
      */
     public function apply(Builder $builder, Model $model)
     {
+        $partners = [
+            'accounting_integrators_perspective',
+            'accounting_distributors_perspective',
+            'accounting_sales_partners_perspective',
+            'accounting_affiliates_perspective',
+            'accounting_vendors_perspective'
+        ];
+
+        if(in_array($model->getTable(), $partners)) {
+            return;
+        }
+
         if(
             $model->getTable() == 'accounting_invoices' ||
             $model->getTable() == 'accounting_invoices_perspective' ||
@@ -78,6 +90,12 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
     public function allowedOperations() :array
     {
         return [
+            'accounting_integrators_perspective:read',
+            'accounting_distributors_perspective:read',
+            'accounting_sales_partners_perspective:read',
+            'accounting_affiliates_perspective:read',
+            'accounting_vendors_perspective:read',
+            
             'accounting_accounts:read',
             'accounting_accounts:create',
             'accounting_accounts:update',
