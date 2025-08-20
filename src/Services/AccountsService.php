@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Accounting\Services;
 
+use Google\Service\DisplayVideo\Partner;
 use Helpers\CrmHelper;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Helpers\PartnershipHelper;
@@ -98,9 +99,7 @@ class AccountsService extends AbstractAccountsService
             ->where('id', $partnerAccountingAccountId)
             ->first();
 
-        $ownerOfDistributor = \NextDeveloper\IAM\Database\Models\Users::withoutGlobalScope(AuthorizationScope::class)
-            ->where('id', $iamAccountOfDistributor->iam_user_id)
-            ->first();
+        $ownerOfDistributor = PartnershipHelper::getPartnerAccountOwner($partnerAccountingAccountId);
 
         CrmHelper::addAccountManager($crmAccountOfAccountingAccount, $iamAccountOfDistributor, $ownerOfDistributor, $ownerOfDistributor);
     }
