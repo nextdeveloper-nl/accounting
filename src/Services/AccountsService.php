@@ -62,8 +62,6 @@ class AccountsService extends AbstractAccountsService
             }
         }
 
-        $account = Accounts::withoutGlobalScope(AuthorizationScope::class)->where('uuid', $id)->first();
-
         $updatedAccount = parent::update($id, $data);
 
         if(!$updatedAccount) {
@@ -71,36 +69,52 @@ class AccountsService extends AbstractAccountsService
         }
 
         if(array_key_exists('distributor_id', $data)) {
-            self::assignPartner($updatedAccount, $data['distributor_id']);
+            $partnerAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('id', $data['distributor_id'])
+                ->first();
+
+            self::assignPartner($updatedAccount, $partnerAccount);
         }
 
         if(array_key_exists('sales_partner_id', $data)) {
-            self::assignPartner($updatedAccount, $data['sales_partner_id']);
+            $partnerAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('id', $data['distributor_id'])
+                ->first();
+
+            self::assignPartner($updatedAccount, $partnerAccount);
         }
 
         if(array_key_exists('integrator_partner_id', $data)) {
-            self::assignPartner($updatedAccount, $data['integrator_partner_id']);
+            $partnerAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('id', $data['distributor_id'])
+                ->first();
+
+            self::assignPartner($updatedAccount, $partnerAccount);
         }
 
         if(array_key_exists('affiliate_partner_id', $data)) {
-            self::assignPartner($updatedAccount, $data['affiliate_partner_id']);
+            $partnerAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->where('id', $data['distributor_id'])
+                ->first();
+
+            self::assignPartner($updatedAccount, $partnerAccount);
         }
 
         return $updatedAccount;
     }
 
-    private static function assignPartner($account, $partnerAccountingAccountId)
+    private static function assignPartner($account, $partnerAccount)
     {
-        $crmAccountOfAccountingAccount = \NextDeveloper\CRM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
+        $crmAccount = \NextDeveloper\CRM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('iam_account_id', $account->iam_account_id)
             ->first();
 
-        $iamAccountOfDistributor = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
-            ->where('id', $partnerAccountingAccountId)
+        $iamAccountOfPartner = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $partnerAccount->iam_account_id)
             ->first();
 
-        $ownerOfDistributor = PartnershipHelper::getPartnerAccountOwner($partnerAccountingAccountId);
+        $ownerOfPartner = UserHelper::getAccountOwner($iamAccountOfPartner);
 
-        CrmHelper::addAccountManager($crmAccountOfAccountingAccount, $iamAccountOfDistributor, $ownerOfDistributor, $ownerOfDistributor);
+        CrmHelper::addAccountManager($crmAccount, $iamAccountOfPartner, $ownerOfPartner);
     }
 }
