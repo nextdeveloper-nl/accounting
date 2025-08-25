@@ -78,7 +78,7 @@ class AccountsService extends AbstractAccountsService
 
         if(array_key_exists('sales_partner_id', $data)) {
             $partnerAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
-                ->where('id', $data['distributor_id'])
+                ->where('id', $data['sales_partner_id'])
                 ->first();
 
             self::assignPartner($updatedAccount, $partnerAccount);
@@ -86,7 +86,7 @@ class AccountsService extends AbstractAccountsService
 
         if(array_key_exists('integrator_partner_id', $data)) {
             $partnerAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
-                ->where('id', $data['distributor_id'])
+                ->where('id', $data['integrator_partner_id'])
                 ->first();
 
             self::assignPartner($updatedAccount, $partnerAccount);
@@ -94,7 +94,7 @@ class AccountsService extends AbstractAccountsService
 
         if(array_key_exists('affiliate_partner_id', $data)) {
             $partnerAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
-                ->where('id', $data['distributor_id'])
+                ->where('id', $data['affiliate_partner_id'])
                 ->first();
 
             self::assignPartner($updatedAccount, $partnerAccount);
