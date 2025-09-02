@@ -159,6 +159,11 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
         return parent::checkUpdatePolicy($model, $user);
     }
 
+    public function checkCreatePolicy(Users $user, Model $model): bool
+    {
+        return true;
+    }
+
     public function getLevel(): int
     {
         return self::LEVEL;
