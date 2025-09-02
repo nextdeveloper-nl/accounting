@@ -153,10 +153,7 @@ class AccountingAdminRole extends AbstractRole implements IAuthorizationRole
     //  This is a very powerful role, so be careful with it.
     public function checkUpdatePolicy(Model $model, Users $user): bool
     {
-        if($model->getTable() == 'accounting_accounts')
-            return true;
-
-        return parent::checkUpdatePolicy($model, $user);
+        return true;
     }
 
     public function checkCreatePolicy(Users $user, Model $model): bool
