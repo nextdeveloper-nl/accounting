@@ -163,6 +163,11 @@ class InvoiceHelper
             InvoiceHelper::getAccount($invoice)
         );
 
+        if(!$provider) {
+            Log::info(__METHOD__ . '| Cannot find the provider for the account: ' . InvoiceHelper::getAccount($invoice)->id);
+            throw new AccountingException('Cannot find the provider for the account: ' . InvoiceHelper::getAccount($invoice)->id);
+        }
+
         $providerAccountingAccount = AccountingHelper::getAccount($provider);
 
         $providerCurrency = ExchangeRateHelper::getCurrencyFromId($providerAccountingAccount->common_currency_id);
