@@ -124,11 +124,7 @@ class Pay extends AbstractAction
         //  Here we are finding the payment gateway by using the country of the customer
         //  and the provider (who creates the invoice) of the customer. Because in multiple accounting system
         //  There can be more than one payment gateways and we may need to charge customers from that payment gateways
-        $this->paymentGateway = PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
-            ->where('common_country_id', $this->customer->common_country_id)
-            ->where('iam_account_id', $invoice->iam_account_id)
-            ->where('is_active', true)
-            ->first();
+        $this->paymentGateway = InvoiceHelper::getGatewayForInvoice($invoice);
 
         Log::info(__METHOD__ . '| Payment gateway for the customer is: ' . ($this->paymentGateway ? $this->paymentGateway->name : 'not found'));
 
