@@ -145,6 +145,11 @@ abstract class AbstractInvoiceItem
             InvoiceHelper::getAccount($this->invoice)
         );
 
+        if(!$provider) {
+            Log::info(__METHOD__ . ' | Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->invoice)->id);
+            throw new \Exception('Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->invoice)->id);
+        }
+
         $providerAccountingAccount = AccountingHelper::getAccount($provider);
 
         $providerCurrency = ExchangeRateHelper::getCurrencyFromId($providerAccountingAccount->common_currency_id);
