@@ -221,7 +221,7 @@ class AccountingHelper
             ->first();
 
         if($iamAccount->common_country_id != null) {
-            Log::info(__METHOD__ . '| Customer does not have a country id. Using the global provider.');
+            Log::info(__METHOD__ . '| Customer does not have a country id. Returning null as provider.');
             return null;
         }
 
