@@ -220,7 +220,7 @@ class AccountingHelper
             ->where('id', $accounts->iam_account_id)
             ->first();
 
-        if($iamAccount->common_country_id != null) {
+        if($iamAccount->common_country_id == null) {
             Log::info(__METHOD__ . '| Customer does not have a country id. Returning null as provider.');
             return null;
         }
