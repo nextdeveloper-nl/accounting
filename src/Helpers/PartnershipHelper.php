@@ -6,9 +6,19 @@ use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\IAM\Database\Models\Users;
+use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
 class PartnershipHelper
 {
+    public static function getPartnerByCode($partnerCode) : ?Partnerships
+    {
+        if(!$partnerCode) return null;
+
+        return Partnerships::withoutGlobalScope(AuthorizationScope::class)
+            ->where('partner_code', $partnerCode)
+            ->first();
+    }
+
     public static function getPartnership(Accounts|\NextDeveloper\IAM\Database\Models\Accounts $account)
     {
         switch (get_class($account)) {

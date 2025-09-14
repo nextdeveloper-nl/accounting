@@ -2,11 +2,14 @@
 
 namespace NextDeveloper\Accounting\Services;
 
-use Google\Service\DisplayVideo\Partner;
+use App\Envelopes\Affiliate\NewRegisterCameFromYourCode;
 use Helpers\CrmHelper;
 use NextDeveloper\Accounting\Database\Models\Accounts;
+use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Helpers\PartnershipHelper;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountsService;
+use NextDeveloper\Commons\Exceptions\CannotCreateModelException;
+use NextDeveloper\Communication\Helpers\Communicate;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
@@ -21,6 +24,11 @@ class AccountsService extends AbstractAccountsService
 {
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+    public static function create($data)
+    {
+        throw new CannotCreateModelException('Accounting accounts cannot be created manually.');
+    }
+
     public static function update($id, array $data)
     {
         if(!(UserHelper::hasRole('accounting-admin') || UserHelper::hasRole('accounting-manager'))) {
@@ -116,5 +124,17 @@ class AccountsService extends AbstractAccountsService
         $ownerOfPartner = UserHelper::getAccountOwner($iamAccountOfPartner);
 
         CrmHelper::addAccountManager($crmAccount, $iamAccountOfPartner, $ownerOfPartner);
+    }
+
+    public static function assignAffiliateToAccount(Accounts $customer, Partnerships $affiliateAccount)
+    {
+        $customer->affiliate_partner_id = $affiliateAccount->accounting_account_id;
+        $customer->saveQuietly();
+
+        // Here we need to send a notification to the affiliate
+        $partnershipResponsible = UserHelper::getWithEmail(config('leo.notifications.partnership.responsible'));
+        (new Communicate($partnershipResponsible))->sendEnvelope(new NewRegisterCameFromYourCode($customer));
+
+        return $customer;
     }
 }
