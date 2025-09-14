@@ -12,6 +12,8 @@ class PartnershipHelper
 {
     public static function getPartnerByCode($partnerCode) : ?Partnerships
     {
+        if(!$partnerCode) return null;
+
         return Partnerships::withoutGlobalScope(AuthorizationScope::class)
             ->where('partner_code', $partnerCode)
             ->first();
