@@ -55,11 +55,13 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
     public function transform(Partnerships $model)
     {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
+                                                            $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                         
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
             'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
             'partner_code'  =>  $model->partner_code,
             'is_brand_ambassador'  =>  $model->is_brand_ambassador,
             'customer_count'  =>  $model->customer_count,
@@ -167,4 +169,5 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

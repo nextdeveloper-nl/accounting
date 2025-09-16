@@ -87,7 +87,8 @@ abstract class AbstractInvoiceItem
 
         //  We are removing this from here because it is creating almost infinite loop.
         //  We will be calculating invoice amounts, every hour, or just before the customer wants to pay it
-        InvoiceHelper::updateInvoiceAmount($this->invoice);
+        //  We will be doing this calculation at the database
+        //  InvoiceHelper::updateInvoiceAmount($this->invoice);
 
         return $item;
     }
@@ -144,6 +145,11 @@ abstract class AbstractInvoiceItem
         $provider = AccountingHelper::getCustomerProvider(
             InvoiceHelper::getAccount($this->invoice)
         );
+
+        if(!$provider) {
+            Log::info(__METHOD__ . ' | Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->invoice)->id);
+            throw new \Exception('Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->invoice)->id);
+        }
 
         $providerAccountingAccount = AccountingHelper::getAccount($provider);
 

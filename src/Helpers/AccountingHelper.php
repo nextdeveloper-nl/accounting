@@ -214,14 +214,15 @@ class AccountingHelper
             ->first();
     }
 
-    public static function getCustomerProvider(Accounts $accounts) : \NextDeveloper\IAM\Database\Models\Accounts
+    public static function getCustomerProvider(Accounts $accounts) : ?\NextDeveloper\IAM\Database\Models\Accounts
     {
         $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('id', $accounts->iam_account_id)
             ->first();
 
-        if($iamAccount->common_country_id != null) {
-            Log::info(__METHOD__ . '| Customer does not have a country id. Using the global provider.');
+        if($iamAccount->common_country_id == null) {
+            Log::info(__METHOD__ . '| Customer does not have a country id. Returning null as provider.');
+            return null;
         }
 
         $provider = null;

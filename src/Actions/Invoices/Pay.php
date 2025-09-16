@@ -124,11 +124,7 @@ class Pay extends AbstractAction
         //  Here we are finding the payment gateway by using the country of the customer
         //  and the provider (who creates the invoice) of the customer. Because in multiple accounting system
         //  There can be more than one payment gateways and we may need to charge customers from that payment gateways
-        $this->paymentGateway = PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
-            ->where('common_country_id', $this->customer->common_country_id)
-            ->where('iam_account_id', $invoice->iam_account_id)
-            ->where('is_active', true)
-            ->first();
+        $this->paymentGateway = InvoiceHelper::getGatewayForInvoice($invoice);
 
         Log::info(__METHOD__ . '| Payment gateway for the customer is: ' . ($this->paymentGateway ? $this->paymentGateway->name : 'not found'));
 
@@ -251,6 +247,12 @@ class Pay extends AbstractAction
 
         $accountBilled = AccountingHelper::getIamAccountFromInvoice($this->model);
 
+        if($accountBilled->common_country_id != $this->paymentGateway->common_country_id) {
+            StateHelper::setState($this->model, 'payment-error', 'country-not-supported', null, 'The payment gateway does not support the country of the customer. Please use a different payment gateway.');
+            $this->setFinishedWithError('The payment gateway does not support the country of the customer');
+            return;
+        }
+
         $address = Addresses::withoutGlobalScope(AuthorizationScope::class)
             ->where('object_id', $accountBilled->id)
             ->where('object_type', 'NextDeveloper\\IAM\\Database\\Models\\Accounts')
@@ -291,6 +293,11 @@ class Pay extends AbstractAction
         }
 
         $calculatedPrice = $this->model->amount;
+
+        if($this->model->common_currency_id == 1) {
+            $this->model->exchange_rate = 1;
+            $this->model->save();
+        }
 
         if($this->model->exchange_rate) {
             $calculatedPrice *= $this->model->exchange_rate;
@@ -333,7 +340,7 @@ class Pay extends AbstractAction
 
             $transactionLog = $transaction->create([
                 'accounting_invoice_id'         =>  $invoice->id,
-                'amount'                        => $invoice->amount,
+                'amount'                        => $calculatedPrice,
                 'common_currency_id'            => $invoice->common_currency_id,
                 'accounting_payment_gateway_id' =>  $this->paymentGateway->id,
                 'iam_account_id'                => $invoice->iam_account_id,
@@ -346,6 +353,8 @@ class Pay extends AbstractAction
             $this->setFinishedWithError('The payment request has failed. The error message is: '
                 . $e->getMessage());
 
+            StateHelper::setState($this->model, 'payment-error', 'payment-processor-error', StateHelper::STATE_WARNING, $e->getMessage());
+
             return;
         }
 
@@ -354,7 +363,7 @@ class Pay extends AbstractAction
 
         $transactionLog = $transaction->create([
             'accounting_invoice_id'         =>  $invoice->id,
-            'amount'                        => $invoice->amount,
+            'amount'                        => $calculatedPrice,
             'common_currency_id'            => $invoice->common_currency_id,
             'accounting_payment_gateway_id' =>  $this->paymentGateway->id,
             'iam_account_id'                => $invoice->iam_account_id,
@@ -402,6 +411,9 @@ class Pay extends AbstractAction
                 case 12:
                     StateHelper::setState($creditCard, 'card-number', 'card-number-invalid', null, 'Card number is invalid. Card owner should provide a valid card number.');
                     StateHelper::setState($invoice, 'payment-error', 'card-number-invalid', null, 'Credit card has invalid number. Card owner should provide a valid card number.');
+                    break;
+                case 5008:
+                    StateHelper::setState($invoice, 'payment-error', 'card-number-invalid', null, 'The amount is more than 100.000 TL, therefore we cannot process the payment. Please reduce the number.');
                     break;
                 case 10051:
                     StateHelper::setState($creditCard, 'fund', 'not-enough-funds', null, 'There is not enough fund in the card. Card owner should provide a valid card with enough fund.');
