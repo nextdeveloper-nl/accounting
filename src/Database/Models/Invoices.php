@@ -40,6 +40,7 @@ use Illuminate\Notifications\Notifiable;
  * @property integer $term_month
  * @property boolean $is_cancelled
  * @property string $cancellation_reason
+ * @property string $payment_link_url
  */
 class Invoices extends Model
 {
@@ -75,6 +76,7 @@ class Invoices extends Model
             'term_month',
             'is_cancelled',
             'cancellation_reason',
+            'payment_link_url',
     ];
 
     /**
@@ -115,6 +117,7 @@ class Invoices extends Model
     'term_month' => 'integer',
     'is_cancelled' => 'boolean',
     'cancellation_reason' => 'string',
+    'payment_link_url' => 'string',
     ];
 
     /**
@@ -187,6 +190,7 @@ class Invoices extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
