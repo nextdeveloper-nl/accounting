@@ -83,6 +83,7 @@ class AbstractInvoicesTransformer extends AbstractTransformer
             'term_month'  =>  $model->term_month,
             'is_cancelled'  =>  $model->is_cancelled,
             'cancellation_reason'  =>  $model->cancellation_reason,
+            'payment_link_url'  =>  $model->payment_link_url,
             ]
         );
     }
@@ -171,6 +172,7 @@ class AbstractInvoicesTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

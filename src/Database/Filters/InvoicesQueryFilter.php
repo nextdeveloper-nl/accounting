@@ -45,6 +45,17 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
         return $this->cancellationReason($value);
     }
+        
+    public function paymentLinkUrl($value)
+    {
+        return $this->builder->where('payment_link_url', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of paymentLinkUrl
+    public function payment_link_url($value)
+    {
+        return $this->paymentLinkUrl($value);
+    }
     
     public function termYear($value)
     {
@@ -278,6 +289,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
 
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
