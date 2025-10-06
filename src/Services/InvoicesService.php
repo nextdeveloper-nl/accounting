@@ -26,6 +26,13 @@ class InvoicesService extends AbstractInvoicesService
         return parent::get($filter, $params);
     }
 
+    public static function create($data)
+    {
+        $invoices = parent::create($data);
+        self::createPaymentLink($invoices);
+        return $invoices;
+    }
+
     public static function createPaymentLink(Invoices $invoice): ?string
     {
         // get Accounting account
@@ -65,13 +72,20 @@ class InvoicesService extends AbstractInvoicesService
                 [
                     'invoice_id' => $invoice->id,
                     'class' => $class,
-                ]
+                ],
             );
             return null;
         }
 
         $class = new $class($paymentGateway);
 
-        return $class->createPaymentLink($accountingAccount, $invoice);
+        $link = $class->createPaymentLink($accountingAccount, $invoice);
+
+        if($link) {
+            $invoice->payment_link_url = $link;
+            $invoice->saveQuietly();
+        }
+
+        return $link;
     }
 }
