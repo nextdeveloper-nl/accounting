@@ -7,6 +7,7 @@ use NextDeveloper\Accounting\Database\Filters\InvoicesQueryFilter;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
+use NextDeveloper\Accounting\Database\Models\Transactions;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractInvoicesService;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
@@ -28,8 +29,12 @@ class InvoicesService extends AbstractInvoicesService
 
     public static function create($data)
     {
+        // create invoice
         $invoices = parent::create($data);
+
+        // create payment link
         self::createPaymentLink($invoices);
+
         return $invoices;
     }
 
@@ -70,16 +75,38 @@ class InvoicesService extends AbstractInvoicesService
             Log::error(
                 __METHOD__ . '::' . __LINE__ . ' - Payment gateway class not found',
                 [
-                    'invoice_id' => $invoice->id,
+                    'accounting_invoice_id' => $invoice->id,
                     'class' => $class,
                 ],
             );
             return null;
         }
 
+        // create transaction record
+        $transaction = Transactions::withoutGlobalScope(AuthorizationScope::class)
+            ->updateOrCreate([
+                'accounting_invoice_id' => $invoice->id,
+                'amount' => $invoice->amount,
+                'common_currency_id' => $invoice->common_currency_id,
+                'accounting_payment_gateway_id' => $paymentGateway->id,
+                'iam_account_id' => $invoice->iam_account_id,
+                'accounting_account_id' => $invoice->accounting_account_id,
+            ],[
+                'accounting_invoice_id' => $invoice->id,
+                'amount' => $invoice->amount,
+                'common_currency_id' => $invoice->common_currency_id,
+                'accounting_payment_gateway_id' => $paymentGateway->id,
+                'iam_account_id' => $invoice->iam_account_id,
+                'accounting_account_id' => $invoice->accounting_account_id,
+                'conversation_identifier' => 'inv-' . $invoice->id . '-' . time(),
+                'is_pending' => true,
+            ]);
+
+        $transaction->fresh();
+
         $class = new $class($paymentGateway);
 
-        $link = $class->createPaymentLink($accountingAccount, $invoice);
+        $link = $class->createPaymentLink($accountingAccount, $invoice, $transaction);
 
         if($link) {
             $invoice->payment_link_url = $link;
