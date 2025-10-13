@@ -4,12 +4,14 @@ namespace NextDeveloper\Accounting\PaymentGateways;
 
 use Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
+use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
+use NextDeveloper\Accounting\Database\Models\Transactions;
 
 class Stripe implements PaymentGatewaysInterface
 {
@@ -130,10 +132,11 @@ class Stripe implements PaymentGatewaysInterface
      * Returns null on: already paid, invalid currency, computed amount <= 0, below min (if configured), or Stripe error.
      *
      * @param Accounts $account
-     * @param \NextDeveloper\Accounting\Database\Models\Invoices $invoice
+     * @param Invoices $invoice
+     * @param Transactions $transaction
      * @return string|null Payment link URL or null when creation not possible.
      */
-    public function createPaymentLink(Accounts $account, \NextDeveloper\Accounting\Database\Models\Invoices $invoice): ?string
+    public function createPaymentLink(Accounts $account, Invoices $invoice, Transactions $transaction): ?string
     {
         $isPaid = $invoice->is_paid;
         if ($isPaid) {
@@ -146,7 +149,7 @@ class Stripe implements PaymentGatewaysInterface
             ->first();
 
         if (!$currency) {
-            Log::error(__METHOD__ . '::' . __LINE__ . ' - Currency not found', ['currency_code' => $invoice->currency]);
+            Log::error(__METHOD__ . '::' . __LINE__ . ' - Currency not found', ['currency_code' => $invoice->common_currency_id]);
             return null;
         }
 
@@ -155,7 +158,7 @@ class Stripe implements PaymentGatewaysInterface
 
         if ($unitAmount <= 0) {
             Log::warning(__METHOD__ . '::' . __LINE__ . ' - Calculated unit amount is not positive', [
-                'invoice_id' => $invoice->id,
+                'accounting_invoice_id' => $invoice->id,
                 'raw_amount' => $invoice->amount,
                 'unit_amount' => $unitAmount,
                 'currency' => $currencyCode
@@ -168,9 +171,9 @@ class Stripe implements PaymentGatewaysInterface
                 'unit_amount' => $unitAmount,
                 'currency' => strtolower($currencyCode),
                 'product_data' => [
-                    'name' => "Invoice #{$invoice->id}",
+                    'name' => "Invoice #" . $invoice->invoice_number ?? $invoice->id,
                     'metadata' => [
-                        'invoice_id' => $invoice->id,
+                        'accounting_transaction_id' => $transaction->uuid,
                     ],
                 ],
             ]);
@@ -183,15 +186,14 @@ class Stripe implements PaymentGatewaysInterface
                     ],
                 ],
                 'metadata' => [
-                    'invoice_id' => $invoice->id,
-                    'accounting_account_id' => $account->id,
+                    'accounting_transaction_id' => $transaction->uuid,
                 ],
             ]);
 
             return $paymentLink->url;
         } catch (\Stripe\Exception\ApiErrorException $e) {
             Log::error(__METHOD__ . ' Stripe API error creating payment link', [
-                'invoice_id' => $invoice->id,
+                'accounting_invoice_id' => $invoice->id,
                 'stripe_error_type' => method_exists($e, 'getError') && $e->getError() ? $e->getError()->type : null,
                 'stripe_error_code' => method_exists($e, 'getError') && $e->getError() ? $e->getError()->code : null,
                 'message' => $e->getMessage(),
@@ -199,7 +201,7 @@ class Stripe implements PaymentGatewaysInterface
             return null;
         } catch (\Throwable $e) {
             Log::error(__METHOD__ . ' Unexpected error creating payment link', [
-                'invoice_id' => $invoice->id,
+                'accounting_invoice_id' => $invoice->id,
                 'exception' => get_class($e),
                 'message' => $e->getMessage(),
             ]);
@@ -224,5 +226,115 @@ class Stripe implements PaymentGatewaysInterface
         }
 
         return (int) round(((float) $amount) * 100);
+    }
+
+    /**
+     * Handle payment callback from Stripe
+     *
+     * @param array $callbackData The webhook data from Stripe
+     * @param array $headers The HTTP headers from the webhook request (for signature validation)
+     * @return array Result of callback processing
+     */
+    public function handleCallback(array $callbackData, array $headers = []): array
+    {
+        try {
+            Log::info('Stripe callback received', ['data' => $callbackData]);
+
+            // Stripe sends event type to identify the webhook
+            $eventType = $callbackData['type'] ?? null;
+
+            if (!$eventType) {
+                return [
+                    'success' => false,
+                    'message' => 'No event type found in callback data'
+                ];
+            }
+
+            // Handle different Stripe event types
+            switch ($eventType) {
+                case 'payment_intent.succeeded':
+                case 'checkout.session.completed':
+                    return $this->handleSuccessfulPayment($callbackData);
+
+                case 'payment_intent.payment_failed':
+                case 'checkout.session.expired':
+                    return $this->handleFailedPayment($callbackData);
+
+                default:
+                    Log::info('Unhandled Stripe event type', ['type' => $eventType]);
+                    return [
+                        'success' => true,
+                        'message' => 'Event type not processed: ' . $eventType
+                    ];
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error processing Stripe callback', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Error processing callback: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Handle successful payment from Stripe
+     *
+     * @param array $eventData
+     * @return array
+     */
+    private function handleSuccessfulPayment(array $eventData): array
+    {
+        $data = $eventData['data']['object'] ?? [];
+
+        // Extract transaction ID from metadata
+        $transactionId = $data['metadata']['accounting_transaction_id'] ?? null;
+        $paymentIntentId = $data['id'] ?? $data['payment_intent'] ?? null;
+
+        if (!$transactionId) {
+            Log::warning('Transaction ID not found in Stripe callback metadata', ['data' => $data]);
+            return [
+                'success' => false,
+                'message' => 'Transaction ID not found in metadata'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'accounting_transaction_id' => $transactionId,
+            'transaction_id' => $paymentIntentId,
+            'paid' => true,
+            'payment_method' => 'stripe',
+            'raw_data' => $eventData
+        ];
+    }
+
+    /**
+     * Handle failed payment from Stripe
+     *
+     * @param array $eventData
+     * @return array
+     */
+    private function handleFailedPayment(array $eventData): array
+    {
+        $data = $eventData['data']['object'] ?? [];
+        $transactionId = $data['metadata']['accounting_transaction_id'] ?? null;
+
+        Log::info('Stripe payment failed', [
+            'accounting_transaction_id' => $transactionId,
+            'event_type' => $eventData['type'] ?? 'unknown'
+        ]);
+
+        return [
+            'success' => true,
+            'paid' => false,
+            'accounting_transaction_id' => $transactionId,
+            'message' => 'Payment failed or expired',
+            'raw_data' => $eventData
+        ];
     }
 }
