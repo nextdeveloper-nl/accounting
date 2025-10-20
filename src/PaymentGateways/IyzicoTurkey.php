@@ -15,6 +15,7 @@ use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Accounting\Database\Models\Transactions;
+use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
 
 class IyzicoTurkey implements PaymentGatewaysInterface
 {
@@ -22,6 +23,7 @@ class IyzicoTurkey implements PaymentGatewaysInterface
     private $options;
     private $apiKey;
     private $apiSecret;
+
 
     public function __construct(PaymentGateways $gateway)
     {
@@ -102,7 +104,16 @@ class IyzicoTurkey implements PaymentGatewaysInterface
         }
 
         // Map currency code to Iyzico currency constant
-        $iyzicoCurrency = $this->mapCurrencyToIyzico($currencyCode);
+        $iyzicoCurrency = Currency::TL;
+
+        if ($this->gateway->common_currency_id != $invoice->common_currency_id) {
+            // Convert invoice currency to common currency
+            $amount = ExchangeRateHelper::convert($currency->code, 'TRY', $amount);
+        }
+
+
+        // Apply VAT rate if applicable
+        $amount = $amount * (1 + $this->gateway->vat_rate);
 
         // Format amount to 2 decimal places as required by Iyzico
         $formattedAmount = number_format((float) $amount, 2, '.', '');
@@ -132,12 +143,14 @@ class IyzicoTurkey implements PaymentGatewaysInterface
                 return null;
             }
 
+            $invoiceNumber = "Invoice #" . now()->year . "-" . $invoice->id;
+
             // Create IyziLink product request
             $request = new IyziLinkSaveProductRequest();
             $request->setLocale(Locale::TR);
             $request->setConversationId($transaction->uuid);
-            $request->setName("Invoice #{$invoice->invoice_number}");
-            $request->setDescription("Payment for Invoice #{$invoice->invoice_number}");
+            $request->setName($invoiceNumber);
+            $request->setDescription("Payment for " . $invoiceNumber);
             $request->setPrice($formattedAmount);
             $request->setCurrency($iyzicoCurrency);
             $request->setAddressIgnorable(false); // Address is required by Iyzico
@@ -176,32 +189,6 @@ class IyzicoTurkey implements PaymentGatewaysInterface
         }
     }
 
-    /**
-     * Map currency code to Iyzico currency constant
-     *
-     * @param string $currencyCode
-     * @return string
-     */
-    private function mapCurrencyToIyzico(string $currencyCode): string
-    {
-        // Iyzico supports TRY, USD, EUR, GBP
-        switch ($currencyCode) {
-            case 'TRY':
-            case 'TL':
-                return Currency::TL;
-            case 'USD':
-                return Currency::USD;
-            case 'EUR':
-                return Currency::EUR;
-            case 'GBP':
-                return Currency::GBP;
-            default:
-                Log::warning(__METHOD__ . ' - Unsupported currency, defaulting to TRY', [
-                    'currency_code' => $currencyCode
-                ]);
-                return Currency::TL;
-        }
-    }
 
     /**
      * Handle payment callback from iyzico
@@ -310,12 +297,12 @@ class IyzicoTurkey implements PaymentGatewaysInterface
     /**
      * Validate Iyzico webhook signature using HMAC-SHA256
      *
-     * For HPP Format (IyziLink), signature is created from:
+     * For HPP Format (IyziLink), a signature is created from:
      * SECRET KEY + iyziEventType + iyziPaymentId + token + paymentConversationId + status
      *
      * @param array $callbackData The webhook payload
      * @param string $signature The X-IYZ-SIGNATURE-V3 header value
-     * @return bool True if signature is valid, false otherwise
+     * @return bool True if a signature is valid, false otherwise
      */
     private function validateWebhookSignature(array $callbackData, string $signature): bool
     {

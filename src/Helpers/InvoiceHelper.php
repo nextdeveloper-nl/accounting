@@ -150,12 +150,12 @@ class InvoiceHelper
         $amounts = [];
 
         foreach($items as $item) {
-            $unitPrice = $item->unit_price * $item->quantity;
+            $itemTotalPrice = $item->total_price;
 
             if(array_key_exists($item->common_currency_id, $amounts))
-                $amounts[$item->common_currency_id] += $unitPrice;
+                $amounts[$item->common_currency_id] += $itemTotalPrice;
             else
-                $amounts[$item->common_currency_id] = $unitPrice;
+                $amounts[$item->common_currency_id] = $itemTotalPrice;
         }
 
         //  Now we are finding the provider, from there we will find the invoice amount

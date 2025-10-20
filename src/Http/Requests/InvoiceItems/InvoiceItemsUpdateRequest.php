@@ -22,6 +22,7 @@ class InvoiceItemsUpdateRequest extends AbstractFormRequest
         'total_price' => 'nullable',
         'accounting_account_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
         'details' => 'nullable',
+            'discount' => 'nullable',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
