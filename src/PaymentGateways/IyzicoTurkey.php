@@ -24,8 +24,6 @@ class IyzicoTurkey implements PaymentGatewaysInterface
     private $apiKey;
     private $apiSecret;
 
-    // Applying tax rate for Turkish customers
-    private const TAX_RATE = 20;
 
     public function __construct(PaymentGateways $gateway)
     {
@@ -113,8 +111,9 @@ class IyzicoTurkey implements PaymentGatewaysInterface
             $amount = ExchangeRateHelper::convert($currency->code, 'TRY', $amount);
         }
 
-        // Apply tax rate
-        $amount = $amount * (1 + self::TAX_RATE / 100);
+
+        // Apply VAT rate if applicable
+        $amount = $amount * (1 + $this->gateway->vat_rate);
 
         // Format amount to 2 decimal places as required by Iyzico
         $formattedAmount = number_format((float) $amount, 2, '.', '');
