@@ -27,17 +27,9 @@ class InvoicesService extends AbstractInvoicesService
         return parent::get($filter, $params);
     }
 
-    public static function create($data)
-    {
-        // create invoice
-        $invoices = parent::create($data);
-
-        // create payment link
-        self::createPaymentLink($invoices);
-
-        return $invoices;
-    }
-
+    /*
+     * Create a payment link for invoice
+     */
     public static function createPaymentLink(Invoices $invoice): ?string
     {
         // get Accounting account

@@ -20,7 +20,7 @@ class Stripe implements PaymentGatewaysInterface
     // Stripe zero-decimal currencies
     // Source: https://stripe.com/docs/currencies#zero-decimal
 
-    const ZERO_DECIMAL_CURRENCIES = [
+    const array ZERO_DECIMAL_CURRENCIES = [
         'BIF',
         'CLP',
         'DJF',
@@ -171,7 +171,7 @@ class Stripe implements PaymentGatewaysInterface
                 'unit_amount' => $unitAmount,
                 'currency' => strtolower($currencyCode),
                 'product_data' => [
-                    'name' => "Invoice #" . $invoice->invoice_number ?? $invoice->id,
+                    'name' => "Invoice #" . now()->year . "-" .  $invoice->id,
                     'metadata' => [
                         'accounting_transaction_id' => $transaction->uuid,
                     ],
