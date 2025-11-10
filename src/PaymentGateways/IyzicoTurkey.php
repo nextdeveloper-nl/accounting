@@ -33,6 +33,8 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
     {
         $this->gateway = PaymentGateways::where('name', 'iyzico-turkey')->first();
 
+        $gateway = $this->gateway;
+
         $this->apiKey = $gateway->parameters['is_test']
             ? $gateway->parameters['test_api_key']
             : $gateway->parameters['live_api_key'];
