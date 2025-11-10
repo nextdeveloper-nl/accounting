@@ -5,7 +5,7 @@ namespace NextDeveloper\Accounting\Services;
 use Helpers\InvoiceHelper;
 use NextDeveloper\Accounting\Exceptions\CheckoutSessionException;
 use NextDeveloper\Accounting\PaymentGateways\IyzicoTurkey;
-use NextDeveloper\Accounting\PaymentGateways\Stripe;
+use NextDeveloper\Accounting\PaymentGateways\StripeUSA;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractPaymentCheckoutSessionsService;
 
 /**
@@ -41,7 +41,7 @@ class PaymentCheckoutSessionsService extends AbstractPaymentCheckoutSessionsServ
 
         switch($gateway->name) {
             case 'stripe-usa':
-                $sessionData = (new Stripe($gateway))->createCheckoutSession($invoice);
+                $sessionData = (new StripeUSA($gateway))->createCheckoutSession($invoice);
                 break;
             case 'iyzico-turkey':
                 $sessionData = (new IyzicoTurkey($gateway))->createCheckoutSession($invoice);

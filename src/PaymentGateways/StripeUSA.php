@@ -13,7 +13,7 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Accounting\Database\Models\Transactions;
 
-class Stripe implements PaymentGatewaysInterface
+class StripeUSA implements PaymentGatewaysInterface
 {
     private $gateway;
 

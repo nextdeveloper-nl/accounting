@@ -9,25 +9,29 @@ use Iyzipay\Model\Iyzilink\IyziLinkSaveProduct;
 use Iyzipay\Model\Locale;
 use Iyzipay\Options;
 use Iyzipay\Request\Iyzilink\IyziLinkSaveProductRequest;
+
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
+
+use Omnipay\Iyzico\Gateway as IyzicoGateway;
+
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Accounting\Database\Models\Transactions;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
 
-class IyzicoTurkey implements PaymentGatewaysInterface
+
+class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
 {
     private $gateway;
     private $options;
     private $apiKey;
     private $apiSecret;
 
-
-    public function __construct(PaymentGateways $gateway)
+    public function __construct()
     {
-        $this->gateway = $gateway;
+        $this->gateway = PaymentGateways::where('code', 'iyzico-turkey')->first();
 
         $this->apiKey = $gateway->parameters['is_test']
             ? $gateway->parameters['test_api_key']
@@ -116,7 +120,7 @@ class IyzicoTurkey implements PaymentGatewaysInterface
         $amount = $amount * (1 + $this->gateway->vat_rate);
 
         // Format amount to 2 decimal places as required by Iyzico
-        $formattedAmount = number_format((float) $amount, 2, '.', '');
+        $formattedAmount = number_format((float)$amount, 2, '.', '');
 
         try {
             // Get the logo file path - use public_path() to get absolute path
@@ -331,5 +335,4 @@ class IyzicoTurkey implements PaymentGatewaysInterface
             return false;
         }
     }
-
 }
