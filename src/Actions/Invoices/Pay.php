@@ -353,9 +353,12 @@ class Pay extends AbstractAction
                 'gateway_response' => $e->getMessage()
             ]);
 
+            Log::error('The payment request has failed. The error message is: ' . $e->getMessage());
+
             $this->setFinishedWithError('The payment request has failed. The error message is: '
                 . $e->getMessage());
 
+            StateHelper::setState($invoice, 'payment-error', 'payment-processor-error', StateHelper::STATE_ERROR, $e->getMessage());
             StateHelper::setState($this->model, 'payment-error', 'payment-processor-error', StateHelper::STATE_WARNING, $e->getMessage());
 
             return;
