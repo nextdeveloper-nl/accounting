@@ -14,7 +14,7 @@ use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Database\Models\Transactions;
 use NextDeveloper\Accounting\Helpers\AccountingHelper;
-use Nextdeveloper\Accounting\PaymentGateways\Stripe;
+use Nextdeveloper\Accounting\PaymentGateways\StripeUSA;
 use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Database\Models\Addresses;
 use NextDeveloper\Commons\Database\Models\Currencies;
@@ -182,7 +182,7 @@ class Pay extends AbstractAction
 
         $this->setProgress(50, 'Building the payment request for payment processor.');
 
-        $gateway = new Stripe($this->paymentGateway);
+        $gateway = new StripeUSA($this->paymentGateway);
 
         dd($gateway);
     }
