@@ -362,7 +362,7 @@ class Pay extends AbstractAction
             'accounting_account_id'         => $invoice->accounting_account_id,
             'conversation_identifier'       => $this->conversationId,
             'is_pending' => $errorMessage ? false : true,
-            'gateway_response' => json_encode($response->getData())
+            'gateway_response' => $errorMessage ? $errorMessage : null,
         ]);
 
         Events::fire('created:NextDeveloper\Accounting\Transactions', $transactionLog);
