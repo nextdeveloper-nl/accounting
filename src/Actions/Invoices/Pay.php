@@ -129,7 +129,7 @@ class Pay extends AbstractAction
         Log::info(__METHOD__ . '| Payment gateway for the customer is: ' . ($this->paymentGateway ? $this->paymentGateway->name : 'not found'));
 
         switch ($this->paymentGateway->name) {
-            case 'iyzico':
+            case 'iyzico-turkey':
                 $this->setProgress(30, 'Payment gateway is Iyzico. We will use Iyzico payment gateway to charge the customer.');
                 $this->payWithIyzico();
                 break;
@@ -137,6 +137,9 @@ class Pay extends AbstractAction
                 $this->setProgress(30, 'Payment gateway is Stripe USA. We will use Stripe USA payment gateway to charge the customer.');
                 $this->payWithStripe();
                 break;
+            default:
+                $this->setFinishedWithError("The payment gateway " . $this->paymentGateway->name . " is not supported.");
+                return;
         }
 
         Events::fire('payment-successful:NextDeveloper\Accounting\Invoices', $invoice);
