@@ -332,26 +332,14 @@ class Pay extends AbstractAction
 
         $this->setProgress(75, 'Sending the payment request.');
 
+        $errorMessage = null;
+
         //  We are giving the parameters here. These parameters are the parameters that the payment gateway needs
         try {
             $response = $omnipay->purchase($purchaseData)->send();
         } catch (\Exception $e) {
             //  We don't catch the payment exceptions here. Payment exceptions are handled down below
-
-            $transaction = new Transactions();
-            $transaction->unsetEventDispatcher();
-
-            $transactionLog = $transaction->create([
-                'accounting_invoice_id'         =>  $invoice->id,
-                'amount'                        => $calculatedPrice,
-                'common_currency_id'            => $invoice->common_currency_id,
-                'accounting_payment_gateway_id' =>  $this->paymentGateway->id,
-                'iam_account_id'                => $invoice->iam_account_id,
-                'accounting_account_id'         => $invoice->accounting_account_id,
-                'conversation_identifier'       => $this->conversationId,
-                'is_pending' => true,
-                'gateway_response' => $e->getMessage()
-            ]);
+            $errorMessage = $e->getMessage();
 
             Log::error('The payment request has failed. The error message is: ' . $e->getMessage());
 
@@ -360,8 +348,6 @@ class Pay extends AbstractAction
 
             StateHelper::setState($invoice, 'payment-error', 'payment-processor-error', StateHelper::STATE_ERROR, $e->getMessage());
             StateHelper::setState($this->model, 'payment-error', 'payment-processor-error', StateHelper::STATE_WARNING, $e->getMessage());
-
-            return;
         }
 
         $transaction = new Transactions();
@@ -375,7 +361,8 @@ class Pay extends AbstractAction
             'iam_account_id'                => $invoice->iam_account_id,
             'accounting_account_id'         => $invoice->accounting_account_id,
             'conversation_identifier'       => $this->conversationId,
-            'is_pending' => true
+            'is_pending' => $errorMessage ? false : true,
+            'gateway_response' => json_encode($response->getData())
         ]);
 
         Events::fire('created:NextDeveloper\Accounting\Transactions', $transactionLog);
