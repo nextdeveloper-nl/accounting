@@ -33,6 +33,7 @@ use Illuminate\Notifications\Notifiable;
  * @property integer $accounting_promo_code_id
  * @property integer $accounting_account_id
  * @property $details
+ * @property $discount
  */
 class InvoiceItems extends Model
 {
@@ -61,6 +62,7 @@ class InvoiceItems extends Model
             'accounting_promo_code_id',
             'accounting_account_id',
             'details',
+            'discount',
     ];
 
     /**
@@ -159,7 +161,7 @@ class InvoiceItems extends Model
     {
         return $this->belongsTo(\NextDeveloper\Commons\Database\Models\Currencies::class);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

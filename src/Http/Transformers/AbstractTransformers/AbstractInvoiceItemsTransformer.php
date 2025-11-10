@@ -77,6 +77,7 @@ class AbstractInvoiceItemsTransformer extends AbstractTransformer
             'accounting_promo_code_id'  =>  $accountingPromoCodeId ? $accountingPromoCodeId->uuid : null,
             'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
             'details'  =>  $model->details,
+            'discount'  =>  $model->discount,
             ]
         );
     }

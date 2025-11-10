@@ -2,8 +2,14 @@
 
 namespace NextDeveloper\Accounting\Services;
 
+use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Database\Filters\InvoicesQueryFilter;
+use NextDeveloper\Accounting\Database\Models\Accounts;
+use NextDeveloper\Accounting\Database\Models\Invoices;
+use NextDeveloper\Accounting\Database\Models\PaymentGateways;
+use NextDeveloper\Accounting\Database\Models\Transactions;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractInvoicesService;
+use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
 /**
  * This class is responsible from managing the data for Invoices
@@ -19,5 +25,86 @@ class InvoicesService extends AbstractInvoicesService
     public static function get(InvoicesQueryFilter $filter = null, array $params = []): \Illuminate\Database\Eloquent\Collection|\Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return parent::get($filter, $params);
+    }
+
+    /*
+     * Create a payment link for invoice
+     */
+    public static function createPaymentLink(Invoices $invoice): ?string
+    {
+        // get Accounting account
+        $accountingAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $invoice->accounting_account_id)
+            ->first();
+
+        if (!$accountingAccount) {
+            Log::error(__METHOD__ . '::' . __LINE__ . ' - Accounting account not found', ['invoice_id' => $invoice->id]);
+            return null;
+        }
+
+        // get distributor account
+        $distributorAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $accountingAccount->distributor_id)
+            ->first();
+
+        if (!$distributorAccount) {
+            Log::error(__METHOD__ . '::' . __LINE__ . ' - Distributor account not found', ['invoice_id' => $invoice->id]);
+            return null;
+        }
+
+        $paymentGateway = PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
+            ->where('accounting_account_id', $distributorAccount->id)
+            ->first();
+
+        if (!$paymentGateway) {
+            Log::error(__METHOD__ . '::' . __LINE__ . ' - Payment gateway not found', ['invoice_id' => $invoice->id]);
+            return null;
+        }
+
+        $class = $paymentGateway->gateway;
+
+        if (!class_exists($class)) {
+            Log::error(
+                __METHOD__ . '::' . __LINE__ . ' - Payment gateway class not found',
+                [
+                    'accounting_invoice_id' => $invoice->id,
+                    'class' => $class,
+                ],
+            );
+            return null;
+        }
+
+        // create transaction record
+        $transaction = Transactions::withoutGlobalScope(AuthorizationScope::class)
+            ->updateOrCreate([
+                'accounting_invoice_id' => $invoice->id,
+                'amount' => $invoice->amount,
+                'common_currency_id' => $invoice->common_currency_id,
+                'accounting_payment_gateway_id' => $paymentGateway->id,
+                'iam_account_id' => $invoice->iam_account_id,
+                'accounting_account_id' => $invoice->accounting_account_id,
+            ],[
+                'accounting_invoice_id' => $invoice->id,
+                'amount' => $invoice->amount,
+                'common_currency_id' => $invoice->common_currency_id,
+                'accounting_payment_gateway_id' => $paymentGateway->id,
+                'iam_account_id' => $invoice->iam_account_id,
+                'accounting_account_id' => $invoice->accounting_account_id,
+                'conversation_identifier' => 'inv-' . $invoice->id . '-' . time(),
+                'is_pending' => true,
+            ]);
+
+        $transaction->fresh();
+
+        $class = new $class($paymentGateway);
+
+        $link = $class->createPaymentLink($accountingAccount, $invoice, $transaction);
+
+        if($link) {
+            $invoice->payment_link_url = $link;
+            $invoice->saveQuietly();
+        }
+
+        return $link;
     }
 }
