@@ -54,10 +54,11 @@ class InvoicesService extends AbstractInvoicesService
 
         $paymentGateway = PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
             ->where('accounting_account_id', $distributorAccount->id)
+            ->where('name', 'iyzico-link')
             ->first();
 
         if (!$paymentGateway) {
-            Log::error(__METHOD__ . '::' . __LINE__ . ' - Payment gateway not found', ['invoice_id' => $invoice->id]);
+            Log::error(__METHOD__ . '::' . __LINE__ . ' - Payment gateway not found', ['invoice_id' => $invoice->id, 'gateway' => 'iyzico-link']);
             return null;
         }
 
