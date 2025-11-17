@@ -103,42 +103,7 @@ class AccountingHelper
             return $account;
         }
 
-        if($iamAccount->common_country_id) {
-            $country = CountryHelper::getCountryById($iamAccount->common_country_id);
-        } else {
-            $country = null;
-            Log::info(__METHOD__ . '| Customer (' . $iamAccount->name . ' | ' . $iamAccount->uuid . ') does not have a country id. Using the global provider.');
-        }
-
-        $provider = null;
-
-        //  If the country is not set, we will use the global provider because we dont know where the customer is from.
-        if(!$country) {
-            $defaultProviderId = config('leo.providers.zones.global.distributor');
-
-            $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
-                ->where('iam_account_id', $defaultProviderId)
-                ->first();
-        } else {
-            //  If we know where the customer is then we should assign the related distributor
-            //  For temporary we are assigning the default distributor
-            $defaultProviderId = config('leo.providers.zones.' . strtolower($country->code) . '.distributor');
-
-            if($defaultProviderId) {
-                $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
-                    ->where('iam_account_id', $defaultProviderId)
-                    ->first();
-            } else {
-                $defaultProviderId = config('leo.providers.zones.global.distributor');
-                $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
-                    ->where('iam_account_id', $defaultProviderId)
-                    ->first();
-            }
-        }
-
-        $account->updateQuietly([
-            'distributor_id'    =>  $provider->id
-        ]);
+        self::assignDistributorByCountry($account, $iamAccount);
 
         return $account->fresh();
     }
@@ -253,4 +218,76 @@ class AccountingHelper
 
         return $provider;
     }
+
+    /**
+     * Assigns distributor based on the account's country or uses global fallback
+     *
+     * @param Accounts $account
+     * @param \NextDeveloper\IAM\Database\Models\Accounts $iamAccount
+     * @return void
+     */
+    private static function assignDistributorByCountry(Accounts $account, \NextDeveloper\IAM\Database\Models\Accounts $iamAccount): void
+    {
+        $country = null;
+
+        if($iamAccount->common_country_id) {
+            $country = CountryHelper::getCountryById($iamAccount->common_country_id);
+        }
+
+        if(!$country) {
+            Log::info(__METHOD__ . '| Customer (' . $iamAccount->name . ' | ' . $iamAccount->uuid . ') does not have a country id. Using the global provider.');
+        }
+
+        //  If the country is not set, we will use the global provider because we don't know where the customer is from.
+        if(!$country) {
+            $defaultProviderId = config('leo.providers.zones.global.distributor');
+        } else {
+            //  If we know where the customer is, then we should assign the related distributor
+            $defaultProviderId = config('leo.providers.zones.' . strtolower($country->code) . '.distributor');
+
+            if(!$defaultProviderId) {
+                $defaultProviderId = config('leo.providers.zones.global.distributor');
+            }
+        }
+
+        $provider = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('iam_account_id', $defaultProviderId)
+            ->first();
+
+        if(!$provider) {
+            Log::error(__METHOD__ . '| Cannot find provider account for IAM account ID: ' . $defaultProviderId);
+            return;
+        }
+
+        $account->updateQuietly([
+            'distributor_id'    =>  $provider->id
+        ]);
+
+    }
+
+    /**
+     * Sets distribution partner and sales partner for the customer based on the provider account
+     *
+     * @param Accounts $provider
+     * @param \NextDeveloper\IAM\Database\Models\Accounts $customer
+     * @return void
+     */
+    public static function setDistributionPartner(Accounts $provider, \NextDeveloper\IAM\Database\Models\Accounts $customer): void
+    {
+       // get Customer's accounting
+        $customerAccount = self::getAccountFromIamAccountId($customer->id);
+
+        if (!$customerAccount) {
+            Log::error(__METHOD__ . '| Cannot find accounting account for IAM account ID: ' . $customer->id);
+            return;
+        }
+
+       if($provider->distributor_id) {
+           $customerAccount->updateQuietly([
+               'distributor_id' => $provider->distributor_id,
+               'sales_partner_id' => $provider->id
+           ]);
+       }
+    }
+
 }
