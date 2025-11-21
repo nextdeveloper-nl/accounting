@@ -13,6 +13,7 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use Illuminate\Notifications\Notifiable;
+use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
  * CreditCards model.
@@ -39,7 +40,7 @@ use Illuminate\Notifications\Notifiable;
  */
 class CreditCards extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -183,6 +184,8 @@ class CreditCards extends Model
             },
         );
     }
+
+
 
 
 

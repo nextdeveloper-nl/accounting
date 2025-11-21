@@ -44,6 +44,27 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('invoice-items')->group(
+            function () {
+                Route::get('/', 'InvoiceItems\InvoiceItemsController@index');
+                Route::get('/actions', 'InvoiceItems\InvoiceItemsController@getActions');
+
+                Route::get('{accounting_invoice_items}/tags ', 'InvoiceItems\InvoiceItemsController@tags');
+                Route::post('{accounting_invoice_items}/tags ', 'InvoiceItems\InvoiceItemsController@saveTags');
+                Route::get('{accounting_invoice_items}/addresses ', 'InvoiceItems\InvoiceItemsController@addresses');
+                Route::post('{accounting_invoice_items}/addresses ', 'InvoiceItems\InvoiceItemsController@saveAddresses');
+
+                Route::get('/{accounting_invoice_items}/{subObjects}', 'InvoiceItems\InvoiceItemsController@relatedObjects');
+                Route::get('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@show');
+
+                Route::post('/', 'InvoiceItems\InvoiceItemsController@store');
+                Route::post('/{accounting_invoice_items}/do/{action}', 'InvoiceItems\InvoiceItemsController@doAction');
+
+                Route::patch('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@update');
+                Route::delete('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@destroy');
+            }
+        );
+
         Route::prefix('transactions')->group(
             function () {
                 Route::get('/', 'Transactions\TransactionsController@index');
@@ -128,27 +149,6 @@ Route::prefix('accounting')->group(
             }
         );
 
-        Route::prefix('invoice-items')->group(
-            function () {
-                Route::get('/', 'InvoiceItems\InvoiceItemsController@index');
-                Route::get('/actions', 'InvoiceItems\InvoiceItemsController@getActions');
-
-                Route::get('{accounting_invoice_items}/tags ', 'InvoiceItems\InvoiceItemsController@tags');
-                Route::post('{accounting_invoice_items}/tags ', 'InvoiceItems\InvoiceItemsController@saveTags');
-                Route::get('{accounting_invoice_items}/addresses ', 'InvoiceItems\InvoiceItemsController@addresses');
-                Route::post('{accounting_invoice_items}/addresses ', 'InvoiceItems\InvoiceItemsController@saveAddresses');
-
-                Route::get('/{accounting_invoice_items}/{subObjects}', 'InvoiceItems\InvoiceItemsController@relatedObjects');
-                Route::get('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@show');
-
-                Route::post('/', 'InvoiceItems\InvoiceItemsController@store');
-                Route::post('/{accounting_invoice_items}/do/{action}', 'InvoiceItems\InvoiceItemsController@doAction');
-
-                Route::patch('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@update');
-                Route::delete('/{accounting_invoice_items}', 'InvoiceItems\InvoiceItemsController@destroy');
-            }
-        );
-
         Route::prefix('payment-gateways')->group(
             function () {
                 Route::get('/', 'PaymentGateways\PaymentGatewaysController@index');
@@ -191,27 +191,6 @@ Route::prefix('accounting')->group(
             }
         );
 
-        Route::prefix('accounts')->group(
-            function () {
-                Route::get('/', 'Accounts\AccountsController@index');
-                Route::get('/actions', 'Accounts\AccountsController@getActions');
-
-                Route::get('{accounting_accounts}/tags ', 'Accounts\AccountsController@tags');
-                Route::post('{accounting_accounts}/tags ', 'Accounts\AccountsController@saveTags');
-                Route::get('{accounting_accounts}/addresses ', 'Accounts\AccountsController@addresses');
-                Route::post('{accounting_accounts}/addresses ', 'Accounts\AccountsController@saveAddresses');
-
-                Route::get('/{accounting_accounts}/{subObjects}', 'Accounts\AccountsController@relatedObjects');
-                Route::get('/{accounting_accounts}', 'Accounts\AccountsController@show');
-
-                Route::post('/', 'Accounts\AccountsController@store');
-                Route::post('/{accounting_accounts}/do/{action}', 'Accounts\AccountsController@doAction');
-
-                Route::patch('/{accounting_accounts}', 'Accounts\AccountsController@update');
-                Route::delete('/{accounting_accounts}', 'Accounts\AccountsController@destroy');
-            }
-        );
-
         Route::prefix('payment-checkout-sessions')->group(
             function () {
                 Route::get('/', 'PaymentCheckoutSessions\PaymentCheckoutSessionsController@index');
@@ -230,6 +209,27 @@ Route::prefix('accounting')->group(
 
                 Route::patch('/{apcs}', 'PaymentCheckoutSessions\PaymentCheckoutSessionsController@update');
                 Route::delete('/{apcs}', 'PaymentCheckoutSessions\PaymentCheckoutSessionsController@destroy');
+            }
+        );
+
+        Route::prefix('accounts')->group(
+            function () {
+                Route::get('/', 'Accounts\AccountsController@index');
+                Route::get('/actions', 'Accounts\AccountsController@getActions');
+
+                Route::get('{accounting_accounts}/tags ', 'Accounts\AccountsController@tags');
+                Route::post('{accounting_accounts}/tags ', 'Accounts\AccountsController@saveTags');
+                Route::get('{accounting_accounts}/addresses ', 'Accounts\AccountsController@addresses');
+                Route::post('{accounting_accounts}/addresses ', 'Accounts\AccountsController@saveAddresses');
+
+                Route::get('/{accounting_accounts}/{subObjects}', 'Accounts\AccountsController@relatedObjects');
+                Route::get('/{accounting_accounts}', 'Accounts\AccountsController@show');
+
+                Route::post('/', 'Accounts\AccountsController@store');
+                Route::post('/{accounting_accounts}/do/{action}', 'Accounts\AccountsController@doAction');
+
+                Route::patch('/{accounting_accounts}', 'Accounts\AccountsController@update');
+                Route::delete('/{accounting_accounts}', 'Accounts\AccountsController@destroy');
             }
         );
 
@@ -272,27 +272,6 @@ Route::prefix('accounting')->group(
 
                 Route::patch('/{accounting_contracts_perspective}', 'ContractsPerspective\ContractsPerspectiveController@update');
                 Route::delete('/{accounting_contracts_perspective}', 'ContractsPerspective\ContractsPerspectiveController@destroy');
-            }
-        );
-
-        Route::prefix('invoice-items-perspective')->group(
-            function () {
-                Route::get('/', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@index');
-                Route::get('/actions', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@getActions');
-
-                Route::get('{aiip}/tags ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@tags');
-                Route::post('{aiip}/tags ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@saveTags');
-                Route::get('{aiip}/addresses ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@addresses');
-                Route::post('{aiip}/addresses ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@saveAddresses');
-
-                Route::get('/{aiip}/{subObjects}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@relatedObjects');
-                Route::get('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@show');
-
-                Route::post('/', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@store');
-                Route::post('/{aiip}/do/{action}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@doAction');
-
-                Route::patch('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@update');
-                Route::delete('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@destroy');
             }
         );
 
@@ -461,6 +440,48 @@ Route::prefix('accounting')->group(
 
                 Route::patch('/{acip}', 'ContractItemsPerspective\ContractItemsPerspectiveController@update');
                 Route::delete('/{acip}', 'ContractItemsPerspective\ContractItemsPerspectiveController@destroy');
+            }
+        );
+
+        Route::prefix('weekly-paid-invoices-performance')->group(
+            function () {
+                Route::get('/', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@index');
+                Route::get('/actions', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@getActions');
+
+                Route::get('{awpip}/tags ', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@tags');
+                Route::post('{awpip}/tags ', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@saveTags');
+                Route::get('{awpip}/addresses ', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@addresses');
+                Route::post('{awpip}/addresses ', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@saveAddresses');
+
+                Route::get('/{awpip}/{subObjects}', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@relatedObjects');
+                Route::get('/{awpip}', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@show');
+
+                Route::post('/', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@store');
+                Route::post('/{awpip}/do/{action}', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@doAction');
+
+                Route::patch('/{awpip}', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@update');
+                Route::delete('/{awpip}', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoicesPerformanceController@destroy');
+            }
+        );
+
+        Route::prefix('monthly-paid-invoices-performance')->group(
+            function () {
+                Route::get('/', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@index');
+                Route::get('/actions', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@getActions');
+
+                Route::get('{ampip}/tags ', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@tags');
+                Route::post('{ampip}/tags ', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@saveTags');
+                Route::get('{ampip}/addresses ', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@addresses');
+                Route::post('{ampip}/addresses ', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@saveAddresses');
+
+                Route::get('/{ampip}/{subObjects}', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@relatedObjects');
+                Route::get('/{ampip}', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@show');
+
+                Route::post('/', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@store');
+                Route::post('/{ampip}/do/{action}', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@doAction');
+
+                Route::patch('/{ampip}', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@update');
+                Route::delete('/{ampip}', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@destroy');
             }
         );
 
@@ -1172,8 +1193,56 @@ Route::prefix('accounting')->group(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 );
+
+
 
 
 

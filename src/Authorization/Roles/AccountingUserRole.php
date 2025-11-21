@@ -95,7 +95,7 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             'accounting_sales_partners_perspective:read',
             'accounting_affiliates_perspective:read',
             'accounting_vendors_perspective:read',
-            
+
             'accounting_accounts:read',
             'accounting_accounts:create',
             'accounting_accounts:update',

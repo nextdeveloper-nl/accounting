@@ -19,11 +19,12 @@ class InvoiceItemsCreateRequest extends AbstractFormRequest
         'unit_price' => 'required',
         'common_currency_id' => 'required|exists:common_currencies,uuid|uuid',
         'accounting_invoice_id' => 'nullable|exists:accounting_invoices,uuid|uuid',
-        'total_price' => 'nullable',
         'accounting_account_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
         'details' => 'nullable',
-            'discount' => 'nullable',
+        'discount' => '',
+        'total_price' => 'nullable',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

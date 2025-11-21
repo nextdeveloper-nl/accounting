@@ -12,6 +12,7 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use Illuminate\Notifications\Notifiable;
+use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
  * InvoiceItems model.
@@ -29,15 +30,15 @@ use Illuminate\Notifications\Notifiable;
  * @property \Carbon\Carbon $deleted_at
  * @property integer $iam_account_id
  * @property integer $accounting_invoice_id
- * @property $total_price
  * @property integer $accounting_promo_code_id
  * @property integer $accounting_account_id
  * @property $details
  * @property $discount
+ * @property $total_price
  */
 class InvoiceItems extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -58,11 +59,11 @@ class InvoiceItems extends Model
             'common_currency_id',
             'iam_account_id',
             'accounting_invoice_id',
-            'total_price',
             'accounting_promo_code_id',
             'accounting_account_id',
             'details',
             'discount',
+            'total_price',
     ];
 
     /**
@@ -161,8 +162,10 @@ class InvoiceItems extends Model
     {
         return $this->belongsTo(\NextDeveloper\Commons\Database\Models\Currencies::class);
     }
-
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

@@ -12,6 +12,7 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use Illuminate\Notifications\Notifiable;
+use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
  * Accounts model.
@@ -45,10 +46,11 @@ use Illuminate\Notifications\Notifiable;
  * @property boolean $is_affiliate
  * @property integer $affiliate_level
  * @property string $iban
+ * @property string $partner_code
  */
 class Accounts extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -85,6 +87,7 @@ class Accounts extends Model
             'is_affiliate',
             'affiliate_level',
             'iban',
+            'partner_code',
     ];
 
     /**
@@ -131,6 +134,7 @@ class Accounts extends Model
     'is_affiliate' => 'boolean',
     'affiliate_level' => 'integer',
     'iban' => 'string',
+    'partner_code' => 'string',
     ];
 
     /**
@@ -207,6 +211,8 @@ class Accounts extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

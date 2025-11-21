@@ -10,6 +10,7 @@ use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Commons\Database\Models\Countries;
 use NextDeveloper\Commons\Helpers\CountryHelper;
 use NextDeveloper\Communication\Helpers\Communicate;
+use NextDeveloper\IAM\Database\Models\AccountsPerspective;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
@@ -53,6 +54,10 @@ class AccountingHelper
             ->first();
     }
 
+    /**
+     * @param Accounts $account
+     * @return mixed
+     */
     public static function getDistributorAccount(Accounts $account) {
         //  We are trying to find the accounting_account of the distributor
         $distributorAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
@@ -272,7 +277,9 @@ class AccountingHelper
      * @param \NextDeveloper\IAM\Database\Models\Accounts $customer
      * @return void
      */
-    public static function setDistributionPartner(Accounts $provider, \NextDeveloper\IAM\Database\Models\Accounts $customer): void
+    public static function setDistributionPartner(
+        Accounts $provider,
+        \NextDeveloper\IAM\Database\Models\Accounts|AccountsPerspective $customer): void
     {
        // get Customer's accounting
         $customerAccount = self::getAccountFromIamAccountId($customer->id);

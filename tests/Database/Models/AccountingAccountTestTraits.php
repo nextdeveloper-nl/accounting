@@ -65,6 +65,7 @@ trait AccountingAccountTestTraits
                 'trade_office'  =>  'a',
                 'tr_mersis'  =>  'a',
                 'iban'  =>  'a',
+                'partner_code'  =>  'a',
                 'affiliate_level'  =>  '1',
                             ],
                 ['http_errors' => false]
@@ -468,6 +469,25 @@ trait AccountingAccountTestTraits
             $request = new Request(
                 [
                 'iban'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingAccountQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingAccount::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingaccount_event_partner_code_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'partner_code'  =>  'a'
                 ]
             );
 
