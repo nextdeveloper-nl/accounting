@@ -188,4 +188,5 @@ class Partnerships extends Model
 
 
 
+
 }

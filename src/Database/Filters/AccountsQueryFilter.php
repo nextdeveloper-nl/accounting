@@ -89,6 +89,17 @@ class AccountsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('iban', 'ilike', '%' . $value . '%');
     }
 
+        
+    public function partnerCode($value)
+    {
+        return $this->builder->where('partner_code', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of partnerCode
+    public function partner_code($value)
+    {
+        return $this->partnerCode($value);
+    }
     
     public function affiliateLevel($value)
     {
@@ -338,6 +349,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

@@ -35,6 +35,7 @@ class AccountsCreateRequest extends AbstractFormRequest
         'is_affiliate' => 'boolean',
         'affiliate_level' => 'integer',
         'iban' => 'nullable|string',
+        'partner_code' => 'nullable|string',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

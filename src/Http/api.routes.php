@@ -191,27 +191,6 @@ Route::prefix('accounting')->group(
             }
         );
 
-        Route::prefix('accounts')->group(
-            function () {
-                Route::get('/', 'Accounts\AccountsController@index');
-                Route::get('/actions', 'Accounts\AccountsController@getActions');
-
-                Route::get('{accounting_accounts}/tags ', 'Accounts\AccountsController@tags');
-                Route::post('{accounting_accounts}/tags ', 'Accounts\AccountsController@saveTags');
-                Route::get('{accounting_accounts}/addresses ', 'Accounts\AccountsController@addresses');
-                Route::post('{accounting_accounts}/addresses ', 'Accounts\AccountsController@saveAddresses');
-
-                Route::get('/{accounting_accounts}/{subObjects}', 'Accounts\AccountsController@relatedObjects');
-                Route::get('/{accounting_accounts}', 'Accounts\AccountsController@show');
-
-                Route::post('/', 'Accounts\AccountsController@store');
-                Route::post('/{accounting_accounts}/do/{action}', 'Accounts\AccountsController@doAction');
-
-                Route::patch('/{accounting_accounts}', 'Accounts\AccountsController@update');
-                Route::delete('/{accounting_accounts}', 'Accounts\AccountsController@destroy');
-            }
-        );
-
         Route::prefix('payment-checkout-sessions')->group(
             function () {
                 Route::get('/', 'PaymentCheckoutSessions\PaymentCheckoutSessionsController@index');
@@ -230,6 +209,27 @@ Route::prefix('accounting')->group(
 
                 Route::patch('/{apcs}', 'PaymentCheckoutSessions\PaymentCheckoutSessionsController@update');
                 Route::delete('/{apcs}', 'PaymentCheckoutSessions\PaymentCheckoutSessionsController@destroy');
+            }
+        );
+
+        Route::prefix('accounts')->group(
+            function () {
+                Route::get('/', 'Accounts\AccountsController@index');
+                Route::get('/actions', 'Accounts\AccountsController@getActions');
+
+                Route::get('{accounting_accounts}/tags ', 'Accounts\AccountsController@tags');
+                Route::post('{accounting_accounts}/tags ', 'Accounts\AccountsController@saveTags');
+                Route::get('{accounting_accounts}/addresses ', 'Accounts\AccountsController@addresses');
+                Route::post('{accounting_accounts}/addresses ', 'Accounts\AccountsController@saveAddresses');
+
+                Route::get('/{accounting_accounts}/{subObjects}', 'Accounts\AccountsController@relatedObjects');
+                Route::get('/{accounting_accounts}', 'Accounts\AccountsController@show');
+
+                Route::post('/', 'Accounts\AccountsController@store');
+                Route::post('/{accounting_accounts}/do/{action}', 'Accounts\AccountsController@doAction');
+
+                Route::patch('/{accounting_accounts}', 'Accounts\AccountsController@update');
+                Route::delete('/{accounting_accounts}', 'Accounts\AccountsController@destroy');
             }
         );
 
@@ -1216,8 +1216,32 @@ Route::prefix('accounting')->group(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 );
+
 
 
 

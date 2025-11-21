@@ -176,4 +176,5 @@ class AbstractAffiliatesPerspectiveTransformer extends AbstractTransformer
 
 
 
+
 }
