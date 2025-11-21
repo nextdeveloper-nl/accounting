@@ -73,11 +73,11 @@ class AbstractInvoiceItemsTransformer extends AbstractTransformer
             'deleted_at'  =>  $model->deleted_at,
             'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
             'accounting_invoice_id'  =>  $accountingInvoiceId ? $accountingInvoiceId->uuid : null,
-            'total_price'  =>  $model->total_price,
             'accounting_promo_code_id'  =>  $accountingPromoCodeId ? $accountingPromoCodeId->uuid : null,
             'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
             'details'  =>  $model->details,
             'discount'  =>  $model->discount,
+            'total_price'  =>  $model->total_price,
             ]
         );
     }
@@ -166,6 +166,7 @@ class AbstractInvoiceItemsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

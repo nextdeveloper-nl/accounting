@@ -263,4 +263,5 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
 
 
 
+
 }
