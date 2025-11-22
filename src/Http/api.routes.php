@@ -464,6 +464,27 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('distributor-sales-report')->group(
+            function () {
+                Route::get('/', 'DistributorSalesReport\DistributorSalesReportController@index');
+                Route::get('/actions', 'DistributorSalesReport\DistributorSalesReportController@getActions');
+
+                Route::get('{adsr}/tags ', 'DistributorSalesReport\DistributorSalesReportController@tags');
+                Route::post('{adsr}/tags ', 'DistributorSalesReport\DistributorSalesReportController@saveTags');
+                Route::get('{adsr}/addresses ', 'DistributorSalesReport\DistributorSalesReportController@addresses');
+                Route::post('{adsr}/addresses ', 'DistributorSalesReport\DistributorSalesReportController@saveAddresses');
+
+                Route::get('/{adsr}/{subObjects}', 'DistributorSalesReport\DistributorSalesReportController@relatedObjects');
+                Route::get('/{adsr}', 'DistributorSalesReport\DistributorSalesReportController@show');
+
+                Route::post('/', 'DistributorSalesReport\DistributorSalesReportController@store');
+                Route::post('/{adsr}/do/{action}', 'DistributorSalesReport\DistributorSalesReportController@doAction');
+
+                Route::patch('/{adsr}', 'DistributorSalesReport\DistributorSalesReportController@update');
+                Route::delete('/{adsr}', 'DistributorSalesReport\DistributorSalesReportController@destroy');
+            }
+        );
+
         Route::prefix('monthly-paid-invoices-performance')->group(
             function () {
                 Route::get('/', 'MonthlyPaidInvoicesPerformance\MonthlyPaidInvoicesPerformanceController@index');
@@ -1239,8 +1260,33 @@ Route::prefix('accounting')->group(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 );
+
 
 
 

@@ -265,4 +265,5 @@ class SalesPartnersPerspectiveQueryFilter extends AbstractQueryFilter
 
 
 
+
 }

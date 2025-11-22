@@ -2,41 +2,38 @@
 
 namespace NextDeveloper\Accounting\Database\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use NextDeveloper\Accounting\Database\Observers\PaymentCheckoutSessionsObserver;
-use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
-use NextDeveloper\Commons\Database\Traits\Filterable;
 use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
-use NextDeveloper\Commons\Database\Traits\Taggable;
-use NextDeveloper\Commons\Database\Traits\UuidId;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
+use NextDeveloper\Commons\Database\Traits\Filterable;
+use NextDeveloper\Accounting\Database\Observers\DistributorSalesReportObserver;
+use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Database\Traits\HasObject;
+use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
+use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
- * PaymentCheckoutSessions model.
+ * DistributorSalesReport model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
- * @property string $uuid
- * @property integer $accounting_payment_gateway_id
- * @property $payment_data
- * @property $session_data
- * @property boolean $is_invalidated
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon $deleted_at
- * @property integer $accounting_account_id
+ * @property integer $iam_account_id
+ * @property integer $distributor_id
+ * @property string $currency_code
+ * @property integer $invoice_count
+ * @property integer $unpaid_invoice_count
+ * @property $paid_amount
+ * @property $unpaid_amount
+ * @property $this_month_income
  */
-class PaymentCheckoutSessions extends Model
+class DistributorSalesReport extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
-    use SoftDeletes;
 
-    public $timestamps = true;
+    public $timestamps = false;
 
-    protected $table = 'accounting_payment_checkout_sessions';
+    protected $table = 'accounting_distributor_sales_report';
 
 
     /**
@@ -45,11 +42,14 @@ class PaymentCheckoutSessions extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'accounting_payment_gateway_id',
-            'payment_data',
-            'session_data',
-            'is_invalidated',
-            'accounting_account_id',
+            'iam_account_id',
+            'distributor_id',
+            'currency_code',
+            'invoice_count',
+            'unpaid_invoice_count',
+            'paid_amount',
+            'unpaid_amount',
+            'this_month_income',
     ];
 
     /**
@@ -73,14 +73,10 @@ class PaymentCheckoutSessions extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'accounting_payment_gateway_id' => 'integer',
-    'payment_data' => 'array',
-    'session_data' => 'array',
-    'is_invalidated' => 'boolean',
-    'created_at' => 'datetime',
-    'updated_at' => 'datetime',
-    'deleted_at' => 'datetime',
-    'accounting_account_id' => 'integer',
+    'distributor_id' => 'integer',
+    'currency_code' => 'string',
+    'invoice_count' => 'integer',
+    'unpaid_invoice_count' => 'integer',
     ];
 
     /**
@@ -89,9 +85,7 @@ class PaymentCheckoutSessions extends Model
      @var array
      */
     protected $dates = [
-    'created_at',
-    'updated_at',
-    'deleted_at',
+
     ];
 
     /**
@@ -114,7 +108,7 @@ class PaymentCheckoutSessions extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(PaymentCheckoutSessionsObserver::class);
+        parent::observe(DistributorSalesReportObserver::class);
 
         self::registerScopes();
     }
@@ -122,7 +116,7 @@ class PaymentCheckoutSessions extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_payment_checkout_sessions');
+        $modelScopes = config('accounting.scopes.accounting_distributor_sales_report');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -142,23 +136,4 @@ class PaymentCheckoutSessions extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
