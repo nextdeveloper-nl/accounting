@@ -21,6 +21,7 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
  * @property \Carbon\Carbon $month_end
  * @property string $month_name
  * @property string $month_code
+ * @property integer $common_currency_id
  * @property integer $count
  * @property $total_amount
  * @property $avg_amount
@@ -46,6 +47,7 @@ class MonthlyPaidInvoicesPerformance extends Model
             'month_end',
             'month_name',
             'month_code',
+            'common_currency_id',
             'count',
             'total_amount',
             'avg_amount',
@@ -77,6 +79,7 @@ class MonthlyPaidInvoicesPerformance extends Model
     'month_end' => 'datetime',
     'month_name' => 'string',
     'month_code' => 'string',
+    'common_currency_id' => 'integer',
     'count' => 'integer',
     ];
 
@@ -138,5 +141,6 @@ class MonthlyPaidInvoicesPerformance extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 }

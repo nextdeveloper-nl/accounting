@@ -8,6 +8,7 @@ use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Helpers\PartnershipHelper;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountsService;
+use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\Commons\Exceptions\CannotCreateModelException;
 use NextDeveloper\Communication\Helpers\Communicate;
@@ -147,7 +148,7 @@ class AccountsService extends AbstractAccountsService
         return $updatedAccount;
     }
 
-    private static function assignPartner($account, $partnerAccount)
+    public static function assignPartner($account, $partnerAccount)
     {
         $crmAccount = \NextDeveloper\CRM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('iam_account_id', $account->iam_account_id)
@@ -160,6 +161,11 @@ class AccountsService extends AbstractAccountsService
         $ownerOfPartner = UserHelper::getAccountOwner($iamAccountOfPartner);
 
         CrmHelper::addAccountManager($crmAccount, $iamAccountOfPartner, $ownerOfPartner);
+
+        Events::fire(
+            'partner-assigned:NextDeveloper\Accounting\Accounts',
+            $account
+        );
     }
 
     public static function assignAffiliateToAccount(Accounts $customer, Partnerships $affiliateAccount)
