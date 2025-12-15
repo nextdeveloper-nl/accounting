@@ -20,16 +20,16 @@ use NextDeveloper\Commons\Http\Transformers\MetaTransformer;
 use NextDeveloper\Commons\Http\Transformers\VotesTransformer;
 use NextDeveloper\Commons\Http\Transformers\AddressesTransformer;
 use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
-use NextDeveloper\Accounting\Database\Models\Partnerships;
+use NextDeveloper\Accounting\Database\Models\DistributorSalesReports;
 use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
 /**
- * Class PartnershipsTransformer. This class is being used to manipulate the data we are serving to the customer
+ * Class DistributorSalesReportsTransformer. This class is being used to manipulate the data we are serving to the customer
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractPartnershipsTransformer extends AbstractTransformer
+class AbstractDistributorSalesReportsTransformer extends AbstractTransformer
 {
 
     /**
@@ -48,44 +48,31 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
     ];
 
     /**
-     * @param Partnerships $model
+     * @param DistributorSalesReports $model
      *
      * @return array
      */
-    public function transform(Partnerships $model)
+    public function transform(DistributorSalesReports $model)
     {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
-                                                            $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
+                                                            $distributorId = \NextDeveloper\\Database\Models\Distributors::where('id', $model->distributor_id)->first();
                         
         return $this->buildPayload(
             [
-            'id'  =>  $model->uuid,
+            'id'  =>  $model->id,
             'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            'partner_code'  =>  $model->partner_code,
-            'is_brand_ambassador'  =>  $model->is_brand_ambassador,
-            'customer_count'  =>  $model->customer_count,
-            'level'  =>  $model->level,
-            'reward_points'  =>  $model->reward_points,
-            'boosts'  =>  $model->boosts,
-            'mystery_box'  =>  $model->mystery_box,
-            'badges'  =>  $model->badges,
-            'is_approved'  =>  $model->is_approved,
-            'technical_capabilities'  =>  $model->technical_capabilities,
-            'industry'  =>  $model->industry,
-            'sector_focus'  =>  $model->sector_focus,
-            'special_interest'  =>  $model->special_interest,
-            'compliance_certifications'  =>  $model->compliance_certifications,
-            'target_group'  =>  $model->target_group,
-            'meeting_link'  =>  $model->meeting_link,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
+            'distributor_id'  =>  $distributorId ? $distributorId->uuid : null,
+            'currency_code'  =>  $model->currency_code,
+            'invoice_count'  =>  $model->invoice_count,
+            'unpaid_invoice_count'  =>  $model->unpaid_invoice_count,
+            'paid_amount'  =>  $model->paid_amount,
+            'unpaid_amount'  =>  $model->unpaid_amount,
+            'this_month_income'  =>  $model->this_month_income,
             ]
         );
     }
 
-    public function includeStates(Partnerships $model)
+    public function includeStates(DistributorSalesReports $model)
     {
         $states = States::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -94,7 +81,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($states, new StatesTransformer());
     }
 
-    public function includeActions(Partnerships $model)
+    public function includeActions(DistributorSalesReports $model)
     {
         $input = get_class($model);
         $input = str_replace('\\Database\\Models', '', $input);
@@ -106,7 +93,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($actions, new AvailableActionsTransformer());
     }
 
-    public function includeMedia(Partnerships $model)
+    public function includeMedia(DistributorSalesReports $model)
     {
         $media = Media::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -115,7 +102,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($media, new MediaTransformer());
     }
 
-    public function includeSocialMedia(Partnerships $model)
+    public function includeSocialMedia(DistributorSalesReports $model)
     {
         $socialMedia = SocialMedia::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -124,7 +111,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($socialMedia, new SocialMediaTransformer());
     }
 
-    public function includeComments(Partnerships $model)
+    public function includeComments(DistributorSalesReports $model)
     {
         $comments = Comments::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -133,7 +120,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($comments, new CommentsTransformer());
     }
 
-    public function includeVotes(Partnerships $model)
+    public function includeVotes(DistributorSalesReports $model)
     {
         $votes = Votes::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -142,7 +129,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($votes, new VotesTransformer());
     }
 
-    public function includeMeta(Partnerships $model)
+    public function includeMeta(DistributorSalesReports $model)
     {
         $meta = Meta::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -151,7 +138,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($meta, new MetaTransformer());
     }
 
-    public function includePhoneNumbers(Partnerships $model)
+    public function includePhoneNumbers(DistributorSalesReports $model)
     {
         $phoneNumbers = PhoneNumbers::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -160,7 +147,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($phoneNumbers, new PhoneNumbersTransformer());
     }
 
-    public function includeAddresses(Partnerships $model)
+    public function includeAddresses(DistributorSalesReports $model)
     {
         $addresses = Addresses::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -169,10 +156,4 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
 }

@@ -506,7 +506,53 @@ Route::prefix('accounting')->group(
             }
         );
 
+        Route::prefix('invoice-items-perspective')->group(
+            function () {
+                Route::get('/', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@index');
+                Route::get('/actions', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@getActions');
+
+                Route::get('{aiip}/tags ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@tags');
+                Route::post('{aiip}/tags ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@saveTags');
+                Route::get('{aiip}/addresses ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@addresses');
+                Route::post('{aiip}/addresses ', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@saveAddresses');
+
+                Route::get('/{aiip}/{subObjects}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@relatedObjects');
+                Route::get('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@show');
+
+                Route::post('/', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@store');
+                Route::post('/{aiip}/do/{action}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@doAction');
+
+                Route::patch('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@update');
+                Route::delete('/{aiip}', 'InvoiceItemsPerspective\InvoiceItemsPerspectiveController@destroy');
+            }
+        );
+
         // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1286,6 +1332,7 @@ Route::prefix('accounting')->group(
 
     }
 );
+
 
 
 
