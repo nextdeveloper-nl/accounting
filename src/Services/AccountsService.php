@@ -148,7 +148,13 @@ class AccountsService extends AbstractAccountsService
         return $updatedAccount;
     }
 
-    public static function assignPartner($account, $partnerAccount)
+    /**
+     * @param \NextDeveloper\Accounting\Database\Models\Accounts $account
+     * @param $partnerAccount
+     * @param $as
+     * @return void
+     */
+    public static function assignPartner($account, $partnerAccount, $as = 'integrator')
     {
         $crmAccount = \NextDeveloper\CRM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('iam_account_id', $account->iam_account_id)
