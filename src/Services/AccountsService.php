@@ -174,14 +174,14 @@ class AccountsService extends AbstractAccountsService
         );
     }
 
-    public static function assignAffiliateToAccount(Accounts $customer, Partnerships $affiliateAccount)
+    public static function assignAffiliateToAccount(Accounts $customer, Accounts $affiliateAccount)
     {
-        $customer->affiliate_partner_id = $affiliateAccount->accounting_account_id;
+        $customer->affiliate_partner_id = $affiliateAccount->id;
         $customer->saveQuietly();
 
         // Here we need to send a notification to the affiliate
         $partnershipResponsible = UserHelper::getWithEmail(config('leo.notifications.partnership.responsible'));
-        (new Communicate($partnershipResponsible))->sendEnvelope(new NewRegisterCameFromYourCode($customer));
+        (new Communicate($partnershipResponsible))->sendEnvelope(new NewRegisterCameFromYourCode($affiliateAccount));
 
         return $customer;
     }

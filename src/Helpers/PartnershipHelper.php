@@ -10,11 +10,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
 class PartnershipHelper
 {
-    public static function getPartnerByCode($partnerCode) : ?Partnerships
+    public static function getPartnerByCode($partnerCode) : ?Accounts
     {
         if(!$partnerCode) return null;
 
-        return Partnerships::withoutGlobalScope(AuthorizationScope::class)
+        return Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('partner_code', $partnerCode)
             ->first();
     }
