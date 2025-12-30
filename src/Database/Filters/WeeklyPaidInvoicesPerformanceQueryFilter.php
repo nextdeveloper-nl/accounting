@@ -91,4 +91,7 @@ class WeeklyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
 
 
 
+
+
+
 }

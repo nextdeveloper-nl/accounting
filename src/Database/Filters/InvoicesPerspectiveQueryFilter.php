@@ -327,4 +327,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
 
 
 
+
+
+
 }

@@ -13,9 +13,7 @@ class PartnershipsCreateRequest extends AbstractFormRequest
     public function rules()
     {
         return [
-            'accounting_account_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
-        'partner_code' => 'nullable|string',
-        'is_brand_ambassador' => 'boolean',
+            'is_brand_ambassador' => 'boolean',
         'customer_count' => 'integer',
         'level' => 'integer',
         'reward_points' => 'integer',
@@ -30,6 +28,8 @@ class PartnershipsCreateRequest extends AbstractFormRequest
         'compliance_certifications' => 'nullable',
         'target_group' => 'nullable',
         'meeting_link' => 'nullable|string',
+        'operating_countries' => 'nullable',
+        'operating_cities' => 'nullable',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

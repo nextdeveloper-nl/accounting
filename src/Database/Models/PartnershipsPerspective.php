@@ -7,20 +7,21 @@ use NextDeveloper\Commons\Database\Traits\HasStates;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Accounting\Database\Observers\PartnershipsObserver;
+use NextDeveloper\Accounting\Database\Observers\PartnershipsPerspectiveObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
+use NextDeveloper\Commons\Database\Traits\HasObject;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
-use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
- * Partnerships model.
+ * PartnershipsPerspective model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property integer $iam_account_id
+ * @property string $name
+ * @property string $partner_code
  * @property boolean $is_brand_ambassador
  * @property integer $customer_count
  * @property integer $level
@@ -36,20 +37,19 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property array $compliance_certifications
  * @property array $target_group
  * @property string $meeting_link
+ * @property integer $iam_account_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
- * @property array $operating_countries
- * @property array $operating_cities
  */
-class Partnerships extends Model
+class PartnershipsPerspective extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'accounting_partnerships';
+    protected $table = 'accounting_partnerships_perspective';
 
 
     /**
@@ -58,7 +58,8 @@ class Partnerships extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'iam_account_id',
+            'name',
+            'partner_code',
             'is_brand_ambassador',
             'customer_count',
             'level',
@@ -74,8 +75,7 @@ class Partnerships extends Model
             'compliance_certifications',
             'target_group',
             'meeting_link',
-            'operating_countries',
-            'operating_cities',
+            'iam_account_id',
     ];
 
     /**
@@ -99,6 +99,8 @@ class Partnerships extends Model
      */
     protected $casts = [
     'id' => 'integer',
+    'name' => 'string',
+    'partner_code' => 'string',
     'is_brand_ambassador' => 'boolean',
     'customer_count' => 'integer',
     'level' => 'integer',
@@ -117,8 +119,6 @@ class Partnerships extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-    'operating_countries' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
-    'operating_cities' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
     ];
 
     /**
@@ -152,7 +152,7 @@ class Partnerships extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(PartnershipsObserver::class);
+        parent::observe(PartnershipsPerspectiveObserver::class);
 
         self::registerScopes();
     }
@@ -160,7 +160,7 @@ class Partnerships extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_partnerships');
+        $modelScopes = config('accounting.scopes.accounting_partnerships_perspective');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -179,19 +179,5 @@ class Partnerships extends Model
         }
     }
 
-    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
 }
