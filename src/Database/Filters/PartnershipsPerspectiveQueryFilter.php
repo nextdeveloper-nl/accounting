@@ -4,13 +4,13 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                    
+    
 
 /**
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class InvoiceItemsQueryFilter extends AbstractQueryFilter
+class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
 {
 
     /**
@@ -18,18 +18,41 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
     
-    public function objectType($value)
+    public function name($value)
     {
-        return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
+        return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of objectType
-    public function object_type($value)
+        
+    public function partnerCode($value)
     {
-        return $this->objectType($value);
+        return $this->builder->where('partner_code', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of partnerCode
+    public function partner_code($value)
+    {
+        return $this->partnerCode($value);
+    }
+        
+    public function industry($value)
+    {
+        return $this->builder->where('industry', 'ilike', '%' . $value . '%');
+    }
+
+        
+    public function meetingLink($value)
+    {
+        return $this->builder->where('meeting_link', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of meetingLink
+    public function meeting_link($value)
+    {
+        return $this->meetingLink($value);
     }
     
-    public function quantity($value)
+    public function customerCount($value)
     {
         $operator = substr($value, 0, 1);
 
@@ -39,10 +62,70 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('quantity', $operator, $value);
+        return $this->builder->where('customer_count', $operator, $value);
+    }
+
+        //  This is an alias function of customerCount
+    public function customer_count($value)
+    {
+        return $this->customerCount($value);
+    }
+    
+    public function level($value)
+    {
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('level', $operator, $value);
     }
 
     
+    public function rewardPoints($value)
+    {
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('reward_points', $operator, $value);
+    }
+
+        //  This is an alias function of rewardPoints
+    public function reward_points($value)
+    {
+        return $this->rewardPoints($value);
+    }
+    
+    public function isBrandAmbassador($value)
+    {
+        return $this->builder->where('is_brand_ambassador', $value);
+    }
+
+        //  This is an alias function of isBrandAmbassador
+    public function is_brand_ambassador($value)
+    {
+        return $this->isBrandAmbassador($value);
+    }
+     
+    public function isApproved($value)
+    {
+        return $this->builder->where('is_approved', $value);
+    }
+
+        //  This is an alias function of isApproved
+    public function is_approved($value)
+    {
+        return $this->isApproved($value);
+    }
+     
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -109,21 +192,6 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
         return $this->deletedAtEnd($value);
     }
 
-    public function commonCurrencyId($value)
-    {
-            $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
-
-        if($commonCurrency) {
-            return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
-        }
-    }
-
-        //  This is an alias function of commonCurrency
-    public function common_currency_id($value)
-    {
-        return $this->commonCurrency($value);
-    }
-    
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -134,114 +202,5 @@ class InvoiceItemsQueryFilter extends AbstractQueryFilter
     }
 
     
-    public function accountingInvoiceId($value)
-    {
-            $accountingInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
-
-        if($accountingInvoice) {
-            return $this->builder->where('accounting_invoice_id', '=', $accountingInvoice->id);
-        }
-    }
-
-        //  This is an alias function of accountingInvoice
-    public function accounting_invoice_id($value)
-    {
-        return $this->accountingInvoice($value);
-    }
-    
-    public function accountingPromoCodeId($value)
-    {
-            $accountingPromoCode = \NextDeveloper\Accounting\Database\Models\PromoCodes::where('uuid', $value)->first();
-
-        if($accountingPromoCode) {
-            return $this->builder->where('accounting_promo_code_id', '=', $accountingPromoCode->id);
-        }
-    }
-
-        //  This is an alias function of accountingPromoCode
-    public function accounting_promo_code_id($value)
-    {
-        return $this->accountingPromoCode($value);
-    }
-    
-    public function accountingAccountId($value)
-    {
-            $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
-
-        if($accountingAccount) {
-            return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
-        }
-    }
-
-        //  This is an alias function of accountingAccount
-    public function accounting_account_id($value)
-    {
-        return $this->accountingAccount($value);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

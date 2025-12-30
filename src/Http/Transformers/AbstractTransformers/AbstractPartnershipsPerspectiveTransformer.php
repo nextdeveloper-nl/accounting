@@ -20,16 +20,16 @@ use NextDeveloper\Commons\Http\Transformers\MetaTransformer;
 use NextDeveloper\Commons\Http\Transformers\VotesTransformer;
 use NextDeveloper\Commons\Http\Transformers\AddressesTransformer;
 use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
-use NextDeveloper\Accounting\Database\Models\MonthlyPaidInvoicesPerformance;
+use NextDeveloper\Accounting\Database\Models\PartnershipsPerspective;
 use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
 /**
- * Class MonthlyPaidInvoicesPerformanceTransformer. This class is being used to manipulate the data we are serving to the customer
+ * Class PartnershipsPerspectiveTransformer. This class is being used to manipulate the data we are serving to the customer
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransformer
+class AbstractPartnershipsPerspectiveTransformer extends AbstractTransformer
 {
 
     /**
@@ -48,32 +48,43 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
     ];
 
     /**
-     * @param MonthlyPaidInvoicesPerformance $model
+     * @param PartnershipsPerspective $model
      *
      * @return array
      */
-    public function transform(MonthlyPaidInvoicesPerformance $model)
+    public function transform(PartnershipsPerspective $model)
     {
-                                                $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
+                                                $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                         
         return $this->buildPayload(
             [
-            'id'  =>  $model->id,
-            'month_start'  =>  $model->month_start,
-            'month_end'  =>  $model->month_end,
-            'month_name'  =>  $model->month_name,
-            'month_code'  =>  $model->month_code,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'count'  =>  $model->count,
-            'total_amount'  =>  $model->total_amount,
-            'avg_amount'  =>  $model->avg_amount,
-            'min_amount'  =>  $model->min_amount,
-            'max_amount'  =>  $model->max_amount,
+            'id'  =>  $model->uuid,
+            'name'  =>  $model->name,
+            'partner_code'  =>  $model->partner_code,
+            'is_brand_ambassador'  =>  $model->is_brand_ambassador,
+            'customer_count'  =>  $model->customer_count,
+            'level'  =>  $model->level,
+            'reward_points'  =>  $model->reward_points,
+            'boosts'  =>  $model->boosts,
+            'mystery_box'  =>  $model->mystery_box,
+            'badges'  =>  $model->badges,
+            'is_approved'  =>  $model->is_approved,
+            'technical_capabilities'  =>  $model->technical_capabilities,
+            'industry'  =>  $model->industry,
+            'sector_focus'  =>  $model->sector_focus,
+            'special_interest'  =>  $model->special_interest,
+            'compliance_certifications'  =>  $model->compliance_certifications,
+            'target_group'  =>  $model->target_group,
+            'meeting_link'  =>  $model->meeting_link,
+            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+            'created_at'  =>  $model->created_at,
+            'updated_at'  =>  $model->updated_at,
+            'deleted_at'  =>  $model->deleted_at,
             ]
         );
     }
 
-    public function includeStates(MonthlyPaidInvoicesPerformance $model)
+    public function includeStates(PartnershipsPerspective $model)
     {
         $states = States::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -82,7 +93,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($states, new StatesTransformer());
     }
 
-    public function includeActions(MonthlyPaidInvoicesPerformance $model)
+    public function includeActions(PartnershipsPerspective $model)
     {
         $input = get_class($model);
         $input = str_replace('\\Database\\Models', '', $input);
@@ -94,7 +105,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($actions, new AvailableActionsTransformer());
     }
 
-    public function includeMedia(MonthlyPaidInvoicesPerformance $model)
+    public function includeMedia(PartnershipsPerspective $model)
     {
         $media = Media::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -103,7 +114,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($media, new MediaTransformer());
     }
 
-    public function includeSocialMedia(MonthlyPaidInvoicesPerformance $model)
+    public function includeSocialMedia(PartnershipsPerspective $model)
     {
         $socialMedia = SocialMedia::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -112,7 +123,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($socialMedia, new SocialMediaTransformer());
     }
 
-    public function includeComments(MonthlyPaidInvoicesPerformance $model)
+    public function includeComments(PartnershipsPerspective $model)
     {
         $comments = Comments::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -121,7 +132,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($comments, new CommentsTransformer());
     }
 
-    public function includeVotes(MonthlyPaidInvoicesPerformance $model)
+    public function includeVotes(PartnershipsPerspective $model)
     {
         $votes = Votes::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -130,7 +141,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($votes, new VotesTransformer());
     }
 
-    public function includeMeta(MonthlyPaidInvoicesPerformance $model)
+    public function includeMeta(PartnershipsPerspective $model)
     {
         $meta = Meta::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -139,7 +150,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($meta, new MetaTransformer());
     }
 
-    public function includePhoneNumbers(MonthlyPaidInvoicesPerformance $model)
+    public function includePhoneNumbers(PartnershipsPerspective $model)
     {
         $phoneNumbers = PhoneNumbers::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -148,7 +159,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($phoneNumbers, new PhoneNumbersTransformer());
     }
 
-    public function includeAddresses(MonthlyPaidInvoicesPerformance $model)
+    public function includeAddresses(PartnershipsPerspective $model)
     {
         $addresses = Addresses::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -157,10 +168,4 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
 }
