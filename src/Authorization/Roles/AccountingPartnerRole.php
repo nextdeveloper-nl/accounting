@@ -39,11 +39,7 @@ class AccountingPartnerRole extends AbstractRole implements IAuthorizationRole
             'accounting_vendors_perspective',
         ];
 
-        //  Here we are checking if the user is partner or the user has sales-person role from CRM
-        //  You may think that this is a cross requirement, however since we are storing the roles in the database
-        //  we can use this. Later maybe we can put it in a config file so that the developer may change without
-        //  modifying the code.
-        if(in_array($model->getTable(), $partners) || UserHelper::has('sales-person')) {
+        if(in_array($model->getTable(), $partners)) {
             return;
         }
 

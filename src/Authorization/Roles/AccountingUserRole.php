@@ -44,6 +44,15 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
         }
 
         if(
+            UserHelper::has('sales-person') && (
+                $model->getTable() === 'accounting_accounts_perspective' ||
+                $model->getTable() === 'accounting_accounts'
+            )
+        ) {
+            return;
+        }
+
+        if(
             $model->getTable() == 'accounting_invoices' ||
             $model->getTable() == 'accounting_invoices_perspective' ||
             $model->getTable() == 'accounting_transactions' ||
