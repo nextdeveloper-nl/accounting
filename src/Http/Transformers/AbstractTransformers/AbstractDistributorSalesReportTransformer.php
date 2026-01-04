@@ -55,8 +55,8 @@ class AbstractDistributorSalesReportTransformer extends AbstractTransformer
     public function transform(DistributorSalesReport $model)
     {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
-                                                            $distributorId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->distributor_id)->first();
-
+                                                            $distributorId = \NextDeveloper\\Database\Models\Distributors::where('id', $model->distributor_id)->first();
+                        
         return $this->buildPayload(
             [
             'id'  =>  $model->id,
@@ -156,4 +156,6 @@ class AbstractDistributorSalesReportTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 }

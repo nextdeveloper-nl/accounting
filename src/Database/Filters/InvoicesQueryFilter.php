@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                
+                    
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -150,6 +150,61 @@ class InvoicesQueryFilter extends AbstractQueryFilter
         return $this->isCancelled($value);
     }
      
+    public function isCommissionInvoice($value)
+    {
+        return $this->builder->where('is_commission_invoice', $value);
+    }
+
+        //  This is an alias function of isCommissionInvoice
+    public function is_commission_invoice($value)
+    {
+        return $this->isCommissionInvoice($value);
+    }
+     
+    public function isCommissionInvoiceForPartner($value)
+    {
+        return $this->builder->where('is_commission_invoice_for_partner', $value);
+    }
+
+        //  This is an alias function of isCommissionInvoiceForPartner
+    public function is_commission_invoice_for_partner($value)
+    {
+        return $this->isCommissionInvoiceForPartner($value);
+    }
+     
+    public function isCommissionInvoiceForDistributor($value)
+    {
+        return $this->builder->where('is_commission_invoice_for_distributor', $value);
+    }
+
+        //  This is an alias function of isCommissionInvoiceForDistributor
+    public function is_commission_invoice_for_distributor($value)
+    {
+        return $this->isCommissionInvoiceForDistributor($value);
+    }
+     
+    public function isCommissionInvoiceForAffiliate($value)
+    {
+        return $this->builder->where('is_commission_invoice_for_affiliate', $value);
+    }
+
+        //  This is an alias function of isCommissionInvoiceForAffiliate
+    public function is_commission_invoice_for_affiliate($value)
+    {
+        return $this->isCommissionInvoiceForAffiliate($value);
+    }
+     
+    public function isCommissionInvoiceForSalesPartner($value)
+    {
+        return $this->builder->where('is_commission_invoice_for_sales_partner', $value);
+    }
+
+        //  This is an alias function of isCommissionInvoiceForSalesPartner
+    public function is_commission_invoice_for_sales_partner($value)
+    {
+        return $this->isCommissionInvoiceForSalesPartner($value);
+    }
+     
     public function dueDateStart($date)
     {
         return $this->builder->where('due_date', '>=', $date);
@@ -288,7 +343,24 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     }
 
     
+    public function parentInvoiceId($value)
+    {
+            $parentInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
+
+        if($parentInvoice) {
+            return $this->builder->where('parent_invoice_id', '=', $parentInvoice->id);
+        }
+    }
+
+        //  This is an alias function of parentInvoice
+    public function parent_invoice_id($value)
+    {
+        return $this->parentInvoice($value);
+    }
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

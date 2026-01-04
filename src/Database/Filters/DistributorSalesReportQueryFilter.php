@@ -79,7 +79,7 @@ class DistributorSalesReportQueryFilter extends AbstractQueryFilter
     
     public function distributorId($value)
     {
-            $distributor = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
+            $distributor = \NextDeveloper\\Database\Models\Distributors::where('uuid', $value)->first();
 
         if($distributor) {
             return $this->builder->where('distributor_id', '=', $distributor->id);
@@ -93,4 +93,6 @@ class DistributorSalesReportQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 }

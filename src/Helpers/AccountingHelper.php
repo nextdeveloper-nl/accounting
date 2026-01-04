@@ -297,4 +297,23 @@ class AccountingHelper
        }
     }
 
+    /**
+     * Returns the accounting account by id
+     *
+     * @param int|string $accountId
+     * @return Accounts|null
+     */
+    public static function getAccountingAccountById(int|string $accountId) : ?Accounts
+    {
+        $account = Accounts::withoutGlobalScope(AuthorizationScope::class);
+
+        if(is_string($accountId)) {
+            $account = $account->where('uuid', $accountId);
+        } else {
+            $account = $account->where('id', $accountId);
+        }
+
+        return $account->first();
+    }
+
 }

@@ -30,6 +30,12 @@ class InvoicesCreateRequest extends AbstractFormRequest
         'is_cancelled' => 'boolean',
         'cancellation_reason' => 'nullable|string',
         'payment_link_url' => 'nullable|string',
+        'is_commission_invoice' => 'boolean',
+        'is_commission_invoice_for_partner' => 'boolean',
+        'is_commission_invoice_for_distributor' => 'boolean',
+        'is_commission_invoice_for_affiliate' => 'boolean',
+        'is_commission_invoice_for_sales_partner' => 'boolean',
+        'parent_invoice_id' => 'nullable|exists:accounting_invoices,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

@@ -58,6 +58,7 @@ class AbstractInvoicesTransformer extends AbstractTransformer
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
+                                                            $parentInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->parent_invoice_id)->first();
                         
         return $this->buildPayload(
             [
@@ -84,6 +85,12 @@ class AbstractInvoicesTransformer extends AbstractTransformer
             'is_cancelled'  =>  $model->is_cancelled,
             'cancellation_reason'  =>  $model->cancellation_reason,
             'payment_link_url'  =>  $model->payment_link_url,
+            'is_commission_invoice'  =>  $model->is_commission_invoice,
+            'is_commission_invoice_for_partner'  =>  $model->is_commission_invoice_for_partner,
+            'is_commission_invoice_for_distributor'  =>  $model->is_commission_invoice_for_distributor,
+            'is_commission_invoice_for_affiliate'  =>  $model->is_commission_invoice_for_affiliate,
+            'is_commission_invoice_for_sales_partner'  =>  $model->is_commission_invoice_for_sales_partner,
+            'parent_invoice_id'  =>  $parentInvoiceId ? $parentInvoiceId->uuid : null,
             ]
         );
     }
@@ -172,6 +179,8 @@ class AbstractInvoicesTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 

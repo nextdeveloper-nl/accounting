@@ -255,4 +255,19 @@ class InvoiceHelper
 
         return $invoice;
     }
+
+
+    /**
+     * Returns the commission invoice by parent invoice
+     *
+     * @param Invoices $parentInvoice
+     * @return Invoices|null
+     */
+    public static function getCommissionInvoiceByParentInvoice(Invoices $parentInvoice) : ?Invoices
+    {
+        return Invoices::withoutGlobalScope(AuthorizationScope::class)
+            ->where('parent_invoice_id', $parentInvoice->id)
+            ->where('is_commission_invoice', true)
+            ->first();
+    }
 }
