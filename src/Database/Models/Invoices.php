@@ -42,6 +42,12 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property boolean $is_cancelled
  * @property string $cancellation_reason
  * @property string $payment_link_url
+ * @property boolean $is_commission_invoice
+ * @property boolean $is_commission_invoice_for_partner
+ * @property boolean $is_commission_invoice_for_distributor
+ * @property boolean $is_commission_invoice_for_affiliate
+ * @property boolean $is_commission_invoice_for_sales_partner
+ * @property integer $parent_invoice_id
  */
 class Invoices extends Model
 {
@@ -78,6 +84,12 @@ class Invoices extends Model
             'is_cancelled',
             'cancellation_reason',
             'payment_link_url',
+            'is_commission_invoice',
+            'is_commission_invoice_for_partner',
+            'is_commission_invoice_for_distributor',
+            'is_commission_invoice_for_affiliate',
+            'is_commission_invoice_for_sales_partner',
+            'parent_invoice_id',
     ];
 
     /**
@@ -119,6 +131,12 @@ class Invoices extends Model
     'is_cancelled' => 'boolean',
     'cancellation_reason' => 'string',
     'payment_link_url' => 'string',
+    'is_commission_invoice' => 'boolean',
+    'is_commission_invoice_for_partner' => 'boolean',
+    'is_commission_invoice_for_distributor' => 'boolean',
+    'is_commission_invoice_for_affiliate' => 'boolean',
+    'is_commission_invoice_for_sales_partner' => 'boolean',
+    'parent_invoice_id' => 'integer',
     ];
 
     /**
@@ -191,6 +209,8 @@ class Invoices extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
 
 
 
