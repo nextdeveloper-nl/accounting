@@ -237,4 +237,5 @@ class AffiliatesPerspective extends Model
 
 
 
+
 }

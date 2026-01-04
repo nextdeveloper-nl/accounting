@@ -129,6 +129,17 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->isSealed($value);
     }
      
+    public function isCommissionInvoice($value)
+    {
+        return $this->builder->where('is_commission_invoice', $value);
+    }
+
+        //  This is an alias function of isCommissionInvoice
+    public function is_commission_invoice($value)
+    {
+        return $this->isCommissionInvoice($value);
+    }
+     
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -304,6 +315,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->builder->where('amount', '>', 0);
     }
+
 
 
 

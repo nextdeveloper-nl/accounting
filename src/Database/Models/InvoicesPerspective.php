@@ -27,6 +27,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property boolean $is_payable
  * @property boolean $is_refund
  * @property boolean $is_sealed
+ * @property boolean $is_commission_invoice
  * @property string $name
  * @property integer $common_country_id
  * @property integer $common_domain_id
@@ -65,6 +66,7 @@ class InvoicesPerspective extends Model
             'is_payable',
             'is_refund',
             'is_sealed',
+            'is_commission_invoice',
             'name',
             'common_country_id',
             'common_domain_id',
@@ -105,6 +107,7 @@ class InvoicesPerspective extends Model
     'is_payable' => 'boolean',
     'is_refund' => 'boolean',
     'is_sealed' => 'boolean',
+    'is_commission_invoice' => 'boolean',
     'name' => 'string',
     'common_country_id' => 'integer',
     'common_domain_id' => 'integer',
@@ -177,6 +180,7 @@ class InvoicesPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
