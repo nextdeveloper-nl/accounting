@@ -30,6 +30,11 @@ class InvoicesUpdateRequest extends AbstractFormRequest
         'is_cancelled' => 'boolean',
         'cancellation_reason' => 'nullable|string',
         'payment_link_url' => 'nullable|string',
+        'is_commission_invoice' => 'boolean',
+        'distributor_commission_invoice_id' => 'nullable|exists:accounting_invoices,uuid|uuid',
+        'integrator_commission_invoice_id' => 'nullable|exists:accounting_invoices,uuid|uuid',
+        'reseller_commission_invoice_id' => 'nullable|exists:accounting_invoices,uuid|uuid',
+        'affiliate_commission_invoice_id' => 'nullable|exists:accounting_invoices,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

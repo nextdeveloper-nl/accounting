@@ -194,4 +194,7 @@ class Partnerships extends Model
 
 
 
+
+
+
 }

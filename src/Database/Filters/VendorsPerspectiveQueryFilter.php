@@ -270,4 +270,7 @@ class VendorsPerspectiveQueryFilter extends AbstractQueryFilter
 
 
 
+
+
+
 }
