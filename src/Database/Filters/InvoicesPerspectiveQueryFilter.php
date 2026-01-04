@@ -19,6 +19,12 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
     
+    public function note($value)
+    {
+        return $this->builder->where('note', 'ilike', '%' . $value . '%');
+    }
+
+        
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
@@ -315,6 +321,7 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->builder->where('amount', '>', 0);
     }
+
 
 
 

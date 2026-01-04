@@ -21,6 +21,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property integer $id
  * @property string $uuid
  * @property integer $iam_account_id
+ * @property string $partner_code
  * @property boolean $is_brand_ambassador
  * @property integer $customer_count
  * @property integer $level
@@ -39,6 +40,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property integer $accounting_account_id
  * @property array $operating_countries
  * @property array $operating_cities
  */
@@ -59,6 +61,7 @@ class Partnerships extends Model
 
     protected $fillable = [
             'iam_account_id',
+            'partner_code',
             'is_brand_ambassador',
             'customer_count',
             'level',
@@ -74,6 +77,7 @@ class Partnerships extends Model
             'compliance_certifications',
             'target_group',
             'meeting_link',
+            'accounting_account_id',
             'operating_countries',
             'operating_cities',
     ];
@@ -99,6 +103,7 @@ class Partnerships extends Model
      */
     protected $casts = [
     'id' => 'integer',
+    'partner_code' => 'string',
     'is_brand_ambassador' => 'boolean',
     'customer_count' => 'integer',
     'level' => 'integer',
@@ -117,6 +122,7 @@ class Partnerships extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
+    'accounting_account_id' => 'integer',
     'operating_countries' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
     'operating_cities' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
     ];
@@ -185,6 +191,7 @@ class Partnerships extends Model
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

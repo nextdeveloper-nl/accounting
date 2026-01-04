@@ -34,7 +34,6 @@ class AccountsUpdateRequest extends AbstractFormRequest
         'is_reseller' => 'boolean',
         'is_affiliate' => 'boolean',
         'affiliate_level' => 'integer',
-        'iban' => 'nullable|string',
         'partner_code' => 'nullable|string',
         ];
     }

@@ -45,7 +45,6 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property boolean $is_reseller
  * @property boolean $is_affiliate
  * @property integer $affiliate_level
- * @property string $iban
  * @property string $partner_code
  */
 class Accounts extends Model
@@ -86,7 +85,6 @@ class Accounts extends Model
             'is_reseller',
             'is_affiliate',
             'affiliate_level',
-            'iban',
             'partner_code',
     ];
 
@@ -133,7 +131,6 @@ class Accounts extends Model
     'is_reseller' => 'boolean',
     'is_affiliate' => 'boolean',
     'affiliate_level' => 'integer',
-    'iban' => 'string',
     'partner_code' => 'string',
     ];
 
@@ -206,6 +203,7 @@ class Accounts extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
