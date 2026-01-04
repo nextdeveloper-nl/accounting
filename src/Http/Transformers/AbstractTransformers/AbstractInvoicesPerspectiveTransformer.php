@@ -73,6 +73,7 @@ class AbstractInvoicesPerspectiveTransformer extends AbstractTransformer
             'is_refund'  =>  $model->is_refund,
             'is_sealed'  =>  $model->is_sealed,
             'is_commission_invoice'  =>  $model->is_commission_invoice,
+            'note'  =>  $model->note,
             'name'  =>  $model->name,
             'common_country_id'  =>  $commonCountryId ? $commonCountryId->uuid : null,
             'common_domain_id'  =>  $commonDomainId ? $commonDomainId->uuid : null,
@@ -175,6 +176,7 @@ class AbstractInvoicesPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

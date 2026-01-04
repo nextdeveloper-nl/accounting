@@ -124,4 +124,5 @@ class MonthlyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
 
 
 
+
 }
