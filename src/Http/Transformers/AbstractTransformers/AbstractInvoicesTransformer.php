@@ -58,7 +58,10 @@ class AbstractInvoicesTransformer extends AbstractTransformer
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
-                                                            $parentInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->parent_invoice_id)->first();
+                                                            $distributorCommissionInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->distributor_commission_invoice_id)->first();
+                                                            $integratorCommissionInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->integrator_commission_invoice_id)->first();
+                                                            $resellerCommissionInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->reseller_commission_invoice_id)->first();
+                                                            $affiliateCommissionInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->affiliate_commission_invoice_id)->first();
                         
         return $this->buildPayload(
             [
@@ -86,11 +89,10 @@ class AbstractInvoicesTransformer extends AbstractTransformer
             'cancellation_reason'  =>  $model->cancellation_reason,
             'payment_link_url'  =>  $model->payment_link_url,
             'is_commission_invoice'  =>  $model->is_commission_invoice,
-            'is_commission_invoice_for_partner'  =>  $model->is_commission_invoice_for_partner,
-            'is_commission_invoice_for_distributor'  =>  $model->is_commission_invoice_for_distributor,
-            'is_commission_invoice_for_affiliate'  =>  $model->is_commission_invoice_for_affiliate,
-            'is_commission_invoice_for_sales_partner'  =>  $model->is_commission_invoice_for_sales_partner,
-            'parent_invoice_id'  =>  $parentInvoiceId ? $parentInvoiceId->uuid : null,
+            'distributor_commission_invoice_id'  =>  $distributorCommissionInvoiceId ? $distributorCommissionInvoiceId->uuid : null,
+            'integrator_commission_invoice_id'  =>  $integratorCommissionInvoiceId ? $integratorCommissionInvoiceId->uuid : null,
+            'reseller_commission_invoice_id'  =>  $resellerCommissionInvoiceId ? $resellerCommissionInvoiceId->uuid : null,
+            'affiliate_commission_invoice_id'  =>  $affiliateCommissionInvoiceId ? $affiliateCommissionInvoiceId->uuid : null,
             ]
         );
     }
@@ -179,6 +181,7 @@ class AbstractInvoicesTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

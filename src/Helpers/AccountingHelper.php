@@ -76,6 +76,45 @@ class AccountingHelper
     }
 
     /**
+     * @param Accounts $account
+     * @return mixed
+     */
+    public static function getIntegratorAccount(Accounts $account) {
+        //  We are trying to find the accounting_account of the distributor
+        $distributorAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $account->integrator_partner_id)
+            ->first();
+
+        return $distributorAccount;
+    }
+
+    /**
+     * @param Accounts $account
+     * @return mixed
+     */
+    public static function getResellerAccount(Accounts $account) {
+        //  We are trying to find the accounting_account of the distributor
+        $distributorAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $account->sales_partner_id)
+            ->first();
+
+        return $distributorAccount;
+    }
+
+    /**
+     * @param Accounts $account
+     * @return mixed
+     */
+    public static function getAffiliateAccount(Accounts $account) {
+        //  We are trying to find the accounting_account of the distributor
+        $distributorAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('id', $account->affiliate_partner_id)
+            ->first();
+
+        return $distributorAccount;
+    }
+
+    /**
      * Here we are trying to find the suitable distributor for the customer and then assign the customer
      * to the related distributor
      *

@@ -363,4 +363,5 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
 
 
 
+
 }

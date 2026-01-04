@@ -197,4 +197,5 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
 
 
 
+
 }

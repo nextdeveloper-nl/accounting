@@ -43,11 +43,10 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property string $cancellation_reason
  * @property string $payment_link_url
  * @property boolean $is_commission_invoice
- * @property boolean $is_commission_invoice_for_partner
- * @property boolean $is_commission_invoice_for_distributor
- * @property boolean $is_commission_invoice_for_affiliate
- * @property boolean $is_commission_invoice_for_sales_partner
- * @property integer $parent_invoice_id
+ * @property integer $distributor_commission_invoice_id
+ * @property integer $integrator_commission_invoice_id
+ * @property integer $reseller_commission_invoice_id
+ * @property integer $affiliate_commission_invoice_id
  */
 class Invoices extends Model
 {
@@ -60,111 +59,109 @@ class Invoices extends Model
 
 
     /**
-     @var array
+     * @var array
      */
     protected $guarded = [];
 
     protected $fillable = [
-            'accounting_account_id',
-            'invoice_number',
-            'exchange_rate',
-            'amount',
-            'common_currency_id',
-            'vat',
-            'is_paid',
-            'is_refund',
-            'due_date',
-            'iam_account_id',
-            'iam_user_id',
-            'is_payable',
-            'is_sealed',
-            'note',
-            'term_year',
-            'term_month',
-            'is_cancelled',
-            'cancellation_reason',
-            'payment_link_url',
-            'is_commission_invoice',
-            'is_commission_invoice_for_partner',
-            'is_commission_invoice_for_distributor',
-            'is_commission_invoice_for_affiliate',
-            'is_commission_invoice_for_sales_partner',
-            'parent_invoice_id',
+        'accounting_account_id',
+        'invoice_number',
+        'exchange_rate',
+        'amount',
+        'common_currency_id',
+        'vat',
+        'is_paid',
+        'is_refund',
+        'due_date',
+        'iam_account_id',
+        'iam_user_id',
+        'is_payable',
+        'is_sealed',
+        'note',
+        'term_year',
+        'term_month',
+        'is_cancelled',
+        'cancellation_reason',
+        'payment_link_url',
+        'is_commission_invoice',
+        'distributor_commission_invoice_id',
+        'integrator_commission_invoice_id',
+        'reseller_commission_invoice_id',
+        'affiliate_commission_invoice_id',
     ];
 
     /**
-      Here we have the fulltext fields. We can use these for fulltext search if enabled.
+     * Here we have the fulltext fields. We can use these for fulltext search if enabled.
      */
     protected $fullTextFields = [
 
     ];
 
     /**
-     @var array
+     * @var array
      */
     protected $appends = [
 
     ];
 
     /**
-     We are casting fields to objects so that we can work on them better
+     * We are casting fields to objects so that we can work on them better
      *
-     @var array
+     * @var array
      */
     protected $casts = [
-    'id' => 'integer',
-    'accounting_account_id' => 'integer',
-    'invoice_number' => 'string',
-    'exchange_rate' => 'array',
-    'common_currency_id' => 'integer',
-    'is_paid' => 'boolean',
-    'is_refund' => 'boolean',
-    'due_date' => 'datetime',
-    'is_payable' => 'boolean',
-    'is_sealed' => 'boolean',
-    'note' => 'string',
-    'created_at' => 'datetime',
-    'updated_at' => 'datetime',
-    'deleted_at' => 'datetime',
-    'term_year' => 'integer',
-    'term_month' => 'integer',
-    'is_cancelled' => 'boolean',
-    'cancellation_reason' => 'string',
-    'payment_link_url' => 'string',
-    'is_commission_invoice' => 'boolean',
-    'is_commission_invoice_for_partner' => 'boolean',
-    'is_commission_invoice_for_distributor' => 'boolean',
-    'is_commission_invoice_for_affiliate' => 'boolean',
-    'is_commission_invoice_for_sales_partner' => 'boolean',
-    'parent_invoice_id' => 'integer',
+        'id' => 'integer',
+        'accounting_account_id' => 'integer',
+        'invoice_number' => 'string',
+        'exchange_rate' => 'array',
+        'common_currency_id' => 'integer',
+        'is_paid' => 'boolean',
+        'is_refund' => 'boolean',
+        'due_date' => 'datetime',
+        'is_payable' => 'boolean',
+        'is_sealed' => 'boolean',
+        'note' => 'string',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+        'term_year' => 'integer',
+        'term_month' => 'integer',
+        'is_cancelled' => 'boolean',
+        'cancellation_reason' => 'string',
+        'payment_link_url' => 'string',
+        'is_commission_invoice' => 'boolean',
+        'distributor_commission_invoice_id' => 'integer',
+        'integrator_commission_invoice_id' => 'integer',
+        'reseller_commission_invoice_id' => 'integer',
+        'affiliate_commission_invoice_id' => 'integer',
     ];
 
     /**
-     We are casting data fields.
+     * We are casting data fields.
      *
-     @var array
+     * @var array
      */
     protected $dates = [
-    'due_date',
-    'created_at',
-    'updated_at',
-    'deleted_at',
+        'due_date',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     /**
-     @var array
+     * @var array
      */
     protected $with = [
 
     ];
 
     /**
-     @var int
+     * @var int
      */
     protected $perPage = 20;
 
     /**
-     @return void
+     * @return void
      */
     public static function boot()
     {
@@ -181,9 +178,11 @@ class Invoices extends Model
         $globalScopes = config('accounting.scopes.global');
         $modelScopes = config('accounting.scopes.accounting_invoices');
 
-        if(!$modelScopes) { $modelScopes = [];
+        if (!$modelScopes) {
+            $modelScopes = [];
         }
-        if (!$globalScopes) { $globalScopes = [];
+        if (!$globalScopes) {
+            $globalScopes = [];
         }
 
         $scopes = array_merge(
@@ -191,70 +190,24 @@ class Invoices extends Model
             $modelScopes
         );
 
-        if($scopes) {
+        if ($scopes) {
             foreach ($scopes as $scope) {
                 static::addGlobalScope(app($scope));
             }
         }
     }
 
-    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function accounts(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
     }
-    
-    public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
+
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
