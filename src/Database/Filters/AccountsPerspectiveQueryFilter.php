@@ -4,7 +4,7 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                                        
+                        
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -68,6 +68,17 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->accountingIdentifier($value);
     }
         
+    public function commonCurrencyCode($value)
+    {
+        return $this->builder->where('common_currency_code', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of commonCurrencyCode
+    public function common_currency_code($value)
+    {
+        return $this->commonCurrencyCode($value);
+    }
+        
     public function trMersis($value)
     {
         return $this->builder->where('tr_mersis', 'ilike', '%' . $value . '%');
@@ -99,6 +110,50 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     public function trade_office_number($value)
     {
         return $this->tradeOfficeNumber($value);
+    }
+        
+    public function distributorPartner($value)
+    {
+        return $this->builder->where('distributor_partner', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of distributorPartner
+    public function distributor_partner($value)
+    {
+        return $this->distributorPartner($value);
+    }
+        
+    public function integratorPartner($value)
+    {
+        return $this->builder->where('integrator_partner', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of integratorPartner
+    public function integrator_partner($value)
+    {
+        return $this->integratorPartner($value);
+    }
+        
+    public function salesPartner($value)
+    {
+        return $this->builder->where('sales_partner', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of salesPartner
+    public function sales_partner($value)
+    {
+        return $this->salesPartner($value);
+    }
+        
+    public function affiliatePartner($value)
+    {
+        return $this->builder->where('affiliate_partner', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of affiliatePartner
+    public function affiliate_partner($value)
+    {
+        return $this->affiliatePartner($value);
     }
     
     public function createdAtStart($date)
@@ -247,67 +302,8 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->commonCurrency($value);
     }
     
-    public function distributorId($value)
-    {
-            $distributor = \NextDeveloper\\Database\Models\Distributors::where('uuid', $value)->first();
-
-        if($distributor) {
-            return $this->builder->where('distributor_id', '=', $distributor->id);
-        }
-    }
-
-        //  This is an alias function of distributor
-    public function distributor_id($value)
-    {
-        return $this->distributor($value);
-    }
-    
-    public function integratorPartnerId($value)
-    {
-            $integratorPartner = \NextDeveloper\\Database\Models\IntegratorPartners::where('uuid', $value)->first();
-
-        if($integratorPartner) {
-            return $this->builder->where('integrator_partner_id', '=', $integratorPartner->id);
-        }
-    }
-
-        //  This is an alias function of integratorPartner
-    public function integrator_partner_id($value)
-    {
-        return $this->integratorPartner($value);
-    }
-    
-    public function salesPartnerId($value)
-    {
-            $salesPartner = \NextDeveloper\\Database\Models\SalesPartners::where('uuid', $value)->first();
-
-        if($salesPartner) {
-            return $this->builder->where('sales_partner_id', '=', $salesPartner->id);
-        }
-    }
-
-        //  This is an alias function of salesPartner
-    public function sales_partner_id($value)
-    {
-        return $this->salesPartner($value);
-    }
-    
-    public function affiliatePartnerId($value)
-    {
-            $affiliatePartner = \NextDeveloper\\Database\Models\AffiliatePartners::where('uuid', $value)->first();
-
-        if($affiliatePartner) {
-            return $this->builder->where('affiliate_partner_id', '=', $affiliatePartner->id);
-        }
-    }
-
-        //  This is an alias function of affiliatePartner
-    public function affiliate_partner_id($value)
-    {
-        return $this->affiliatePartner($value);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

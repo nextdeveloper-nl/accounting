@@ -58,7 +58,6 @@ trait AccountingPartnershipTestTraits
         $response = $this->http->request(
             'POST', '/accounting/accountingpartnership', [
             'form_params'   =>  [
-                'partner_code'  =>  'a',
                 'industry'  =>  'a',
                 'meeting_link'  =>  'a',
                 'customer_count'  =>  '1',
@@ -339,25 +338,6 @@ trait AccountingPartnershipTestTraits
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPartnership::first();
 
             event(new \NextDeveloper\Accounting\Events\AccountingPartnership\AccountingPartnershipRestoredEvent($model));
-        } catch (\Exception $e) {
-            $this->assertFalse(false, $e->getMessage());
-        }
-
-        $this->assertTrue(true);
-    }
-
-    public function test_accountingpartnership_event_partner_code_filter()
-    {
-        try {
-            $request = new Request(
-                [
-                'partner_code'  =>  'a'
-                ]
-            );
-
-            $filter = new AccountingPartnershipQueryFilter($request);
-
-            $model = \NextDeveloper\Accounting\Database\Models\AccountingPartnership::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }

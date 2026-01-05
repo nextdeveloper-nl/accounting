@@ -80,6 +80,23 @@ class AbstractDistributorsPerspectiveTransformer extends AbstractTransformer
             'tr_mersis'  =>  $model->tr_mersis,
             'trade_office'  =>  $model->trade_office,
             'trade_office_number'  =>  $model->trade_office_number,
+            'badges'  =>  $model->badges,
+            'boosts'  =>  $model->boosts,
+            'compliance_certifications'  =>  $model->compliance_certifications,
+            'customer_count'  =>  $model->customer_count,
+            'industry'  =>  $model->industry,
+            'is_approved'  =>  $model->is_approved,
+            'is_brand_ambassador'  =>  $model->is_brand_ambassador,
+            'level'  =>  $model->level,
+            'meeting_link'  =>  $model->meeting_link,
+            'mystery_box'  =>  $model->mystery_box,
+            'reward_points'  =>  $model->reward_points,
+            'sector_focus'  =>  $model->sector_focus,
+            'special_interest'  =>  $model->special_interest,
+            'target_group'  =>  $model->target_group,
+            'technical_capabilities'  =>  $model->technical_capabilities,
+            'operating_countries'  =>  $model->operating_countries,
+            'operating_cities'  =>  $model->operating_cities,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
@@ -171,6 +188,7 @@ class AbstractDistributorsPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
