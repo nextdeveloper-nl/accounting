@@ -185,4 +185,6 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
 
 
 
+
+
 }

@@ -187,4 +187,6 @@ class AbstractSalesPartnersPerspectiveTransformer extends AbstractTransformer
 
 
 
+
+
 }
