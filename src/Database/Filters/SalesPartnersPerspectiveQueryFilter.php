@@ -111,98 +111,7 @@ class SalesPartnersPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->tradeOfficeNumber($value);
     }
-        
-    public function industry($value)
-    {
-        return $this->builder->where('industry', 'ilike', '%' . $value . '%');
-    }
-
-        
-    public function meetingLink($value)
-    {
-        return $this->builder->where('meeting_link', 'ilike', '%' . $value . '%');
-    }
-
-        //  This is an alias function of meetingLink
-    public function meeting_link($value)
-    {
-        return $this->meetingLink($value);
-    }
     
-    public function customerCount($value)
-    {
-        $operator = substr($value, 0, 1);
-
-        if ($operator != '<' || $operator != '>') {
-            $operator = '=';
-        } else {
-            $value = substr($value, 1);
-        }
-
-        return $this->builder->where('customer_count', $operator, $value);
-    }
-
-        //  This is an alias function of customerCount
-    public function customer_count($value)
-    {
-        return $this->customerCount($value);
-    }
-    
-    public function level($value)
-    {
-        $operator = substr($value, 0, 1);
-
-        if ($operator != '<' || $operator != '>') {
-            $operator = '=';
-        } else {
-            $value = substr($value, 1);
-        }
-
-        return $this->builder->where('level', $operator, $value);
-    }
-
-    
-    public function rewardPoints($value)
-    {
-        $operator = substr($value, 0, 1);
-
-        if ($operator != '<' || $operator != '>') {
-            $operator = '=';
-        } else {
-            $value = substr($value, 1);
-        }
-
-        return $this->builder->where('reward_points', $operator, $value);
-    }
-
-        //  This is an alias function of rewardPoints
-    public function reward_points($value)
-    {
-        return $this->rewardPoints($value);
-    }
-    
-    public function isApproved($value)
-    {
-        return $this->builder->where('is_approved', $value);
-    }
-
-        //  This is an alias function of isApproved
-    public function is_approved($value)
-    {
-        return $this->isApproved($value);
-    }
-     
-    public function isBrandAmbassador($value)
-    {
-        return $this->builder->where('is_brand_ambassador', $value);
-    }
-
-        //  This is an alias function of isBrandAmbassador
-    public function is_brand_ambassador($value)
-    {
-        return $this->isBrandAmbassador($value);
-    }
-     
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -350,6 +259,7 @@ class SalesPartnersPerspectiveQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

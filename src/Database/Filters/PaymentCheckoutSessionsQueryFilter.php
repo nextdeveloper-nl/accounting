@@ -110,22 +110,23 @@ class PaymentCheckoutSessionsQueryFilter extends AbstractQueryFilter
         return $this->accountingPaymentGateway($value);
     }
     
-    public function accountingAccountId($value)
+    public function accountingInvoiceId($value)
     {
-            $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
+            $accountingInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
 
-        if($accountingAccount) {
-            return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
+        if($accountingInvoice) {
+            return $this->builder->where('accounting_invoice_id', '=', $accountingInvoice->id);
         }
     }
 
-        //  This is an alias function of accountingAccount
-    public function accounting_account_id($value)
+        //  This is an alias function of accountingInvoice
+    public function accounting_invoice_id($value)
     {
-        return $this->accountingAccount($value);
+        return $this->accountingInvoice($value);
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

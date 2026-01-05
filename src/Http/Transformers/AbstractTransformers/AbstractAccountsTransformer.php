@@ -89,7 +89,6 @@ class AbstractAccountsTransformer extends AbstractTransformer
             'is_reseller'  =>  $model->is_reseller,
             'is_affiliate'  =>  $model->is_affiliate,
             'affiliate_level'  =>  $model->affiliate_level,
-            'iban'  =>  $model->iban,
             'partner_code'  =>  $model->partner_code,
             ]
         );
@@ -179,6 +178,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
