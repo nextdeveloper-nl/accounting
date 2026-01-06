@@ -9,11 +9,11 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Events\Services\Events;
 
 /**
- * Class AccountPartnerLogsObserver
+ * Class PartnerAssignmentsObserver
  *
  * @package NextDeveloper\Accounting\Database\Observers
  */
-class AccountPartnerLogsObserver
+class PartnerAssignmentsObserver
 {
     /**
      * Triggered when a new record is retrieved.
@@ -37,7 +37,7 @@ class AccountPartnerLogsObserver
             new NotAllowedException('You are not allowed to create this record')
         );
 
-        Events::fire('creating:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('creating:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
 
     /**
@@ -47,7 +47,7 @@ class AccountPartnerLogsObserver
      */
     public function created(Model $model)
     {
-        Events::fire('created:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('created:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
 
     /**
@@ -62,7 +62,7 @@ class AccountPartnerLogsObserver
             new NotAllowedException('You are not allowed to save this record')
         );
 
-        Events::fire('saving:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('saving:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
 
     /**
@@ -72,7 +72,7 @@ class AccountPartnerLogsObserver
      */
     public function saved(Model $model)
     {
-        Events::fire('saved:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('saved:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
 
 
@@ -86,7 +86,7 @@ class AccountPartnerLogsObserver
             new NotAllowedException('You are not allowed to update this record')
         );
 
-        Events::fire('updating:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('updating:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
 
     /**
@@ -96,7 +96,7 @@ class AccountPartnerLogsObserver
      */
     public function updated(Model $model)
     {
-        Events::fire('updated:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('updated:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
 
 
@@ -110,7 +110,7 @@ class AccountPartnerLogsObserver
             new NotAllowedException('You are not allowed to delete this record')
         );
 
-        Events::fire('deleting:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('deleting:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
 
     /**
@@ -120,7 +120,7 @@ class AccountPartnerLogsObserver
      */
     public function deleted(Model $model)
     {
-        Events::fire('deleted:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('deleted:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
 
     /**
@@ -135,7 +135,7 @@ class AccountPartnerLogsObserver
             new NotAllowedException('You are not allowed to restore this record')
         );
 
-        Events::fire('restoring:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('restoring:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
 
     /**
@@ -145,7 +145,7 @@ class AccountPartnerLogsObserver
      */
     public function restored(Model $model)
     {
-        Events::fire('restored:NextDeveloper\Accounting\AccountPartnerLogs', $model);
+        Events::fire('restored:NextDeveloper\Accounting\PartnerAssignments', $model);
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

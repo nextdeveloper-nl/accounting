@@ -32,6 +32,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property string $accounting_identifier
  * @property $credit
  * @property integer $common_currency_id
+ * @property string $common_currency_code
  * @property string $tr_mersis
  * @property string $trade_office
  * @property string $trade_office_number
@@ -39,6 +40,10 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property integer $integrator_partner_id
  * @property integer $sales_partner_id
  * @property integer $affiliate_partner_id
+ * @property string $distributor_partner
+ * @property string $integrator_partner
+ * @property string $sales_partner
+ * @property string $affiliate_partner
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
@@ -71,6 +76,7 @@ class AccountsPerspective extends Model
             'accounting_identifier',
             'credit',
             'common_currency_id',
+            'common_currency_code',
             'tr_mersis',
             'trade_office',
             'trade_office_number',
@@ -78,6 +84,10 @@ class AccountsPerspective extends Model
             'integrator_partner_id',
             'sales_partner_id',
             'affiliate_partner_id',
+            'distributor_partner',
+            'integrator_partner',
+            'sales_partner',
+            'affiliate_partner',
     ];
 
     /**
@@ -110,6 +120,7 @@ class AccountsPerspective extends Model
     'tax_office' => 'string',
     'accounting_identifier' => 'string',
     'common_currency_id' => 'integer',
+    'common_currency_code' => 'string',
     'tr_mersis' => 'string',
     'trade_office' => 'string',
     'trade_office_number' => 'string',
@@ -117,6 +128,10 @@ class AccountsPerspective extends Model
     'integrator_partner_id' => 'integer',
     'sales_partner_id' => 'integer',
     'affiliate_partner_id' => 'integer',
+    'distributor_partner' => 'string',
+    'integrator_partner' => 'string',
+    'sales_partner' => 'string',
+    'affiliate_partner' => 'string',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
@@ -181,6 +196,7 @@ class AccountsPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
