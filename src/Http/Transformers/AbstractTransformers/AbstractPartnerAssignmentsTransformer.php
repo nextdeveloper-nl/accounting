@@ -20,16 +20,16 @@ use NextDeveloper\Commons\Http\Transformers\MetaTransformer;
 use NextDeveloper\Commons\Http\Transformers\VotesTransformer;
 use NextDeveloper\Commons\Http\Transformers\AddressesTransformer;
 use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
-use NextDeveloper\Accounting\Database\Models\AccountPartnerLogs;
+use NextDeveloper\Accounting\Database\Models\PartnerAssignments;
 use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 
 /**
- * Class AccountPartnerLogsTransformer. This class is being used to manipulate the data we are serving to the customer
+ * Class PartnerAssignmentsTransformer. This class is being used to manipulate the data we are serving to the customer
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
+class AbstractPartnerAssignmentsTransformer extends AbstractTransformer
 {
 
     /**
@@ -48,15 +48,15 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
     ];
 
     /**
-     * @param AccountPartnerLogs $model
+     * @param PartnerAssignments $model
      *
      * @return array
      */
-    public function transform(AccountPartnerLogs $model)
+    public function transform(PartnerAssignments $model)
     {
                                                 $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
-                                                            $oldPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->old_partner_id)->first();
-                                                            $newPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->new_partner_id)->first();
+                                                            $oldPartnerId = \NextDeveloper\\Database\Models\OldPartners::where('id', $model->old_partner_id)->first();
+                                                            $newPartnerId = \NextDeveloper\\Database\Models\NewPartners::where('id', $model->new_partner_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                         
@@ -64,7 +64,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
             [
             'id'  =>  $model->uuid,
             'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            'partner_type'  =>  $model->partner_type,
+            'type'  =>  $model->type,
             'old_partner_id'  =>  $oldPartnerId ? $oldPartnerId->uuid : null,
             'new_partner_id'  =>  $newPartnerId ? $newPartnerId->uuid : null,
             'started_at'  =>  $model->started_at,
@@ -79,7 +79,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
         );
     }
 
-    public function includeStates(AccountPartnerLogs $model)
+    public function includeStates(PartnerAssignments $model)
     {
         $states = States::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -88,7 +88,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
         return $this->collection($states, new StatesTransformer());
     }
 
-    public function includeActions(AccountPartnerLogs $model)
+    public function includeActions(PartnerAssignments $model)
     {
         $input = get_class($model);
         $input = str_replace('\\Database\\Models', '', $input);
@@ -100,7 +100,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
         return $this->collection($actions, new AvailableActionsTransformer());
     }
 
-    public function includeMedia(AccountPartnerLogs $model)
+    public function includeMedia(PartnerAssignments $model)
     {
         $media = Media::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -109,7 +109,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
         return $this->collection($media, new MediaTransformer());
     }
 
-    public function includeSocialMedia(AccountPartnerLogs $model)
+    public function includeSocialMedia(PartnerAssignments $model)
     {
         $socialMedia = SocialMedia::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -118,7 +118,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
         return $this->collection($socialMedia, new SocialMediaTransformer());
     }
 
-    public function includeComments(AccountPartnerLogs $model)
+    public function includeComments(PartnerAssignments $model)
     {
         $comments = Comments::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -127,7 +127,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
         return $this->collection($comments, new CommentsTransformer());
     }
 
-    public function includeVotes(AccountPartnerLogs $model)
+    public function includeVotes(PartnerAssignments $model)
     {
         $votes = Votes::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -136,7 +136,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
         return $this->collection($votes, new VotesTransformer());
     }
 
-    public function includeMeta(AccountPartnerLogs $model)
+    public function includeMeta(PartnerAssignments $model)
     {
         $meta = Meta::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -145,7 +145,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
         return $this->collection($meta, new MetaTransformer());
     }
 
-    public function includePhoneNumbers(AccountPartnerLogs $model)
+    public function includePhoneNumbers(PartnerAssignments $model)
     {
         $phoneNumbers = PhoneNumbers::where('object_type', get_class($model))
             ->where('object_id', $model->id)
@@ -154,7 +154,7 @@ class AbstractAccountPartnerLogsTransformer extends AbstractTransformer
         return $this->collection($phoneNumbers, new PhoneNumbersTransformer());
     }
 
-    public function includeAddresses(AccountPartnerLogs $model)
+    public function includeAddresses(PartnerAssignments $model)
     {
         $addresses = Addresses::where('object_type', get_class($model))
             ->where('object_id', $model->id)

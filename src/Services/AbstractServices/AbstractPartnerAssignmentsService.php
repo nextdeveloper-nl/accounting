@@ -10,22 +10,22 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use NextDeveloper\Commons\Database\Models\AvailableActions;
-use NextDeveloper\Accounting\Database\Models\AccountPartnerLogs;
-use NextDeveloper\Accounting\Database\Filters\AccountPartnerLogsQueryFilter;
+use NextDeveloper\Accounting\Database\Models\PartnerAssignments;
+use NextDeveloper\Accounting\Database\Filters\PartnerAssignmentsQueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
 
 /**
- * This class is responsible from managing the data for AccountPartnerLogs
+ * This class is responsible from managing the data for PartnerAssignments
  *
- * Class AccountPartnerLogsService.
+ * Class PartnerAssignmentsService.
  *
  * @package NextDeveloper\Accounting\Database\Models
  */
-class AbstractAccountPartnerLogsService
+class AbstractPartnerAssignmentsService
 {
-    public static function get(AccountPartnerLogsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
+    public static function get(PartnerAssignmentsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
     {
         $enablePaginate = array_key_exists('paginate', $params);
 
@@ -38,7 +38,7 @@ class AbstractAccountPartnerLogsService
         * Please let me know if you have any other idea about this; baris.bulut@nextdeveloper.com
         */
         if($filter == null) {
-            $filter = new AccountPartnerLogsQueryFilter($request);
+            $filter = new PartnerAssignmentsQueryFilter($request);
         }
 
         $perPage = config('commons.pagination.per_page');
@@ -59,7 +59,7 @@ class AbstractAccountPartnerLogsService
             $filter->orderBy($params['orderBy']);
         }
 
-        $model = AccountPartnerLogs::filter($filter);
+        $model = PartnerAssignments::filter($filter);
 
         if($enablePaginate) {
             //  We are using this because we have been experiencing huge security problem when we use the paginate method.
@@ -81,7 +81,7 @@ class AbstractAccountPartnerLogsService
 
     public static function getAll()
     {
-        return AccountPartnerLogs::all();
+        return PartnerAssignments::all();
     }
 
     /**
@@ -90,14 +90,14 @@ class AbstractAccountPartnerLogsService
      * @param  $ref
      * @return mixed
      */
-    public static function getByRef($ref) : ?AccountPartnerLogs
+    public static function getByRef($ref) : ?PartnerAssignments
     {
-        return AccountPartnerLogs::findByRef($ref);
+        return PartnerAssignments::findByRef($ref);
     }
 
     public static function getActions()
     {
-        $model = AccountPartnerLogs::class;
+        $model = PartnerAssignments::class;
 
         $model = Str::remove('Database\\Models\\', $model);
 
@@ -112,10 +112,10 @@ class AbstractAccountPartnerLogsService
      */
     public static function doAction($objectId, $action, ...$params)
     {
-        $object = AccountPartnerLogs::where('uuid', $objectId)->first();
+        $object = PartnerAssignments::where('uuid', $objectId)->first();
 
         $action = AvailableActions::where('name', $action)
-            ->where('input', 'NextDeveloper\Accounting\AccountPartnerLogs')
+            ->where('input', 'NextDeveloper\Accounting\PartnerAssignments')
             ->first();
 
         $class = $action->class;
@@ -141,11 +141,11 @@ class AbstractAccountPartnerLogsService
      * This method returns the model by lookint at its id
      *
      * @param  $id
-     * @return AccountPartnerLogs|null
+     * @return PartnerAssignments|null
      */
-    public static function getById($id) : ?AccountPartnerLogs
+    public static function getById($id) : ?PartnerAssignments
     {
-        return AccountPartnerLogs::where('id', $id)->first();
+        return PartnerAssignments::where('id', $id)->first();
     }
 
     /**
@@ -159,7 +159,7 @@ class AbstractAccountPartnerLogsService
     public static function relatedObjects($uuid, $object)
     {
         try {
-            $obj = AccountPartnerLogs::where('uuid', $uuid)->first();
+            $obj = PartnerAssignments::where('uuid', $uuid)->first();
 
             if(!$obj) {
                 throw new ModelNotFoundException('Cannot find the related model');
@@ -192,13 +192,13 @@ class AbstractAccountPartnerLogsService
         }
         if (array_key_exists('old_partner_id', $data)) {
             $data['old_partner_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Accounts',
+                '\NextDeveloper\\Database\Models\OldPartners',
                 $data['old_partner_id']
             );
         }
         if (array_key_exists('new_partner_id', $data)) {
             $data['new_partner_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Accounts',
+                '\NextDeveloper\\Database\Models\NewPartners',
                 $data['new_partner_id']
             );
         }
@@ -224,7 +224,7 @@ class AbstractAccountPartnerLogsService
         }
                         
         try {
-            $model = AccountPartnerLogs::create($data);
+            $model = PartnerAssignments::create($data);
         } catch(\Exception $e) {
             throw $e;
         }
@@ -236,9 +236,9 @@ class AbstractAccountPartnerLogsService
      * This function expects the ID inside the object.
      *
      * @param  array $data
-     * @return AccountPartnerLogs
+     * @return PartnerAssignments
      */
-    public static function updateRaw(array $data) : ?AccountPartnerLogs
+    public static function updateRaw(array $data) : ?PartnerAssignments
     {
         if(array_key_exists('id', $data)) {
             return self::update($data['id'], $data);
@@ -259,7 +259,7 @@ class AbstractAccountPartnerLogsService
      */
     public static function update($id, array $data)
     {
-        $model = AccountPartnerLogs::where('uuid', $id)->first();
+        $model = PartnerAssignments::where('uuid', $id)->first();
 
         if(!$model) {
             throw new NotAllowedException(
@@ -276,13 +276,13 @@ class AbstractAccountPartnerLogsService
         }
         if (array_key_exists('old_partner_id', $data)) {
             $data['old_partner_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Accounts',
+                '\NextDeveloper\\Database\Models\OldPartners',
                 $data['old_partner_id']
             );
         }
         if (array_key_exists('new_partner_id', $data)) {
             $data['new_partner_id'] = DatabaseHelper::uuidToId(
-                '\NextDeveloper\Accounting\Database\Models\Accounts',
+                '\NextDeveloper\\Database\Models\NewPartners',
                 $data['new_partner_id']
             );
         }
@@ -321,7 +321,7 @@ class AbstractAccountPartnerLogsService
      */
     public static function delete($id)
     {
-        $model = AccountPartnerLogs::where('uuid', $id)->first();
+        $model = PartnerAssignments::where('uuid', $id)->first();
 
         if(!$model) {
             throw new NotAllowedException(
