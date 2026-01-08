@@ -19,6 +19,7 @@ use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
 use NextDeveloper\Commons\Services\CurrenciesService;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
+use NextDeveloper\IAM\Services\AccountsService;
 
 class InvoiceHelper
 {
@@ -226,15 +227,7 @@ class InvoiceHelper
         $account = AccountingHelper::getIamAccount($invoiceOwnerAccountingAccount);
 
         if(!$account->common_country_id) {
-            UserHelper::runAsAdmin(function() use($account) {
-                $country = Countries::where('code', config('leo.default_country_code'))->first();
-
-                $account->update([
-                    'common_country_id' => $country->id
-                ]);
-            });
-
-            $account = $account->refresh();
+            $account = AccountsService::fixCommonCountryId($account);
         }
 
         return PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
