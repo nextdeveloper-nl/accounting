@@ -68,6 +68,17 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->accountingIdentifier($value);
     }
         
+    public function commonCurrencyCode($value)
+    {
+        return $this->builder->where('common_currency_code', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of commonCurrencyCode
+    public function common_currency_code($value)
+    {
+        return $this->commonCurrencyCode($value);
+    }
+        
     public function trMersis($value)
     {
         return $this->builder->where('tr_mersis', 'ilike', '%' . $value . '%');
@@ -99,6 +110,50 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     public function trade_office_number($value)
     {
         return $this->tradeOfficeNumber($value);
+    }
+        
+    public function distributorPartner($value)
+    {
+        return $this->builder->where('distributor_partner', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of distributorPartner
+    public function distributor_partner($value)
+    {
+        return $this->distributorPartner($value);
+    }
+        
+    public function integratorPartner($value)
+    {
+        return $this->builder->where('integrator_partner', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of integratorPartner
+    public function integrator_partner($value)
+    {
+        return $this->integratorPartner($value);
+    }
+        
+    public function salesPartner($value)
+    {
+        return $this->builder->where('sales_partner', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of salesPartner
+    public function sales_partner($value)
+    {
+        return $this->salesPartner($value);
+    }
+        
+    public function affiliatePartner($value)
+    {
+        return $this->builder->where('affiliate_partner', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of affiliatePartner
+    public function affiliate_partner($value)
+    {
+        return $this->affiliatePartner($value);
     }
     
     public function createdAtStart($date)
@@ -308,6 +363,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

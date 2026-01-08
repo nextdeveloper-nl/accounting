@@ -1,35 +1,35 @@
 <?php
 
-namespace NextDeveloper\Accounting\Http\Controllers\AccountPartnerLogs;
+namespace NextDeveloper\Accounting\Http\Controllers\PartnerAssignments;
 
 use Illuminate\Http\Request;
 use NextDeveloper\Accounting\Http\Controllers\AbstractController;
 use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Accounting\Http\Requests\AccountPartnerLogs\AccountPartnerLogsUpdateRequest;
-use NextDeveloper\Accounting\Database\Filters\AccountPartnerLogsQueryFilter;
-use NextDeveloper\Accounting\Database\Models\AccountPartnerLogs;
-use NextDeveloper\Accounting\Services\AccountPartnerLogsService;
-use NextDeveloper\Accounting\Http\Requests\AccountPartnerLogs\AccountPartnerLogsCreateRequest;
+use NextDeveloper\Accounting\Http\Requests\PartnerAssignments\PartnerAssignmentsUpdateRequest;
+use NextDeveloper\Accounting\Database\Filters\PartnerAssignmentsQueryFilter;
+use NextDeveloper\Accounting\Database\Models\PartnerAssignments;
+use NextDeveloper\Accounting\Services\PartnerAssignmentsService;
+use NextDeveloper\Accounting\Http\Requests\PartnerAssignments\PartnerAssignmentsCreateRequest;
 use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
-class AccountPartnerLogsController extends AbstractController
+class PartnerAssignmentsController extends AbstractController
 {
-    private $model = AccountPartnerLogs::class;
+    private $model = PartnerAssignments::class;
 
     use TagsTrait;
     use AddressesTrait;
     /**
-     * This method returns the list of accountpartnerlogs.
+     * This method returns the list of partnerassignments.
      *
      * optional http params:
      * - paginate: If you set paginate parameter, the result will be returned paginated.
      *
-     * @param  AccountPartnerLogsQueryFilter $filter  An object that builds search query
+     * @param  PartnerAssignmentsQueryFilter $filter  An object that builds search query
      * @param  Request                       $request Laravel request object, this holds all data about request. Automatically populated.
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(AccountPartnerLogsQueryFilter $filter, Request $request)
+    public function index(PartnerAssignmentsQueryFilter $filter, Request $request)
     {
-        $data = AccountPartnerLogsService::get($filter, $request->all());
+        $data = PartnerAssignmentsService::get($filter, $request->all());
 
         return ResponsableFactory::makeResponse($this, $data);
     }
@@ -41,7 +41,7 @@ class AccountPartnerLogsController extends AbstractController
      */
     public function getActions()
     {
-        $data = AccountPartnerLogsService::getActions();
+        $data = PartnerAssignmentsService::getActions();
 
         return ResponsableFactory::makeResponse($this, $data);
     }
@@ -55,7 +55,7 @@ class AccountPartnerLogsController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = AccountPartnerLogsService::doAction($objectId, $action, request()->all());
+        $actionId = PartnerAssignmentsService::doAction($objectId, $action, request()->all());
 
         return $this->withArray(
             [
@@ -67,7 +67,7 @@ class AccountPartnerLogsController extends AbstractController
     /**
      * This method receives ID for the related model and returns the item to the client.
      *
-     * @param  $accountPartnerLogsId
+     * @param  $partnerAssignmentsId
      * @return mixed|null
      * @throws \Laravel\Octane\Exceptions\DdException
      */
@@ -75,7 +75,7 @@ class AccountPartnerLogsController extends AbstractController
     {
         //  Here we are not using Laravel Route Model Binding. Please check routeBinding.md file
         //  in NextDeveloper Platform Project
-        $model = AccountPartnerLogsService::getByRef($ref);
+        $model = PartnerAssignmentsService::getByRef($ref);
 
         return ResponsableFactory::makeResponse($this, $model);
     }
@@ -92,19 +92,19 @@ class AccountPartnerLogsController extends AbstractController
      */
     public function relatedObjects($ref, $subObject)
     {
-        $objects = AccountPartnerLogsService::relatedObjects($ref, $subObject);
+        $objects = PartnerAssignmentsService::relatedObjects($ref, $subObject);
 
         return ResponsableFactory::makeResponse($this, $objects);
     }
 
     /**
-     * This method created AccountPartnerLogs object on database.
+     * This method created PartnerAssignments object on database.
      *
-     * @param  AccountPartnerLogsCreateRequest $request
+     * @param  PartnerAssignmentsCreateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
-    public function store(AccountPartnerLogsCreateRequest $request)
+    public function store(PartnerAssignmentsCreateRequest $request)
     {
         if($request->has('validateOnly') && $request->get('validateOnly') == true) {
             return [
@@ -112,20 +112,20 @@ class AccountPartnerLogsController extends AbstractController
             ];
         }
 
-        $model = AccountPartnerLogsService::create($request->validated());
+        $model = PartnerAssignmentsService::create($request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
     }
 
     /**
-     * This method updates AccountPartnerLogs object on database.
+     * This method updates PartnerAssignments object on database.
      *
-     * @param  $accountPartnerLogsId
-     * @param  AccountPartnerLogsUpdateRequest $request
+     * @param  $partnerAssignmentsId
+     * @param  PartnerAssignmentsUpdateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
-    public function update($accountPartnerLogsId, AccountPartnerLogsUpdateRequest $request)
+    public function update($partnerAssignmentsId, PartnerAssignmentsUpdateRequest $request)
     {
         if($request->has('validateOnly') && $request->get('validateOnly') == true) {
             return [
@@ -133,21 +133,21 @@ class AccountPartnerLogsController extends AbstractController
             ];
         }
 
-        $model = AccountPartnerLogsService::update($accountPartnerLogsId, $request->validated());
+        $model = PartnerAssignmentsService::update($partnerAssignmentsId, $request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
     }
 
     /**
-     * This method updates AccountPartnerLogs object on database.
+     * This method updates PartnerAssignments object on database.
      *
-     * @param  $accountPartnerLogsId
+     * @param  $partnerAssignmentsId
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
-    public function destroy($accountPartnerLogsId)
+    public function destroy($partnerAssignmentsId)
     {
-        $model = AccountPartnerLogsService::delete($accountPartnerLogsId);
+        $model = PartnerAssignmentsService::delete($partnerAssignmentsId);
 
         return $this->noContent();
     }

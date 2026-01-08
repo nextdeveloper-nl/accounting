@@ -21,13 +21,13 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property integer $id
  * @property string $uuid
  * @property integer $accounting_payment_gateway_id
- * @property integer $accounting_invoice_id
  * @property $payment_data
  * @property $session_data
  * @property boolean $is_invalidated
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property integer $accounting_account_id
  */
 class PaymentCheckoutSessions extends Model
 {
@@ -46,10 +46,10 @@ class PaymentCheckoutSessions extends Model
 
     protected $fillable = [
             'accounting_payment_gateway_id',
-            'accounting_invoice_id',
             'payment_data',
             'session_data',
             'is_invalidated',
+            'accounting_account_id',
     ];
 
     /**
@@ -74,13 +74,13 @@ class PaymentCheckoutSessions extends Model
     protected $casts = [
     'id' => 'integer',
     'accounting_payment_gateway_id' => 'integer',
-    'accounting_invoice_id' => 'integer',
     'payment_data' => 'array',
     'session_data' => 'array',
     'is_invalidated' => 'boolean',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
+    'accounting_account_id' => 'integer',
     ];
 
     /**
@@ -142,6 +142,7 @@ class PaymentCheckoutSessions extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

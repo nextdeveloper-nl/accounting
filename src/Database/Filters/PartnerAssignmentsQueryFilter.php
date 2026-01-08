@@ -4,13 +4,13 @@ namespace NextDeveloper\Accounting\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-            
+                    
 
 /**
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class ContractsQueryFilter extends AbstractQueryFilter
+class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
 {
 
     /**
@@ -18,82 +18,54 @@ class ContractsQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
     
-    public function name($value)
+    public function reason($value)
     {
-        return $this->builder->where('name', 'ilike', '%' . $value . '%');
-    }
-
-        
-    public function description($value)
-    {
-        return $this->builder->where('description', 'ilike', '%' . $value . '%');
+        return $this->builder->where('reason', 'ilike', '%' . $value . '%');
     }
 
     
-    public function isApproved($value)
+    public function startedAtStart($date)
     {
-        return $this->builder->where('is_approved', $value);
+        return $this->builder->where('started_at', '>=', $date);
     }
 
-        //  This is an alias function of isApproved
-    public function is_approved($value)
+    public function startedAtEnd($date)
     {
-        return $this->isApproved($value);
-    }
-     
-    public function isSigned($value)
-    {
-        return $this->builder->where('is_signed', $value);
+        return $this->builder->where('started_at', '<=', $date);
     }
 
-        //  This is an alias function of isSigned
-    public function is_signed($value)
+    //  This is an alias function of startedAt
+    public function started_at_start($value)
     {
-        return $this->isSigned($value);
-    }
-     
-    public function termStartsStart($date)
-    {
-        return $this->builder->where('term_starts', '>=', $date);
+        return $this->startedAtStart($value);
     }
 
-    public function termStartsEnd($date)
+    //  This is an alias function of startedAt
+    public function started_at_end($value)
     {
-        return $this->builder->where('term_starts', '<=', $date);
+        return $this->startedAtEnd($value);
     }
 
-    //  This is an alias function of termStarts
-    public function term_starts_start($value)
+    public function finishedAtStart($date)
     {
-        return $this->termStartsStart($value);
+        return $this->builder->where('finished_at', '>=', $date);
     }
 
-    //  This is an alias function of termStarts
-    public function term_starts_end($value)
+    public function finishedAtEnd($date)
     {
-        return $this->termStartsEnd($value);
+        return $this->builder->where('finished_at', '<=', $date);
     }
 
-    public function termEndsStart($date)
+    //  This is an alias function of finishedAt
+    public function finished_at_start($value)
     {
-        return $this->builder->where('term_ends', '>=', $date);
+        return $this->finishedAtStart($value);
     }
 
-    public function termEndsEnd($date)
+    //  This is an alias function of finishedAt
+    public function finished_at_end($value)
     {
-        return $this->builder->where('term_ends', '<=', $date);
-    }
-
-    //  This is an alias function of termEnds
-    public function term_ends_start($value)
-    {
-        return $this->termEndsStart($value);
-    }
-
-    //  This is an alias function of termEnds
-    public function term_ends_end($value)
-    {
-        return $this->termEndsEnd($value);
+        return $this->finishedAtEnd($value);
     }
 
     public function createdAtStart($date)
@@ -177,15 +149,35 @@ class ContractsQueryFilter extends AbstractQueryFilter
         return $this->accountingAccount($value);
     }
     
-    public function iamAccountId($value)
+    public function oldPartnerId($value)
     {
-            $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
+            $oldPartner = \NextDeveloper\\Database\Models\OldPartners::where('uuid', $value)->first();
 
-        if($iamAccount) {
-            return $this->builder->where('iam_account_id', '=', $iamAccount->id);
+        if($oldPartner) {
+            return $this->builder->where('old_partner_id', '=', $oldPartner->id);
         }
     }
 
+        //  This is an alias function of oldPartner
+    public function old_partner_id($value)
+    {
+        return $this->oldPartner($value);
+    }
+    
+    public function newPartnerId($value)
+    {
+            $newPartner = \NextDeveloper\\Database\Models\NewPartners::where('uuid', $value)->first();
+
+        if($newPartner) {
+            return $this->builder->where('new_partner_id', '=', $newPartner->id);
+        }
+    }
+
+        //  This is an alias function of newPartner
+    public function new_partner_id($value)
+    {
+        return $this->newPartner($value);
+    }
     
     public function iamUserId($value)
     {
@@ -197,54 +189,15 @@ class ContractsQueryFilter extends AbstractQueryFilter
     }
 
     
+    public function iamAccountId($value)
+    {
+            $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
+
+        if($iamAccount) {
+            return $this->builder->where('iam_account_id', '=', $iamAccount->id);
+        }
+    }
+
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

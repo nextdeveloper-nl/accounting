@@ -189,4 +189,5 @@ class AbstractVendorsPerspectiveTransformer extends AbstractTransformer
 
 
 
+
 }

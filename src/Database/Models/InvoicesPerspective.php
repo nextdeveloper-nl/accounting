@@ -232,4 +232,5 @@ class InvoicesPerspective extends Model
 
 
 
+
 }

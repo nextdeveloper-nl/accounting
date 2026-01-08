@@ -51,6 +51,8 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property array $special_interest
  * @property array $target_group
  * @property array $technical_capabilities
+ * @property array $operating_countries
+ * @property array $operating_cities
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
@@ -102,6 +104,8 @@ class AffiliatesPerspective extends Model
             'special_interest',
             'target_group',
             'technical_capabilities',
+            'operating_countries',
+            'operating_cities',
     ];
 
     /**
@@ -153,6 +157,8 @@ class AffiliatesPerspective extends Model
     'special_interest' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
     'target_group' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
     'technical_capabilities' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
+    'operating_countries' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
+    'operating_cities' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
@@ -217,6 +223,7 @@ class AffiliatesPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

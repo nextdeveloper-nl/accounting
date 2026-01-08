@@ -14,10 +14,12 @@ use NextDeveloper\Accounting\Exceptions\AccountingException;
 use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use NextDeveloper\Accounting\Services\InvoicesService;
 use NextDeveloper\Commons\Database\GlobalScopes\LimitScope;
+use NextDeveloper\Commons\Database\Models\Countries;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
 use NextDeveloper\Commons\Services\CurrenciesService;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
+use NextDeveloper\IAM\Services\AccountsService;
 
 class InvoiceHelper
 {
@@ -223,6 +225,10 @@ class InvoiceHelper
     {
         $invoiceOwnerAccountingAccount = self::getAccount($invoice);
         $account = AccountingHelper::getIamAccount($invoiceOwnerAccountingAccount);
+
+        if(!$account->common_country_id) {
+            $account = AccountsService::fixCommonCountryId($account);
+        }
 
         return PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
             ->where('common_country_id', $account->common_country_id)
