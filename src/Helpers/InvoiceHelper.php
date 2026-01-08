@@ -14,6 +14,7 @@ use NextDeveloper\Accounting\Exceptions\AccountingException;
 use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use NextDeveloper\Accounting\Services\InvoicesService;
 use NextDeveloper\Commons\Database\GlobalScopes\LimitScope;
+use NextDeveloper\Commons\Database\Models\Countries;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
 use NextDeveloper\Commons\Services\CurrenciesService;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
@@ -223,6 +224,18 @@ class InvoiceHelper
     {
         $invoiceOwnerAccountingAccount = self::getAccount($invoice);
         $account = AccountingHelper::getIamAccount($invoiceOwnerAccountingAccount);
+
+        if(!$account->common_country_id) {
+            UserHelper::runAsAdmin(function() use($account) {
+                $country = Countries::where('code', config('leo.default_country_code'))->first();
+
+                $account->update([
+                    'common_country_id' => $country->id
+                ]);
+            });
+
+            $account = $account->refresh();
+        }
 
         return PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
             ->where('common_country_id', $account->common_country_id)
