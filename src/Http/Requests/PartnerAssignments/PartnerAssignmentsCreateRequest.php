@@ -1,10 +1,10 @@
 <?php
 
-namespace NextDeveloper\Accounting\Http\Requests\AccountPartnerLogs;
+namespace NextDeveloper\Accounting\Http\Requests\PartnerAssignments;
 
 use NextDeveloper\Commons\Http\Requests\AbstractFormRequest;
 
-class AccountPartnerLogsCreateRequest extends AbstractFormRequest
+class PartnerAssignmentsCreateRequest extends AbstractFormRequest
 {
 
     /**
@@ -14,9 +14,9 @@ class AccountPartnerLogsCreateRequest extends AbstractFormRequest
     {
         return [
             'accounting_account_id' => 'required|exists:accounting_accounts,uuid|uuid',
-        'partner_type' => 'required',
-        'old_partner_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
-        'new_partner_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
+        'type' => 'required',
+        'old_partner_id' => 'nullable|exists:old_partners,uuid|uuid',
+        'new_partner_id' => 'nullable|exists:new_partners,uuid|uuid',
         'started_at' => 'date',
         'finished_at' => 'nullable|date',
         'reason' => 'nullable|string',

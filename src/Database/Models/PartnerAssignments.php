@@ -7,7 +7,7 @@ use NextDeveloper\Commons\Database\Traits\HasStates;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Accounting\Database\Observers\AccountPartnerLogsObserver;
+use NextDeveloper\Accounting\Database\Observers\PartnerAssignmentsObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Database\Traits\HasObject;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
@@ -15,13 +15,13 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
- * AccountPartnerLogs model.
+ * PartnerAssignments model.
  *
  * @package  NextDeveloper\Accounting\Database\Models
  * @property integer $id
  * @property string $uuid
  * @property integer $accounting_account_id
- * @property $partner_type
+ * @property $type
  * @property integer $old_partner_id
  * @property integer $new_partner_id
  * @property \Carbon\Carbon $started_at
@@ -33,14 +33,14 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
  */
-class AccountPartnerLogs extends Model
+class PartnerAssignments extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'accounting_account_partner_logs';
+    protected $table = 'accounting_partner_assignments';
 
 
     /**
@@ -50,7 +50,7 @@ class AccountPartnerLogs extends Model
 
     protected $fillable = [
             'accounting_account_id',
-            'partner_type',
+            'type',
             'old_partner_id',
             'new_partner_id',
             'started_at',
@@ -125,7 +125,7 @@ class AccountPartnerLogs extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(AccountPartnerLogsObserver::class);
+        parent::observe(PartnerAssignmentsObserver::class);
 
         self::registerScopes();
     }
@@ -133,7 +133,7 @@ class AccountPartnerLogs extends Model
     public static function registerScopes()
     {
         $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_account_partner_logs');
+        $modelScopes = config('accounting.scopes.accounting_partner_assignments');
 
         if(!$modelScopes) { $modelScopes = [];
         }
