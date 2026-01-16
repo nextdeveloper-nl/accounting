@@ -156,6 +156,8 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             'accounting_payment_checkout_sessions:delete',
 
             'accounting_partnerships:read',
+            'accounting_partnerships:create',
+            'accounting_partnerships:update',
         ];
     }
 
