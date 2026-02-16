@@ -286,7 +286,6 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         }
     }
 
-
     public function commonCurrencyId($value)
     {
         $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
