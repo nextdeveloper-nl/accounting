@@ -29,7 +29,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('phone_number', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of phoneNumber
+    //  This is an alias function of phoneNumber
     public function phone_number($value)
     {
         return $this->phoneNumber($value);
@@ -40,7 +40,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('tax_number', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of taxNumber
+    //  This is an alias function of taxNumber
     public function tax_number($value)
     {
         return $this->taxNumber($value);
@@ -51,7 +51,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('tax_office', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of taxOffice
+    //  This is an alias function of taxOffice
     public function tax_office($value)
     {
         return $this->taxOffice($value);
@@ -62,7 +62,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('accounting_identifier', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of accountingIdentifier
+    //  This is an alias function of accountingIdentifier
     public function accounting_identifier($value)
     {
         return $this->accountingIdentifier($value);
@@ -73,7 +73,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('common_currency_code', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of commonCurrencyCode
+    //  This is an alias function of commonCurrencyCode
     public function common_currency_code($value)
     {
         return $this->commonCurrencyCode($value);
@@ -84,7 +84,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('tr_mersis', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of trMersis
+    //  This is an alias function of trMersis
     public function tr_mersis($value)
     {
         return $this->trMersis($value);
@@ -95,7 +95,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('trade_office', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of tradeOffice
+    //  This is an alias function of tradeOffice
     public function trade_office($value)
     {
         return $this->tradeOffice($value);
@@ -106,7 +106,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('trade_office_number', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of tradeOfficeNumber
+    //  This is an alias function of tradeOfficeNumber
     public function trade_office_number($value)
     {
         return $this->tradeOfficeNumber($value);
@@ -117,7 +117,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('distributor_partner', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of distributorPartner
+    //  This is an alias function of distributorPartner
     public function distributor_partner($value)
     {
         return $this->distributorPartner($value);
@@ -128,7 +128,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('integrator_partner', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of integratorPartner
+    //  This is an alias function of integratorPartner
     public function integrator_partner($value)
     {
         return $this->integratorPartner($value);
@@ -139,7 +139,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('sales_partner', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of salesPartner
+    //  This is an alias function of salesPartner
     public function sales_partner($value)
     {
         return $this->salesPartner($value);
@@ -150,7 +150,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('affiliate_partner', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of affiliatePartner
+    //  This is an alias function of affiliatePartner
     public function affiliate_partner($value)
     {
         return $this->affiliatePartner($value);
@@ -224,14 +224,14 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function commonCountryId($value)
     {
-            $commonCountry = \NextDeveloper\Commons\Database\Models\Countries::where('uuid', $value)->first();
+        $commonCountry = \NextDeveloper\Commons\Database\Models\Countries::where('uuid', $value)->first();
 
-        if($commonCountry) {
+        if ($commonCountry) {
             return $this->builder->where('common_country_id', '=', $commonCountry->id);
         }
     }
 
-        //  This is an alias function of commonCountry
+    //  This is an alias function of commonCountry
     public function common_country_id($value)
     {
         return $this->commonCountry($value);
@@ -239,14 +239,14 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function commonDomainId($value)
     {
-            $commonDomain = \NextDeveloper\Commons\Database\Models\Domains::where('uuid', $value)->first();
+        $commonDomain = \NextDeveloper\Commons\Database\Models\Domains::where('uuid', $value)->first();
 
-        if($commonDomain) {
+        if ($commonDomain) {
             return $this->builder->where('common_domain_id', '=', $commonDomain->id);
         }
     }
 
-        //  This is an alias function of commonDomain
+    //  This is an alias function of commonDomain
     public function common_domain_id($value)
     {
         return $this->commonDomain($value);
@@ -254,9 +254,9 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function iamUserId($value)
     {
-            $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
+        $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
 
-        if($iamUser) {
+        if ($iamUser) {
             return $this->builder->where('iam_user_id', '=', $iamUser->id);
         }
     }
@@ -264,14 +264,14 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function iamAccountTypeId($value)
     {
-            $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
+        $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
 
-        if($iamAccountType) {
+        if ($iamAccountType) {
             return $this->builder->where('iam_account_type_id', '=', $iamAccountType->id);
         }
     }
 
-        //  This is an alias function of iamAccountType
+    //  This is an alias function of iamAccountType
     public function iam_account_type_id($value)
     {
         return $this->iamAccountType($value);
@@ -279,9 +279,9 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function iamAccountId($value)
     {
-            $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
+        $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScopes()->where('uuid', $value)->first();
 
-        if($iamAccount) {
+        if ($iamAccount) {
             return $this->builder->where('iam_account_id', '=', $iamAccount->id);
         }
     }
@@ -289,14 +289,14 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function commonCurrencyId($value)
     {
-            $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
+        $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
 
-        if($commonCurrency) {
+        if ($commonCurrency) {
             return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
         }
     }
 
-        //  This is an alias function of commonCurrency
+    //  This is an alias function of commonCurrency
     public function common_currency_id($value)
     {
         return $this->commonCurrency($value);
@@ -304,14 +304,14 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function distributorId($value)
     {
-            $distributor = \NextDeveloper\Accounting\Database\Models\Distributors::where('uuid', $value)->first();
+        $distributor = \NextDeveloper\Accounting\Database\Models\Distributors::where('uuid', $value)->first();
 
-        if($distributor) {
+        if ($distributor) {
             return $this->builder->where('distributor_id', '=', $distributor->id);
         }
     }
 
-        //  This is an alias function of distributor
+    //  This is an alias function of distributor
     public function distributor_id($value)
     {
         return $this->distributor($value);
@@ -319,14 +319,14 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function integratorPartnerId($value)
     {
-            $integratorPartner = \NextDeveloper\Accounting\Database\Models\IntegratorPartners::where('uuid', $value)->first();
+        $integratorPartner = \NextDeveloper\Accounting\Database\Models\IntegratorPartners::where('uuid', $value)->first();
 
-        if($integratorPartner) {
+        if ($integratorPartner) {
             return $this->builder->where('integrator_partner_id', '=', $integratorPartner->id);
         }
     }
 
-        //  This is an alias function of integratorPartner
+    //  This is an alias function of integratorPartner
     public function integrator_partner_id($value)
     {
         return $this->integratorPartner($value);
@@ -334,14 +334,14 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function salesPartnerId($value)
     {
-            $salesPartner = \NextDeveloper\Accounting\Database\Models\SalesPartners::where('uuid', $value)->first();
+        $salesPartner = \NextDeveloper\Accounting\Database\Models\SalesPartners::where('uuid', $value)->first();
 
-        if($salesPartner) {
+        if ($salesPartner) {
             return $this->builder->where('sales_partner_id', '=', $salesPartner->id);
         }
     }
 
-        //  This is an alias function of salesPartner
+    //  This is an alias function of salesPartner
     public function sales_partner_id($value)
     {
         return $this->salesPartner($value);
@@ -349,21 +349,20 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function affiliatePartnerId($value)
     {
-            $affiliatePartner = \NextDeveloper\Accounting\Database\Models\AffiliatePartners::where('uuid', $value)->first();
+        $affiliatePartner = \NextDeveloper\Accounting\Database\Models\AffiliatePartners::where('uuid', $value)->first();
 
-        if($affiliatePartner) {
+        if ($affiliatePartner) {
             return $this->builder->where('affiliate_partner_id', '=', $affiliatePartner->id);
         }
     }
 
-        //  This is an alias function of affiliatePartner
+    //  This is an alias function of affiliatePartner
     public function affiliate_partner_id($value)
     {
         return $this->affiliatePartner($value);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
 
 
 }

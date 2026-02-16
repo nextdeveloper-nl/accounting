@@ -55,9 +55,13 @@ class AccountsPerspectiveTransformer extends AbstractAccountsPerspectiveTransfor
             ->first();
 
         $transformed['distributor_id']  = $distributor ? $distributor->uuid : null;
+        $transformed['distributor_partner'] = $distributor ? $distributor->name : null;
         $transformed['integrator_partner_id'] = $integrator ? $integrator->uuid : null;
+        $transformed['integrator_partner'] = $integrator ? $integrator->name : null;
         $transformed['sales_partner_id'] = $salesPartner ? $salesPartner->uuid : null;
+        $transformed['sales_partner'] = $salesPartner ? $salesPartner->name : null;
         $transformed['affiliate_partner_id'] = $affiliate ? $affiliate->uuid : null;
+        $transformed['affiliate_partner'] = $affiliate ? $affiliate->uuid : null;
 
         $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('id', $model->iam_account_id)
