@@ -20,7 +20,7 @@ class StripeUSA implements PaymentGatewaysInterface
     // Stripe zero-decimal currencies
     // Source: https://stripe.com/docs/currencies#zero-decimal
 
-    const array ZERO_DECIMAL_CURRENCIES = [
+    const ZERO_DECIMAL_CURRENCIES = [
         'BIF',
         'CLP',
         'DJF',
@@ -260,6 +260,9 @@ class StripeUSA implements PaymentGatewaysInterface
                 case 'checkout.session.expired':
                     return $this->handleFailedPayment($callbackData);
 
+                case 'customer.subscription.created':
+                    return $this->handleSubscriptionCreated($callbackData);
+
                 default:
                     Log::info('Unhandled Stripe event type', ['type' => $eventType]);
                     return [
@@ -279,6 +282,11 @@ class StripeUSA implements PaymentGatewaysInterface
                 'message' => 'Error processing callback: ' . $e->getMessage()
             ];
         }
+    }
+
+    private function handleSubscriptionCreated(array $callbackData): array
+    {
+        $data = $eventData['data']['object'] ?? [];
     }
 
     /**
