@@ -2,20 +2,34 @@
 
 namespace NextDeveloper\Accounting\PaymentGateways;
 
+use App\Products\Products;
+use Illuminate\Support\Carbon;
 use Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
+use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Helpers\AccountingHelper;
+use NextDeveloper\Accounting\Services\InvoiceItemsService;
+use NextDeveloper\Accounting\Services\InvoicesService;
+use NextDeveloper\Accounting\Services\TransactionsService;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Accounting\Database\Models\Transactions;
+use NextDeveloper\IAM\Services\AccountsService;
 
 class StripeUSA implements PaymentGatewaysInterface
 {
     private $gateway;
+
+    private $gatewayObject;
+
+    /**
+     * @var Accounts Accounting Account
+     */
+    private $gatewayOwner;
 
     // Stripe zero-decimal currencies
     // Source: https://stripe.com/docs/currencies#zero-decimal
@@ -39,13 +53,17 @@ class StripeUSA implements PaymentGatewaysInterface
         'XPF'
     ];
 
-    public function __construct(PaymentGateways $gateway)
+    public function __construct(PaymentGateways $gateway, Accounts $account)
     {
+        $this->gatewayObject = $gateway;
+
         if ($gateway->parameters['is_test']) {
             $this->gateway = new \Stripe\StripeClient($gateway->parameters['test_api_secret']);
         } else {
             $this->gateway = new \Stripe\StripeClient($gateway->parameters['live_api_secret']);
         }
+
+        $this->gatewayOwner = $account;
     }
 
     public function getCheckoutSession(Accounts $account): \NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions
@@ -263,6 +281,16 @@ class StripeUSA implements PaymentGatewaysInterface
                 case 'customer.subscription.created':
                     return $this->handleSubscriptionCreated($callbackData);
 
+                case 'invoice.created':
+                    return $this->handleInvoiceCreated($callbackData);
+
+                case 'invoice.finalized':
+                    return $this->handleInvoiceFinalized($callbackData);
+
+                case 'invoice.paid':
+                case 'invoice.payment_succeeded':
+                    return $this->handleSuccessfulPayment($callbackData);
+
                 default:
                     Log::info('Unhandled Stripe event type', ['type' => $eventType]);
                     return [
@@ -272,6 +300,10 @@ class StripeUSA implements PaymentGatewaysInterface
             }
 
         } catch (\Exception $e) {
+            if(config('app.debug')) {
+                throw $e;
+            }
+
             Log::error('Error processing Stripe callback', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -282,6 +314,140 @@ class StripeUSA implements PaymentGatewaysInterface
                 'message' => 'Error processing callback: ' . $e->getMessage()
             ];
         }
+    }
+
+    private function handleInvoiceFinalized(array $callbackData): array
+    {
+        $data = $callbackData['data']['object'];
+
+        $existingInvoice = Invoices::withoutGlobalScope(AuthorizationScope::class)
+            ->where('invoice_number', 'stripe_' . $data['id'])
+            ->first();
+
+        if(!$existingInvoice) {
+            throw new \Exception('Invoice not found');
+        }
+
+        UserHelper::runAsAdmin(function () use ($existingInvoice) {
+            $existingInvoice->update([
+                'is_sealed' => true,
+                'is_payable' => true,
+            ]);
+        });
+    }
+
+    private function handleInvoiceCreated(array $callbackData): array
+    {
+        $data = $callbackData['data']['object'];
+
+        $existingInvoice = Invoices::withoutGlobalScope(AuthorizationScope::class)
+            ->where('invoice_number', 'stripe_' . $data['id'])
+            ->first();
+
+        if($existingInvoice) {
+            return [
+                'success' => true,
+            ];
+        }
+
+        $customerEmail = $data['customer_email'] ?? null;
+
+        if(!$customerEmail) {
+            throw new \Exception('No customer email found in callback data');
+        }
+
+        $user = UserHelper::getWithEmail($customerEmail);
+        $account = UserHelper::masterAccount($user);
+
+        $accountingAccount = AccountingHelper::getAccountingAccount($account->id);
+
+        //  WE ARE MAPPING THE CUSTOMER HERE FOR LATER USAGE
+        $mapping = $accountingAccount->mapping;
+
+        if(!$mapping) {
+            UserHelper::runAsAdmin(function () use ($accountingAccount, $data) {
+                $accountingAccount->update([
+                    'mapping'   =>  [
+                        'stripe'    =>  $data['customer']
+                    ]
+                ]);
+            });
+        } else {
+            if(!array_key_exists('stripe', $mapping)) {
+                UserHelper::runAsAdmin(function () use ($accountingAccount, $mapping, $data) {
+                    $accountingAccount->update([
+                        'mapping'   =>  array_merge(
+                            $mapping, [
+                            'stripe'    =>  $data['customer']
+                            ]
+                        )
+                    ]);
+                });
+            }
+        }
+
+        //  CREATING THE INVOICE
+
+        $gatewayOwner = UserHelper::getAccountById($this->gatewayOwner->iam_account_id);
+        $gatewayUser = UserHelper::getAccountOwner($gatewayOwner->id);
+
+        $createData = [
+            'accounting_account_id' => $accountingAccount->id,
+            'invoice_number' => 'stripe_' . $data['id'],
+            'common_currency_id' => Currencies::where('code', 'ilike', $data['currency'])->first()->id,
+            'exchange_rate' => [],
+            'amount' => floatval($data['amount_paid']) / 100,
+            //  We need to check this
+            'vat' => 0,
+            'is_paid' => false,
+            'is_refund' => false,
+            'is_payable' => false,
+            'is_sealed' => false,
+            'term_year' => Carbon::now()->year,
+            'term_month' => Carbon::now()->month,
+            'iam_account_id' => $gatewayOwner->id,
+            'iam_user_id' => $gatewayUser->id,
+        ];
+
+        $invoice = null;
+
+        UserHelper::runAsAdmin(function() use (&$invoice, $createData) {
+            $invoice = InvoicesService::create($createData);
+        });
+
+        foreach ($data['lines']['data'] as $line) {
+            $product = $line['pricing']['price_details']['product'];
+
+            $availableProducts = Products::availableProducts();
+
+            $productSold = null;
+
+            foreach ($availableProducts as $availableProduct) {
+                if ($product == $availableProduct::STRIPE_CODE) {
+                    $productSold = $availableProduct;
+                }
+            }
+
+            $invoiceItem = [
+                'object_type'   =>  $productSold,
+                'object_id'     =>  0,
+                'quantity'      =>  $line['quantity'],
+                'unit_price'    =>  $line['amount'] / 100,
+                'common_currency_id'    =>  Currencies::where('code', 'ilike', $line['currency'])->first()->id,
+                'iam_account_id' => $gatewayOwner->id,
+                'accounting_invoice_id' => $invoice->id,
+                'accounting_account_id' => $accountingAccount->id,
+                'details'   =>  $line
+            ];
+
+            UserHelper::runAsAdmin(function() use (&$invoiceItem) {
+                $invoiceItem = InvoiceItemsService::create($invoiceItem);
+            });
+        }
+
+        return [
+            'success'   =>  true
+        ];
     }
 
     private function handleSubscriptionCreated(array $callbackData): array
@@ -299,16 +465,55 @@ class StripeUSA implements PaymentGatewaysInterface
     {
         $data = $eventData['data']['object'] ?? [];
 
+        $existingInvoice = Invoices::withoutGlobalScope(AuthorizationScope::class)
+            ->where('invoice_number', 'stripe_' . $data['id'])
+            ->first();
+
+        $invoiceItems = InvoiceItems::withoutGlobalScope(AuthorizationScope::class)
+            ->where('accounting_invoice_id', $existingInvoice->id)
+            ->get();
+
+        $products = Products::availableProducts();
+
+        foreach ($invoiceItems as $item) {
+            foreach ($products as $product) {
+                if($item['object_type'] == $product) {
+                    $app = app($item['object_type']);
+                    $account = AccountingHelper::getIamAccountFromInvoice($existingInvoice);
+                    $app->subscribeFor($account);
+                }
+            }
+        }
+
         // Extract transaction ID from metadata
         $transactionId = $data['metadata']['accounting_transaction_id'] ?? null;
         $paymentIntentId = $data['id'] ?? $data['payment_intent'] ?? null;
 
         if (!$transactionId) {
-            Log::warning('Transaction ID not found in Stripe callback metadata', ['data' => $data]);
-            return [
-                'success' => false,
-                'message' => 'Transaction ID not found in metadata'
-            ];
+            $existingTransaction = Transactions::withoutGlobalScope(AuthorizationScope::class)
+                ->where('conversation_identifier', $existingInvoice->invoice_number)
+                ->first();
+
+            if(!$existingTransaction) {
+                //  We need to create the transaction here.
+                UserHelper::runAsAdmin(function () use (&$transactionId, $data, $existingInvoice) {
+                    $transaction = Transactions::create([
+                        'accounting_invoice_id' => $existingInvoice->id,
+                        'amount' => $existingInvoice->amount,
+                        'common_currency_id' => $existingInvoice->common_currency_id,
+                        'accounting_payment_gateway_id' => $this->gatewayObject->id,
+                        'iam_account_id' => UserHelper::me()->id,
+                        'accounting_account_id' => $existingInvoice->accounting_account_id,
+                        'gateway_response'   =>  'invoice.payment_succeeded',
+                        'conversation_identifier' => $existingInvoice->invoice_number,
+                        'is_pending' => false
+                    ]);
+
+                    $transactionId = $transaction->id;
+                });
+            }
+
+            $transactionId = $existingTransaction->id;
         }
 
         return [
