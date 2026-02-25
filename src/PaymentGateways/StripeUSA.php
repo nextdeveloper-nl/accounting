@@ -338,6 +338,10 @@ class StripeUSA implements PaymentGatewaysInterface
                 'is_payable' => true,
             ]);
         });
+
+        return [
+            'success' => true,
+        ];
     }
 
     private function handleInvoiceCreated(array $callbackData): array
@@ -516,8 +520,6 @@ class StripeUSA implements PaymentGatewaysInterface
                     $transactionId = $transaction->id;
                 });
             }
-
-            $transactionId = $existingTransaction->id;
         }
 
         return [
