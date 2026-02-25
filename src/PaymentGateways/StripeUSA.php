@@ -325,7 +325,11 @@ class StripeUSA implements PaymentGatewaysInterface
             ->first();
 
         if(!$existingInvoice) {
-            throw new \Exception('Invoice not found');
+            $this->handleInvoiceCreated($callbackData);
+
+            $existingInvoice = Invoices::withoutGlobalScope(AuthorizationScope::class)
+                ->where('invoice_number', 'stripe_' . $data['id'])
+                ->first();
         }
 
         UserHelper::runAsAdmin(function () use ($existingInvoice) {
