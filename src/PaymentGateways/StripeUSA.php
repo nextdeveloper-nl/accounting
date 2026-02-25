@@ -3,6 +3,8 @@
 namespace NextDeveloper\Accounting\PaymentGateways;
 
 use App\Products\Products;
+use App\Services\IAM\UsersService;
+use App\Services\Leo\RegisterService;
 use Illuminate\Support\Carbon;
 use Log;
 use NextDeveloper\Accounting\Database\Models\Accounts;
@@ -365,6 +367,14 @@ class StripeUSA implements PaymentGatewaysInterface
         }
 
         $user = UserHelper::getWithEmail($customerEmail);
+
+        if(!$user) {
+            $user = RegisterService::register(
+                email: $customerEmail,
+                name: $data['customer_name']
+            );
+        }
+
         $account = UserHelper::masterAccount($user);
 
         $accountingAccount = AccountingHelper::getAccountingAccount($account->id);
