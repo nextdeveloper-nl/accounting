@@ -166,8 +166,19 @@ class InvoiceHelper
         );
 
         if(!$provider) {
-            Log::info(__METHOD__ . '| Cannot find the provider for the account: ' . InvoiceHelper::getAccount($invoice)->id);
-            throw new AccountingException('Cannot find the provider for the account: ' . InvoiceHelper::getAccount($invoice)->id);
+            $provider = AccountingHelper::getAccount(
+                \NextDeveloper\IAM\Database\Models\Accounts::where('id', config('leo.providers.zones.global.distributor'))->first()
+            );
+
+            AccountingHelper::setDistributionPartner(
+                provider: $provider,
+                customer: Accounts::where('id', $invoice->accounting_account_id)->first()
+            );
+
+            if(!$provider) {
+                Log::info(__METHOD__ . '| Cannot find the provider for the account: ' . InvoiceHelper::getAccount($invoice)->id);
+                throw new AccountingException('Cannot find the provider for the account: ' . InvoiceHelper::getAccount($invoice)->id);
+            }
         }
 
         $providerAccountingAccount = AccountingHelper::getAccount($provider);
