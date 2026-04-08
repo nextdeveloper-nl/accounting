@@ -27,15 +27,13 @@ class CreditHelper
      *
      * @return Accounts The refreshed accounting account.
      */
-    public static function increase(Accounts $account, float $amountUsd): Accounts
+    public static function increase(Accounts $account, float $amountUsd = 0): Accounts
     {
         $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
 
-        UserHelper::runAsAdmin(function () use ($account, $amountInAccountCurrency) {
-            $account->update([
-                'credit' => $account->credit + $amountInAccountCurrency,
-            ]);
-        });
+        $account->updateQuietly([
+            'credit' => $account->credit + $amountInAccountCurrency,
+        ]);
 
         return $account->fresh();
     }
@@ -46,15 +44,13 @@ class CreditHelper
      *
      * @return Accounts The refreshed accounting account.
      */
-    public static function decrease(Accounts $account, float $amountUsd): Accounts
+    public static function decrease(Accounts $account, float $amountUsd = 0): Accounts
     {
         $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
 
-        UserHelper::runAsAdmin(function () use ($account, $amountInAccountCurrency) {
-            $account->update([
-                'credit' => $account->credit - $amountInAccountCurrency,
-            ]);
-        });
+        $account->updateQuietly([
+            'credit' => $account->credit - $amountInAccountCurrency,
+        ]);
 
         return $account->fresh();
     }
@@ -62,7 +58,7 @@ class CreditHelper
     /**
      * Returns whether the account has at least the given amount of credit (given in USD).
      */
-    public static function hasEnoughCredit(Accounts $account, float $amountUsd): bool
+    public static function hasEnoughCredit(Accounts $account, float $amountUsd = 0): bool
     {
         return self::getCredit($account) >= $amountUsd;
     }
