@@ -148,10 +148,6 @@ abstract class AbstractInvoiceItem
         );
 
         if(!$provider) {
-            //  Here we need to try to fix the provider. Because most likely the user is not selected their country
-            //  and the problem exists because of that
-            $provider = AccountingHelper::fixProviderIssues(InvoiceHelper::getAccount($this->invoice));
-
             Log::info(__METHOD__ . ' | Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->invoice)->id);
             throw new \Exception('Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->invoice)->id);
         }
