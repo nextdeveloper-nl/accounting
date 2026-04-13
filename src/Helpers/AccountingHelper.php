@@ -18,6 +18,22 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 
 class AccountingHelper
 {
+    public static function fixProviderIssues(Accounts $account) {
+        //  First check if the customer has country id or not.
+        $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $account->iam_account_id)->first();
+
+        if(!$iamAccount->common_country_id) {
+            logger()->warning('[AccountingHelper] Customer with ID: ' . $account->iam_account_id . ' does not have common_country_id so I am fixing it to default');
+            UserHelper::runAsAdmin(function () use ($iamAccount) {
+                $iamAccount->update([
+                    'common_country_id' => config('leo.providers.zones.global.distributor')
+                ]);
+            });
+        }
+
+        return self::getCustomerProvider($account);
+    }
+
     public static function setAccountAsSalesPartner(Accounts $customer, Accounts $provider)
     {
         $salesPartnerOwner = UserHelper::getAccountOwner(
