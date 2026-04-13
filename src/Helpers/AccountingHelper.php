@@ -257,12 +257,6 @@ class AccountingHelper
             ->where('id', $accounts->iam_account_id)
             ->first();
 
-        if ($iamAccount->common_country_id == null) {
-            self::fixProviderIssues($accounts);
-            Log::info(__METHOD__ . '| Customer does not have a country id. Returning null as provider.');
-            return null;
-        }
-
         $provider = null;
 
         //  We will find the country of the account and then we will find the provider for that country.
