@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Accounting\Invoicing;
 
+use App\Helpers\LeoAccountsHelper;
 use Carbon\Carbon;
 use Helpers\InvoiceHelper;
 use Illuminate\Support\Facades\Log;
@@ -88,7 +89,7 @@ abstract class AbstractInvoiceItem
         //  We are removing this from here because it is creating almost infinite loop.
         //  We will be calculating invoice amounts, every hour, or just before the customer wants to pay it
         //  We will be doing this calculation at the database
-        //  InvoiceHelper::updateInvoiceAmount($this->invoice);
+        InvoiceHelper::updateInvoiceAmount($this->invoice);
 
         return $item;
     }

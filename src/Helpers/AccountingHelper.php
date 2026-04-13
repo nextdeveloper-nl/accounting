@@ -4,7 +4,6 @@ namespace NextDeveloper\Accounting\Helpers;
 
 use App\Envelopes\CRM\Accounts\AssignedAsAccountManager;
 use Illuminate\Support\Facades\Log;
-use NextDeveloper\Accounting\Database\Models\AccountPartnerLogs;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
 use NextDeveloper\Accounting\Database\Models\Invoices;
@@ -18,6 +17,27 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 
 class AccountingHelper
 {
+    /**
+     * @param Accounts $account
+     * @return \NextDeveloper\IAM\Database\Models\Accounts|null
+     * @throws \Exception
+     */
+    public static function fixProviderIssues(Accounts $account) : ?\NextDeveloper\IAM\Database\Models\Accounts {
+        //  First check if the customer has country id or not.
+        $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $account->iam_account_id)->first();
+
+        if(!$iamAccount->common_country_id) {
+            logger()->warning('[AccountingHelper] Customer with ID: ' . $account->iam_account_id . ' does not have common_country_id so I am fixing it to default');
+            UserHelper::runAsAdmin(function () use ($iamAccount) {
+                $iamAccount->update([
+                    'common_country_id' => config('leo.providers.zones.global.distributor')
+                ]);
+            });
+        }
+
+        return self::getCustomerProvider($account);
+    }
+
     public static function setAccountAsSalesPartner(Accounts $customer, Accounts $provider)
     {
         $salesPartnerOwner = UserHelper::getAccountOwner(
@@ -236,11 +256,6 @@ class AccountingHelper
         $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('id', $accounts->iam_account_id)
             ->first();
-
-        if ($iamAccount->common_country_id == null) {
-            Log::info(__METHOD__ . '| Customer does not have a country id. Returning null as provider.');
-            return null;
-        }
 
         $provider = null;
 
