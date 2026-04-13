@@ -4,7 +4,6 @@ namespace NextDeveloper\Accounting\Helpers;
 
 use App\Envelopes\CRM\Accounts\AssignedAsAccountManager;
 use Illuminate\Support\Facades\Log;
-use NextDeveloper\Accounting\Database\Models\AccountPartnerLogs;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Contracts;
 use NextDeveloper\Accounting\Database\Models\Invoices;
@@ -18,7 +17,12 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 
 class AccountingHelper
 {
-    public static function fixProviderIssues(Accounts $account) {
+    /**
+     * @param Accounts $account
+     * @return \NextDeveloper\IAM\Database\Models\Accounts|null
+     * @throws \Exception
+     */
+    public static function fixProviderIssues(Accounts $account) : ?\NextDeveloper\IAM\Database\Models\Accounts {
         //  First check if the customer has country id or not.
         $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $account->iam_account_id)->first();
 
@@ -254,6 +258,7 @@ class AccountingHelper
             ->first();
 
         if ($iamAccount->common_country_id == null) {
+            self::fixProviderIssues($accounts);
             Log::info(__METHOD__ . '| Customer does not have a country id. Returning null as provider.');
             return null;
         }
