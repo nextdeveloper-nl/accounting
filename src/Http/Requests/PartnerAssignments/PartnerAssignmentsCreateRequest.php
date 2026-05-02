@@ -14,9 +14,9 @@ class PartnerAssignmentsCreateRequest extends AbstractFormRequest
     {
         return [
             'accounting_account_id' => 'required|exists:accounting_accounts,uuid|uuid',
-        'type' => 'required',
-        'old_partner_id' => 'nullable|exists:old_partners,uuid|uuid',
-        'new_partner_id' => 'nullable|exists:new_partners,uuid|uuid',
+        'type' => 'required|string',
+        'old_partner_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
+        'new_partner_id' => 'nullable|exists:accounting_accounts,uuid|uuid',
         'started_at' => 'date',
         'finished_at' => 'nullable|date',
         'reason' => 'nullable|string',

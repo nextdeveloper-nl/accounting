@@ -95,8 +95,6 @@ class AbstractAffiliatesPerspectiveTransformer extends AbstractTransformer
             'special_interest'  =>  $model->special_interest,
             'target_group'  =>  $model->target_group,
             'technical_capabilities'  =>  $model->technical_capabilities,
-            'operating_countries'  =>  $model->operating_countries,
-            'operating_cities'  =>  $model->operating_cities,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
@@ -188,6 +186,7 @@ class AbstractAffiliatesPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

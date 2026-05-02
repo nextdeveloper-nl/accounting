@@ -40,6 +40,10 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property integer $integrator_partner_id
  * @property integer $sales_partner_id
  * @property integer $affiliate_partner_id
+ * @property boolean $is_distributor
+ * @property boolean $is_integrator
+ * @property boolean $is_reseller
+ * @property boolean $is_affiliate
  * @property string $distributor_partner
  * @property string $integrator_partner
  * @property string $sales_partner
@@ -84,6 +88,10 @@ class AccountsPerspective extends Model
             'integrator_partner_id',
             'sales_partner_id',
             'affiliate_partner_id',
+            'is_distributor',
+            'is_integrator',
+            'is_reseller',
+            'is_affiliate',
             'distributor_partner',
             'integrator_partner',
             'sales_partner',
@@ -128,6 +136,10 @@ class AccountsPerspective extends Model
     'integrator_partner_id' => 'integer',
     'sales_partner_id' => 'integer',
     'affiliate_partner_id' => 'integer',
+    'is_distributor' => 'boolean',
+    'is_integrator' => 'boolean',
+    'is_reseller' => 'boolean',
+    'is_affiliate' => 'boolean',
     'distributor_partner' => 'string',
     'integrator_partner' => 'string',
     'sales_partner' => 'string',
@@ -196,6 +208,7 @@ class AccountsPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
