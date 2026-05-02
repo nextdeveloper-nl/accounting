@@ -65,6 +65,9 @@ trait AccountingCreditCardTestTraits
                 'cc_month'  =>  'a',
                 'cc_year'  =>  'a',
                 'cc_cvv'  =>  'a',
+                'pg_card_user_key'  =>  'a',
+                'pg_card_token'  =>  'a',
+                'pg_provider'  =>  'a',
                             ],
                 ['http_errors' => false]
             ]
@@ -467,6 +470,63 @@ trait AccountingCreditCardTestTraits
             $request = new Request(
                 [
                 'cc_cvv'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingCreditCardQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingcreditcard_event_pg_card_user_key_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'pg_card_user_key'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingCreditCardQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingcreditcard_event_pg_card_token_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'pg_card_token'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingCreditCardQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingcreditcard_event_pg_provider_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'pg_provider'  =>  'a'
                 ]
             );
 

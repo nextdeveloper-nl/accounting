@@ -84,12 +84,6 @@ class AccountsQueryFilter extends AbstractQueryFilter
         return $this->trMersis($value);
     }
         
-    public function iban($value)
-    {
-        return $this->builder->where('iban', 'ilike', '%' . $value . '%');
-    }
-
-        
     public function partnerCode($value)
     {
         return $this->builder->where('partner_code', 'ilike', '%' . $value . '%');
@@ -349,6 +343,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

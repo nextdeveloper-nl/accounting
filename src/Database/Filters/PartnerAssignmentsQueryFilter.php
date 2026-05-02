@@ -18,6 +18,12 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
     
+    public function type($value)
+    {
+        return $this->builder->where('type', 'ilike', '%' . $value . '%');
+    }
+
+        
     public function reason($value)
     {
         return $this->builder->where('reason', 'ilike', '%' . $value . '%');
@@ -151,7 +157,7 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
     
     public function oldPartnerId($value)
     {
-            $oldPartner = \NextDeveloper\\Database\Models\OldPartners::where('uuid', $value)->first();
+            $oldPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
 
         if($oldPartner) {
             return $this->builder->where('old_partner_id', '=', $oldPartner->id);
@@ -166,7 +172,7 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
     
     public function newPartnerId($value)
     {
-            $newPartner = \NextDeveloper\\Database\Models\NewPartners::where('uuid', $value)->first();
+            $newPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
 
         if($newPartner) {
             return $this->builder->where('new_partner_id', '=', $newPartner->id);
@@ -200,4 +206,5 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
 
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

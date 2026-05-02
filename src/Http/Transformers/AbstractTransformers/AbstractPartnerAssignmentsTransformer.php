@@ -55,8 +55,8 @@ class AbstractPartnerAssignmentsTransformer extends AbstractTransformer
     public function transform(PartnerAssignments $model)
     {
                                                 $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
-                                                            $oldPartnerId = \NextDeveloper\\Database\Models\OldPartners::where('id', $model->old_partner_id)->first();
-                                                            $newPartnerId = \NextDeveloper\\Database\Models\NewPartners::where('id', $model->new_partner_id)->first();
+                                                            $oldPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->old_partner_id)->first();
+                                                            $newPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->new_partner_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                         
@@ -163,4 +163,5 @@ class AbstractPartnerAssignmentsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }
