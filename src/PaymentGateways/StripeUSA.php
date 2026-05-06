@@ -249,6 +249,23 @@ class StripeUSA implements PaymentGatewaysInterface
     }
 
     /**
+     * Retrieve customer email from a Stripe checkout session.
+     */
+    public function getEmailFromSession(string $sessionId): ?string
+    {
+        try {
+            $session = $this->gateway->checkout->sessions->retrieve($sessionId);
+            return $session->customer_details->email ?? $session->customer_email ?? null;
+        } catch (\Exception $e) {
+            Log::error('Error retrieving Stripe session', [
+                'session_id' => $sessionId,
+                'error' => $e->getMessage()
+            ]);
+            return null;
+        }
+    }
+
+    /**
      * Handle payment callback from Stripe
      *
      * @param array $callbackData The webhook data from Stripe
