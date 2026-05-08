@@ -208,15 +208,6 @@ class ContractItemsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->deletedAtEnd($value);
     }
 
-    public function accountingContractId($value)
-    {
-            $accountingContract = \NextDeveloper\Accounting\Database\Models\Contracts::where('uuid', $value)->first();
-
-        if($accountingContract) {
-            return $this->builder->where('accounting_contract_id', '=', $accountingContract->id);
-        }
-    }
-
         //  This is an alias function of accountingContract
     public function accounting_contract_id($value)
     {
