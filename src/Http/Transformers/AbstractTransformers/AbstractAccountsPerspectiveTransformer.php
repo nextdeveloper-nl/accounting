@@ -61,9 +61,9 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                                                             $distributorId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->distributor_id)->first();
-                                                            $integratorPartnerId = \NextDeveloper\Accounting\Database\Models\IntegratorPartners::where('id', $model->integrator_partner_id)->first();
-                                                            $salesPartnerId = \NextDeveloper\Accounting\Database\Models\SalesPartners::where('id', $model->sales_partner_id)->first();
-                                                            $affiliatePartnerId = \NextDeveloper\Accounting\Database\Models\AffiliatePartners::where('id', $model->affiliate_partner_id)->first();
+                                                            $integratorPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
+                                                            $salesPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->sales_partner_id)->first();
+                                                            $affiliatePartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->affiliate_partner_id)->first();
 
         return $this->buildPayload(
             [
