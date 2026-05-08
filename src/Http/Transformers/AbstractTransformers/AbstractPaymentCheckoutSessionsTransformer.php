@@ -55,19 +55,19 @@ class AbstractPaymentCheckoutSessionsTransformer extends AbstractTransformer
     public function transform(PaymentCheckoutSessions $model)
     {
                                                 $accountingPaymentGatewayId = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('id', $model->accounting_payment_gateway_id)->first();
-                                                            $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
+                                                            $accountingInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->accounting_invoice_id)->first();
                         
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
             'accounting_payment_gateway_id'  =>  $accountingPaymentGatewayId ? $accountingPaymentGatewayId->uuid : null,
+            'accounting_invoice_id'  =>  $accountingInvoiceId ? $accountingInvoiceId->uuid : null,
             'payment_data'  =>  $model->payment_data,
             'session_data'  =>  $model->session_data,
             'is_invalidated'  =>  $model->is_invalidated,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
-            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
             ]
         );
     }
@@ -156,6 +156,7 @@ class AbstractPaymentCheckoutSessionsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

@@ -24,6 +24,10 @@ class CreditCardsCreateRequest extends AbstractFormRequest
         'is_valid' => 'boolean',
         'is_active' => 'boolean',
         'is_3d_secure' => 'boolean',
+        'pg_card_user_key' => 'nullable|string',
+        'pg_card_token' => 'nullable|string',
+        'pg_provider' => 'nullable|string',
+        'is_stored_at_pg' => 'boolean',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
