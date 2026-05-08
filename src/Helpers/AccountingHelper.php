@@ -71,6 +71,8 @@ class AccountingHelper
 
     public static function getPaymentGatewayOfDistributor(Accounts $account)
     {
+
+
         return \NextDeveloper\Accounting\Database\Models\PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
             ->where('accounting_account_id', $account->id)
             ->where('is_active', true)

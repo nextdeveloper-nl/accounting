@@ -68,7 +68,13 @@ class AccountsService extends AbstractAccountsService
 
     public static function update($id, array $data)
     {
-        if(!(UserHelper::hasRole('accounting-admin') || UserHelper::hasRole('accounting-manager'))) {
+        if(
+            !(
+                UserHelper::hasRole('accounting-admin') ||
+                UserHelper::hasRole('accounting-manager') ||
+                UserHelper::hasRole('system-admin')
+            )
+        ) {
             unset($data['distributor_id']);
             unset($data['sales_partner_id']);
             unset($data['integrator_partner_id']);
