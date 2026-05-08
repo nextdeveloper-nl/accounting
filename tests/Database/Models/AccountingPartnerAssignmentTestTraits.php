@@ -58,6 +58,7 @@ trait AccountingPartnerAssignmentTestTraits
         $response = $this->http->request(
             'POST', '/accounting/accountingpartnerassignment', [
             'form_params'   =>  [
+                'type'  =>  'a',
                 'reason'  =>  'a',
                     'started_at'  =>  now(),
                     'finished_at'  =>  now(),
@@ -336,6 +337,25 @@ trait AccountingPartnerAssignmentTestTraits
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPartnerAssignment::first();
 
             event(new \NextDeveloper\Accounting\Events\AccountingPartnerAssignment\AccountingPartnerAssignmentRestoredEvent($model));
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_accountingpartnerassignment_event_type_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'type'  =>  'a'
+                ]
+            );
+
+            $filter = new AccountingPartnerAssignmentQueryFilter($request);
+
+            $model = \NextDeveloper\Accounting\Database\Models\AccountingPartnerAssignment::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }

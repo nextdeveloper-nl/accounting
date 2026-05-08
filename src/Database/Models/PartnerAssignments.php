@@ -21,7 +21,7 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
  * @property integer $id
  * @property string $uuid
  * @property integer $accounting_account_id
- * @property $type
+ * @property string $type
  * @property integer $old_partner_id
  * @property integer $new_partner_id
  * @property \Carbon\Carbon $started_at
@@ -82,6 +82,7 @@ class PartnerAssignments extends Model
     protected $casts = [
     'id' => 'integer',
     'accounting_account_id' => 'integer',
+    'type' => 'string',
     'old_partner_id' => 'integer',
     'new_partner_id' => 'integer',
     'started_at' => 'datetime',
@@ -152,15 +153,6 @@ class PartnerAssignments extends Model
         }
     }
 
-    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\Accounting\Database\Models\Accounts::class);
-    }
-    
-    public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

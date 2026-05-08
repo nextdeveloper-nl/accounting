@@ -84,6 +84,39 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     {
         return $this->ccCvv($value);
     }
+        
+    public function pgCardUserKey($value)
+    {
+        return $this->builder->where('pg_card_user_key', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of pgCardUserKey
+    public function pg_card_user_key($value)
+    {
+        return $this->pgCardUserKey($value);
+    }
+        
+    public function pgCardToken($value)
+    {
+        return $this->builder->where('pg_card_token', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of pgCardToken
+    public function pg_card_token($value)
+    {
+        return $this->pgCardToken($value);
+    }
+        
+    public function pgProvider($value)
+    {
+        return $this->builder->where('pg_provider', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of pgProvider
+    public function pg_provider($value)
+    {
+        return $this->pgProvider($value);
+    }
     
     public function isDefault($value)
     {
@@ -127,6 +160,17 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
     public function is_3d_secure($value)
     {
         return $this->is3dSecure($value);
+    }
+     
+    public function isStoredAtPg($value)
+    {
+        return $this->builder->where('is_stored_at_pg', $value);
+    }
+
+        //  This is an alias function of isStoredAtPg
+    public function is_stored_at_pg($value)
+    {
+        return $this->isStoredAtPg($value);
     }
      
     public function createdAtStart($date)
@@ -216,6 +260,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
 
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
