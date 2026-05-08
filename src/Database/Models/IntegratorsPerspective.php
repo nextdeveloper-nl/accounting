@@ -36,23 +36,6 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property string $tr_mersis
  * @property string $trade_office
  * @property string $trade_office_number
- * @property $badges
- * @property $boosts
- * @property array $compliance_certifications
- * @property integer $customer_count
- * @property string $industry
- * @property boolean $is_approved
- * @property boolean $is_brand_ambassador
- * @property integer $level
- * @property string $meeting_link
- * @property $mystery_box
- * @property integer $reward_points
- * @property array $sector_focus
- * @property array $special_interest
- * @property array $target_group
- * @property array $technical_capabilities
- * @property array $operating_countries
- * @property array $operating_cities
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
@@ -89,23 +72,6 @@ class IntegratorsPerspective extends Model
             'tr_mersis',
             'trade_office',
             'trade_office_number',
-            'badges',
-            'boosts',
-            'compliance_certifications',
-            'customer_count',
-            'industry',
-            'is_approved',
-            'is_brand_ambassador',
-            'level',
-            'meeting_link',
-            'mystery_box',
-            'reward_points',
-            'sector_focus',
-            'special_interest',
-            'target_group',
-            'technical_capabilities',
-            'operating_countries',
-            'operating_cities',
     ];
 
     /**
@@ -142,23 +108,6 @@ class IntegratorsPerspective extends Model
     'tr_mersis' => 'string',
     'trade_office' => 'string',
     'trade_office_number' => 'string',
-    'badges' => 'array',
-    'boosts' => 'array',
-    'compliance_certifications' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
-    'customer_count' => 'integer',
-    'industry' => 'string',
-    'is_approved' => 'boolean',
-    'is_brand_ambassador' => 'boolean',
-    'level' => 'integer',
-    'meeting_link' => 'string',
-    'mystery_box' => 'array',
-    'reward_points' => 'integer',
-    'sector_focus' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
-    'special_interest' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
-    'target_group' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
-    'technical_capabilities' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
-    'operating_countries' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
-    'operating_cities' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
@@ -223,6 +172,7 @@ class IntegratorsPerspective extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

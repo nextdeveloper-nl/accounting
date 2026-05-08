@@ -10,10 +10,15 @@ use Iyzipay\Model\Locale;
 use Iyzipay\Options;
 use Iyzipay\Request\Iyzilink\IyziLinkSaveProductRequest;
 
+use Iyzipay\Model\Card as IyzipayCard;
+use Iyzipay\Model\CardInformation;
+use Iyzipay\Request\CreateCardRequest;
 use NextDeveloper\Accounting\Database\Models\Accounts;
+use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
+use NextDeveloper\IAM\Database\Models\Users;
 
 use Omnipay\Iyzico\Gateway as IyzicoGateway;
 
@@ -335,6 +340,95 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
                 'error' => $e->getMessage()
             ]);
             return false;
+        }
+    }
+
+    /**
+     * Store a credit card at Iyzico Card Storage.
+     *
+     * Uses cardUserKey if another card for the same account is already stored,
+     * otherwise creates a new Iyzico user with the account's email.
+     *
+     * @return array{success: bool, cardUserKey: string|null, cardToken: string|null, errorMessage: string|null}
+     */
+    public function storeCard(CreditCards $card): array
+    {
+        try {
+            $request = new CreateCardRequest();
+            $request->setLocale(\Iyzipay\Model\Locale::TR);
+            $request->setConversationId($card->uuid);
+
+            $existingCardWithKey = CreditCards::query()
+                ->where('iam_account_id', $card->iam_account_id)
+                ->where('pg_provider', 'iyzico-turkey')
+                ->whereNotNull('pg_card_user_key')
+                ->where('id', '!=', $card->id)
+                ->first();
+
+            if ($existingCardWithKey) {
+                $request->setCardUserKey($existingCardWithKey->pg_card_user_key);
+            } else {
+                $user = Users::find($card->iam_user_id);
+
+                if (!$user) {
+                    Log::error(__METHOD__ . ' - User not found for card', ['credit_card_id' => $card->id]);
+                    return ['success' => false, 'cardUserKey' => null, 'cardToken' => null, 'errorMessage' => 'User not found'];
+                }
+
+                $request->setEmail($user->email);
+                $request->setExternalId((string) $card->iam_account_id);
+            }
+
+            $cardInformation = new CardInformation();
+            $cardInformation->setCardAlias($card->name);
+            $cardInformation->setCardHolderName($card->cc_holder_name);
+            $cardInformation->setCardNumber(decrypt($card->cc_number));
+            $cardInformation->setExpireMonth($card->cc_month);
+            $cardInformation->setExpireYear($card->cc_year);
+            $request->setCard($cardInformation);
+
+            $response = IyzipayCard::create($request, $this->options);
+
+            if ($response->getStatus() === 'success') {
+                Log::info(__METHOD__ . ' - Card stored at Iyzico', [
+                    'credit_card_id'  => $card->id,
+                    'card_user_key'   => $response->getCardUserKey(),
+                    'card_token'      => $response->getCardToken(),
+                ]);
+
+                return [
+                    'success'      => true,
+                    'cardUserKey'  => $response->getCardUserKey(),
+                    'cardToken'    => $response->getCardToken(),
+                    'errorMessage' => null,
+                ];
+            }
+
+            Log::error(__METHOD__ . ' - Iyzico card storage failed', [
+                'credit_card_id' => $card->id,
+                'error_code'     => $response->getErrorCode(),
+                'error_message'  => $response->getErrorMessage(),
+            ]);
+
+            return [
+                'success'      => false,
+                'cardUserKey'  => null,
+                'cardToken'    => null,
+                'errorMessage' => $response->getErrorMessage(),
+            ];
+        } catch (\Throwable $e) {
+            Log::error(__METHOD__ . ' - Unexpected error storing card at Iyzico', [
+                'credit_card_id' => $card->id,
+                'exception'      => get_class($e),
+                'message'        => $e->getMessage(),
+            ]);
+
+            return [
+                'success'      => false,
+                'cardUserKey'  => null,
+                'cardToken'    => null,
+                'errorMessage' => $e->getMessage(),
+            ];
         }
     }
 }

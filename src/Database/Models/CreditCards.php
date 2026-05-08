@@ -37,6 +37,10 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property string $pg_card_user_key
+ * @property string $pg_card_token
+ * @property string $pg_provider
+ * @property boolean $is_stored_at_pg
  */
 class CreditCards extends Model
 {
@@ -67,6 +71,10 @@ class CreditCards extends Model
             'is_3d_secure',
             'iam_account_id',
             'iam_user_id',
+            'pg_card_user_key',
+            'pg_card_token',
+            'pg_provider',
+            'is_stored_at_pg',
     ];
 
     /**
@@ -104,6 +112,10 @@ class CreditCards extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
+    'pg_card_user_key' => 'string',
+    'pg_card_token' => 'string',
+    'pg_provider' => 'string',
+    'is_stored_at_pg' => 'boolean',
     ];
 
     /**
@@ -164,16 +176,6 @@ class CreditCards extends Model
         }
     }
 
-    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
-    }
-    
-    public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
     protected function ccNumber(): Attribute
@@ -184,6 +186,7 @@ class CreditCards extends Model
             },
         );
     }
+
 
 
 

@@ -76,6 +76,10 @@ class AbstractCreditCardsTransformer extends AbstractTransformer
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
+            'pg_card_user_key'  =>  $model->pg_card_user_key,
+            'pg_card_token'  =>  $model->pg_card_token,
+            'pg_provider'  =>  $model->pg_provider,
+            'is_stored_at_pg'  =>  $model->is_stored_at_pg,
             ]
         );
     }
@@ -164,6 +168,7 @@ class AbstractCreditCardsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
