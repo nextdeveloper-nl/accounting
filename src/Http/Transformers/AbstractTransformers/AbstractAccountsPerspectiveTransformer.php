@@ -60,11 +60,11 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
-                                                            $distributorId = \NextDeveloper\\Database\Models\Distributors::where('id', $model->distributor_id)->first();
-                                                            $integratorPartnerId = \NextDeveloper\\Database\Models\IntegratorPartners::where('id', $model->integrator_partner_id)->first();
-                                                            $salesPartnerId = \NextDeveloper\\Database\Models\SalesPartners::where('id', $model->sales_partner_id)->first();
-                                                            $affiliatePartnerId = \NextDeveloper\\Database\Models\AffiliatePartners::where('id', $model->affiliate_partner_id)->first();
-                        
+                                                            $distributorId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->distributor_id)->first();
+                                                            $integratorPartnerId = \NextDeveloper\Accounting\Database\Models\IntegratorPartners::where('id', $model->integrator_partner_id)->first();
+                                                            $salesPartnerId = \NextDeveloper\Accounting\Database\Models\SalesPartners::where('id', $model->sales_partner_id)->first();
+                                                            $affiliatePartnerId = \NextDeveloper\Accounting\Database\Models\AffiliatePartners::where('id', $model->affiliate_partner_id)->first();
+
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,
