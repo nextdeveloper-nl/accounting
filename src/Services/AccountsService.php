@@ -8,6 +8,7 @@ use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Helpers\PartnershipHelper;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountsService;
+use NextDeveloper\Accounting\Services\PartnershipsService;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\Commons\Exceptions\CannotCreateModelException;
@@ -117,6 +118,19 @@ class AccountsService extends AbstractAccountsService
 
         if(!$updatedAccount) {
             throw new \RuntimeException('Failed to update account.');
+        }
+
+        $freshAccount = $updatedAccount->fresh();
+        if (
+            $freshAccount->is_distributor ||
+            $freshAccount->is_sales_partner ||
+            $freshAccount->is_affiliate ||
+            $freshAccount->is_integrator
+        ) {
+            PartnershipsService::create([
+                'iam_account_id'       => $freshAccount->iam_account_id,
+                'accounting_account_id' => $freshAccount->id,
+            ]);
         }
 
         if(array_key_exists('distributor_id', $data)) {
