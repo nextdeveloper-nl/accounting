@@ -3,6 +3,7 @@
 namespace NextDeveloper\Accounting\Helpers;
 
 use NextDeveloper\Accounting\Database\Models\Accounts;
+use NextDeveloper\Accounting\Exceptions\InsufficientCreditException;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
@@ -13,10 +14,12 @@ class CreditHelper
     /**
      * Returns the credit balance of the given accounting account in USD.
      * If the account's currency is not USD, the stored value is converted before returning.
+     * Falls back to the current session's accounting account when $account is null.
      */
-    public static function getCredit(Accounts $account): float
+    public static function getCredit(?Accounts $account = null): float
     {
-        $credit = (float) $account->credit;
+        $account = self::resolve($account);
+        $credit  = (float) $account->credit;
 
         return self::toUsd($credit, $account);
     }
@@ -24,11 +27,13 @@ class CreditHelper
     /**
      * Increases the account's credit by the given USD amount.
      * The amount is converted from USD to the account's currency before storing.
+     * Falls back to the current session's accounting account when $account is null.
      *
      * @return Accounts The refreshed accounting account.
      */
-    public static function increase(Accounts $account, float $amountUsd = 0): Accounts
+    public static function increase(?Accounts $account = null, float $amountUsd = 0): Accounts
     {
+        $account                 = self::resolve($account);
         $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
 
         $account->updateQuietly([
@@ -41,11 +46,13 @@ class CreditHelper
     /**
      * Decreases the account's credit by the given USD amount.
      * The amount is converted from USD to the account's currency before storing.
+     * Falls back to the current session's accounting account when $account is null.
      *
      * @return Accounts The refreshed accounting account.
      */
-    public static function decrease(Accounts $account, float $amountUsd = 0): Accounts
+    public static function decrease(?Accounts $account = null, float $amountUsd = 0): Accounts
     {
+        $account                 = self::resolve($account);
         $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
 
         $account->updateQuietly([
@@ -57,10 +64,35 @@ class CreditHelper
 
     /**
      * Returns whether the account has at least the given amount of credit (given in USD).
+     * Falls back to the current session's accounting account when $account is null.
      */
-    public static function hasEnoughCredit(Accounts $account, float $amountUsd = 0): bool
+    public static function hasEnoughCredit(?Accounts $account = null, float $amountUsd = 0): bool
     {
         return self::getCredit($account) >= $amountUsd;
+    }
+
+    /**
+     * Throws InsufficientCreditException if the account does not have enough credit.
+     * Use this as a guard at the start of any billable operation.
+     * Falls back to the current session's accounting account when $account is null.
+     *
+     * @throws InsufficientCreditException
+     */
+    public static function check(?Accounts $account = null, float $amountUsd = 0, string $reason = ''): void
+    {
+        $available = self::getCredit($account);
+
+        if ($available < $amountUsd) {
+            throw new InsufficientCreditException($reason, $amountUsd, $available);
+        }
+    }
+
+    /**
+     * Resolves the accounting account, falling back to the current session's account when null.
+     */
+    private static function resolve(?Accounts $account): Accounts
+    {
+        return $account ?? AccountingHelper::getAccount();
     }
 
     /**
