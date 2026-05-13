@@ -583,4 +583,100 @@ class StripeUSA implements PaymentGatewaysInterface
             'raw_data' => $eventData
         ];
     }
+
+    // -------------------------------------------------------------------------
+    // Catalog helpers — read-only Stripe product / price discovery.
+    //
+    // These methods don't need an Accounts context, so they are static. Callers
+    // pass either a PaymentGateways row (preferred) or the gateway's `name` and
+    // we look it up. Use to map plan classes to live Stripe IDs without
+    // instantiating the full gateway.
+    // -------------------------------------------------------------------------
+
+    /**
+     * Build a Stripe API client from an `accounting_payment_gateways` row.
+     */
+    public static function client(PaymentGateways|string $gateway): \Stripe\StripeClient
+    {
+        $row = $gateway instanceof PaymentGateways
+            ? $gateway
+            : PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
+                ->where('name', $gateway)
+                ->where('is_active', true)
+                ->whereNull('deleted_at')
+                ->first();
+
+        if (!$row) {
+            throw new \RuntimeException('Active payment gateway not found: ' . (is_string($gateway) ? $gateway : 'n/a'));
+        }
+
+        $params = $row->parameters ?? [];
+        $secret = ($params['is_test'] ?? false)
+            ? ($params['test_api_secret'] ?? null)
+            : ($params['live_api_secret'] ?? null);
+
+        if (!$secret) {
+            throw new \RuntimeException("No API secret configured on gateway '{$row->name}'.");
+        }
+
+        return new \Stripe\StripeClient($secret);
+    }
+
+    /**
+     * List all active Stripe products, optionally including their prices.
+     *
+     * @return array<int, array{id:string, name:string, active:bool, description:?string, metadata:array, prices?:array}>
+     */
+    public static function listProducts(PaymentGateways|string $gateway = 'stripe-usa', bool $withPrices = true): array
+    {
+        $client = self::client($gateway);
+        $out = [];
+
+        foreach ($client->products->all(['limit' => 100, 'active' => true])->autoPagingIterator() as $product) {
+            $row = [
+                'id'          => $product->id,
+                'name'        => $product->name,
+                'active'      => (bool) $product->active,
+                'description' => $product->description,
+                'metadata'    => (array) $product->metadata->toArray(),
+            ];
+
+            if ($withPrices) {
+                $row['prices'] = self::listPrices($gateway, $product->id);
+            }
+
+            $out[] = $row;
+        }
+
+        return $out;
+    }
+
+    /**
+     * List prices for one product (or all prices if $productId is null).
+     *
+     * @return array<int, array{id:string, currency:string, unit_amount:?int, recurring:?array, nickname:?string}>
+     */
+    public static function listPrices(PaymentGateways|string $gateway = 'stripe-usa', ?string $productId = null): array
+    {
+        $client = self::client($gateway);
+
+        $params = ['limit' => 100, 'active' => true];
+        if ($productId) {
+            $params['product'] = $productId;
+        }
+
+        $out = [];
+
+        foreach ($client->prices->all($params)->autoPagingIterator() as $price) {
+            $out[] = [
+                'id'          => $price->id,
+                'currency'    => $price->currency,
+                'unit_amount' => $price->unit_amount,
+                'recurring'   => $price->recurring ? (array) $price->recurring->toArray() : null,
+                'nickname'    => $price->nickname,
+            ];
+        }
+
+        return $out;
+    }
 }
