@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Accounting\Helpers;
 
+use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Exceptions\InsufficientCreditException;
 use NextDeveloper\Commons\Database\Models\Currencies;
@@ -25,14 +26,18 @@ class CreditHelper
     }
 
     /**
-     * Increases the account's credit by the given USD amount.
-     * The amount is converted from USD to the account's currency before storing.
+     * Increases the account's credit by the given USD amount and records a credit transaction.
+     * Pass $object to associate the transaction with the entity that triggered the increase.
      * Falls back to the current session's accounting account when $account is null.
      *
      * @return Accounts The refreshed accounting account.
      */
-    public static function increase(?Accounts $account = null, float $amountUsd = 0): Accounts
-    {
+    public static function increase(
+        ?Accounts $account = null,
+        float     $amountUsd = 0,
+        ?string   $description = null,
+        ?Model    $object = null
+    ): Accounts {
         $account                 = self::resolve($account);
         $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
 
@@ -40,18 +45,32 @@ class CreditHelper
             'credit' => $account->credit + $amountInAccountCurrency,
         ]);
 
-        return $account->fresh();
+        $account = $account->fresh();
+
+        CreditTransactionsHelper::logCredit(
+            $account,
+            $amountUsd,
+            $description,
+            $object ? get_class($object) : null,
+            $object?->id
+        );
+
+        return $account;
     }
 
     /**
-     * Decreases the account's credit by the given USD amount.
-     * The amount is converted from USD to the account's currency before storing.
+     * Decreases the account's credit by the given USD amount and records a debit transaction.
+     * Pass $object to associate the transaction with the entity that triggered the deduction.
      * Falls back to the current session's accounting account when $account is null.
      *
      * @return Accounts The refreshed accounting account.
      */
-    public static function decrease(?Accounts $account = null, float $amountUsd = 0): Accounts
-    {
+    public static function decrease(
+        ?Accounts $account = null,
+        float     $amountUsd = 0,
+        ?string   $description = null,
+        ?Model    $object = null
+    ): Accounts {
         $account                 = self::resolve($account);
         $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
 
@@ -59,7 +78,17 @@ class CreditHelper
             'credit' => $account->credit - $amountInAccountCurrency,
         ]);
 
-        return $account->fresh();
+        $account = $account->fresh();
+
+        CreditTransactionsHelper::logDebit(
+            $account,
+            $amountUsd,
+            $description,
+            $object ? get_class($object) : null,
+            $object?->id
+        );
+
+        return $account;
     }
 
     /**
