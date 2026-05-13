@@ -18,7 +18,7 @@ class CreditHelper
      */
     public static function getCredit(?Accounts $account = null): float
     {
-        $account = self::resolve($account);
+        $account = self::resolve($account)->fresh();
         $credit  = (float) $account->credit;
 
         return self::toUsd($credit, $account);
