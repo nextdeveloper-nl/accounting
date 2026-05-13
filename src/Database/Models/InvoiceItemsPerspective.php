@@ -15,47 +15,47 @@ use Illuminate\Notifications\Notifiable;
 use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
- * InvoiceItemsPerspective model.
- *
- * @package  NextDeveloper\Accounting\Database\Models
- * @property integer $id
- * @property string $uuid
- * @property integer $accounting_invoice_id
- * @property integer $term_year
- * @property integer $term_month
- * @property $invoice_amount
- * @property string $object_type
- * @property integer $object_id
- * @property $unit_price
- * @property integer $quantity
- * @property $total_price
- * @property integer $iam_account_id
- * @property string $name
- * @property integer $iam_user_id
- * @property string $accounting_identifier
- * @property $credit
- * @property integer $common_currency_id
- * @property string $common_currency_code
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon $deleted_at
- */
+* InvoiceItemsPerspective model.
+*
+* @package NextDeveloper\Accounting\Database\Models
+* @property integer $id
+* @property string $uuid
+* @property integer $accounting_invoice_id
+* @property integer $term_year
+* @property integer $term_month
+* @property  $invoice_amount
+* @property string $object_type
+* @property integer $object_id
+* @property  $unit_price
+* @property integer $quantity
+* @property  $total_price
+* @property integer $iam_account_id
+* @property string $name
+* @property integer $iam_user_id
+* @property string $accounting_identifier
+* @property  $credit
+* @property integer $common_currency_id
+* @property string $common_currency_code
+* @property \Carbon\Carbon $created_at
+* @property \Carbon\Carbon $updated_at
+* @property \Carbon\Carbon $deleted_at
+*/
 class InvoiceItemsPerspective extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
-    use SoftDeletes;
+use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
+	use SoftDeletes;
 
-    public $timestamps = true;
+	public $timestamps = true;
 
-    protected $table = 'accounting_invoice_items_perspective';
+protected $table = 'accounting_invoice_items_perspective';
 
 
-    /**
-     @var array
-     */
-    protected $guarded = [];
+/**
+* @var array
+*/
+protected $guarded = [];
 
-    protected $fillable = [
+protected $fillable = [
             'accounting_invoice_id',
             'term_year',
             'term_month',
@@ -74,101 +74,98 @@ class InvoiceItemsPerspective extends Model
             'common_currency_code',
     ];
 
-    /**
-      Here we have the fulltext fields. We can use these for fulltext search if enabled.
-     */
-    protected $fullTextFields = [
+/**
+*  Here we have the fulltext fields. We can use these for fulltext search if enabled.
+*/
+protected $fullTextFields = [
 
-    ];
+];
 
-    /**
-     @var array
-     */
-    protected $appends = [
+/**
+* @var array
+*/
+protected $appends = [
 
-    ];
+];
 
-    /**
-     We are casting fields to objects so that we can work on them better
-     *
-     @var array
-     */
-    protected $casts = [
-    'id' => 'integer',
-    'accounting_invoice_id' => 'integer',
-    'term_year' => 'integer',
-    'term_month' => 'integer',
-    'object_type' => 'string',
-    'object_id' => 'integer',
-    'quantity' => 'integer',
-    'name' => 'string',
-    'accounting_identifier' => 'string',
-    'common_currency_id' => 'integer',
-    'common_currency_code' => 'string',
-    'created_at' => 'datetime',
-    'updated_at' => 'datetime',
-    'deleted_at' => 'datetime',
-    ];
+/**
+* We are casting fields to objects so that we can work on them better
+* @var array
+*/
+protected $casts = [
+'id' => 'integer',
+'accounting_invoice_id' => 'integer',
+'term_year' => 'integer',
+'term_month' => 'integer',
+'object_type' => 'string',
+'object_id' => 'integer',
+'quantity' => 'integer',
+'name' => 'string',
+'accounting_identifier' => 'string',
+'common_currency_id' => 'integer',
+'common_currency_code' => 'string',
+'created_at' => 'datetime',
+'updated_at' => 'datetime',
+'deleted_at' => 'datetime',
+];
 
-    /**
-     We are casting data fields.
-     *
-     @var array
-     */
-    protected $dates = [
-    'created_at',
-    'updated_at',
-    'deleted_at',
-    ];
+/**
+* We are casting data fields.
+* @var array
+*/
+protected $dates = [
+'created_at',
+'updated_at',
+'deleted_at',
+];
 
-    /**
-     @var array
-     */
-    protected $with = [
+/**
+* @var array
+*/
+protected $with = [
 
-    ];
+];
 
-    /**
-     @var int
-     */
-    protected $perPage = 20;
+/**
+* @var int
+*/
+protected $perPage = 20;
 
-    /**
-     @return void
-     */
-    public static function boot()
-    {
-        parent::boot();
+/**
+* @return void
+*/
+public static function boot()
+{
+parent::boot();
 
-        //  We create and add Observer even if we wont use it.
-        parent::observe(InvoiceItemsPerspectiveObserver::class);
+//  We create and add Observer even if we wont use it.
+parent::observe(InvoiceItemsPerspectiveObserver::class);
 
-        self::registerScopes();
-    }
+self::registerScopes();
+}
 
-    public static function registerScopes()
-    {
-        $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_invoice_items_perspective');
+public static function registerScopes()
+{
+$globalScopes = config('accounting.scopes.global');
+$modelScopes = config('accounting.scopes.accounting_invoice_items_perspective');
 
-        if(!$modelScopes) { $modelScopes = [];
-        }
-        if (!$globalScopes) { $globalScopes = [];
-        }
+if(!$modelScopes) $modelScopes = [];
+if (!$globalScopes) $globalScopes = [];
 
-        $scopes = array_merge(
-            $globalScopes,
-            $modelScopes
-        );
+$scopes = array_merge(
+$globalScopes,
+$modelScopes
+);
 
-        if($scopes) {
-            foreach ($scopes as $scope) {
-                static::addGlobalScope(app($scope));
-            }
-        }
-    }
+if($scopes) {
+foreach ($scopes as $scope) {
+static::addGlobalScope(app($scope));
+}
+}
+}
 
-    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

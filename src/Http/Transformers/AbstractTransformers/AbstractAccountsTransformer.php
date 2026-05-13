@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractAccountsTransformer extends AbstractTransformer
-{
+class AbstractAccountsTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,8 +51,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(Accounts $model)
-    {
+    public function transform(Accounts $model) {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                                                             $distributorId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->distributor_id)->first();
@@ -61,38 +59,36 @@ class AbstractAccountsTransformer extends AbstractTransformer
                                                             $integratorPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
                                                             $affiliatePartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->affiliate_partner_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'tax_office'  =>  $model->tax_office,
-            'tax_number'  =>  $model->tax_number,
-            'accounting_identifier'  =>  $model->accounting_identifier,
-            'credit'  =>  $model->credit,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            'trade_office_number'  =>  $model->trade_office_number,
-            'trade_office'  =>  $model->trade_office,
-            'tr_mersis'  =>  $model->tr_mersis,
-            'is_suspended'  =>  $model->is_suspended,
-            'balance'  =>  $model->balance,
-            'is_disabled'  =>  $model->is_disabled,
-            'distributor_id'  =>  $distributorId ? $distributorId->uuid : null,
-            'sales_partner_id'  =>  $salesPartnerId ? $salesPartnerId->uuid : null,
-            'integrator_partner_id'  =>  $integratorPartnerId ? $integratorPartnerId->uuid : null,
-            'affiliate_partner_id'  =>  $affiliatePartnerId ? $affiliatePartnerId->uuid : null,
-            'is_distributor'  =>  $model->is_distributor,
-            'is_integrator'  =>  $model->is_integrator,
-            'is_vendor'  =>  $model->is_vendor,
-            'is_reseller'  =>  $model->is_reseller,
-            'is_affiliate'  =>  $model->is_affiliate,
-            'affiliate_level'  =>  $model->affiliate_level,
-            'partner_code'  =>  $model->partner_code,
-            'mapping'  =>  $model->mapping,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'tax_office'  =>  $model->tax_office,
+'tax_number'  =>  $model->tax_number,
+'accounting_identifier'  =>  $model->accounting_identifier,
+'credit'  =>  $model->credit,
+'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+'trade_office_number'  =>  $model->trade_office_number,
+'trade_office'  =>  $model->trade_office,
+'tr_mersis'  =>  $model->tr_mersis,
+'is_suspended'  =>  $model->is_suspended,
+'balance'  =>  $model->balance,
+'is_disabled'  =>  $model->is_disabled,
+'distributor_id'  =>  $distributorId ? $distributorId->uuid : null,
+'sales_partner_id'  =>  $salesPartnerId ? $salesPartnerId->uuid : null,
+'integrator_partner_id'  =>  $integratorPartnerId ? $integratorPartnerId->uuid : null,
+'affiliate_partner_id'  =>  $affiliatePartnerId ? $affiliatePartnerId->uuid : null,
+'is_distributor'  =>  $model->is_distributor,
+'is_integrator'  =>  $model->is_integrator,
+'is_vendor'  =>  $model->is_vendor,
+'is_reseller'  =>  $model->is_reseller,
+'is_affiliate'  =>  $model->is_affiliate,
+'affiliate_level'  =>  $model->affiliate_level,
+'partner_code'  =>  $model->partner_code,
+'mapping'  =>  $model->mapping,
+    ]);
     }
 
     public function includeStates(Accounts $model)
@@ -179,6 +175,7 @@ class AbstractAccountsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

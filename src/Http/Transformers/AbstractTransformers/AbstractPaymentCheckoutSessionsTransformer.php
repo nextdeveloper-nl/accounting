@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractPaymentCheckoutSessionsTransformer extends AbstractTransformer
-{
+class AbstractPaymentCheckoutSessionsTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,24 +51,21 @@ class AbstractPaymentCheckoutSessionsTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(PaymentCheckoutSessions $model)
-    {
+    public function transform(PaymentCheckoutSessions $model) {
                                                 $accountingPaymentGatewayId = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('id', $model->accounting_payment_gateway_id)->first();
                                                             $accountingInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->accounting_invoice_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'accounting_payment_gateway_id'  =>  $accountingPaymentGatewayId ? $accountingPaymentGatewayId->uuid : null,
-            'accounting_invoice_id'  =>  $accountingInvoiceId ? $accountingInvoiceId->uuid : null,
-            'payment_data'  =>  $model->payment_data,
-            'session_data'  =>  $model->session_data,
-            'is_invalidated'  =>  $model->is_invalidated,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'accounting_payment_gateway_id'  =>  $accountingPaymentGatewayId ? $accountingPaymentGatewayId->uuid : null,
+'accounting_invoice_id'  =>  $accountingInvoiceId ? $accountingInvoiceId->uuid : null,
+'payment_data'  =>  $model->payment_data,
+'session_data'  =>  $model->session_data,
+'is_invalidated'  =>  $model->is_invalidated,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+    ]);
     }
 
     public function includeStates(PaymentCheckoutSessions $model)
@@ -156,6 +152,7 @@ class AbstractPaymentCheckoutSessionsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

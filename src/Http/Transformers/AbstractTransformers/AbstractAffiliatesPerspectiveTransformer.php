@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractAffiliatesPerspectiveTransformer extends AbstractTransformer
-{
+class AbstractAffiliatesPerspectiveTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,8 +51,7 @@ class AbstractAffiliatesPerspectiveTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(AffiliatesPerspective $model)
-    {
+    public function transform(AffiliatesPerspective $model) {
                                                 $commonCountryId = \NextDeveloper\Commons\Database\Models\Countries::where('id', $model->common_country_id)->first();
                                                             $commonDomainId = \NextDeveloper\Commons\Database\Models\Domains::where('id', $model->common_domain_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
@@ -61,45 +59,43 @@ class AbstractAffiliatesPerspectiveTransformer extends AbstractTransformer
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'name'  =>  $model->name,
-            'phone_number'  =>  $model->phone_number,
-            'common_country_id'  =>  $commonCountryId ? $commonCountryId->uuid : null,
-            'common_domain_id'  =>  $commonDomainId ? $commonDomainId->uuid : null,
-            'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
-            'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'tax_number'  =>  $model->tax_number,
-            'tax_office'  =>  $model->tax_office,
-            'accounting_identifier'  =>  $model->accounting_identifier,
-            'credit'  =>  $model->credit,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'common_currency_code'  =>  $model->common_currency_code,
-            'tr_mersis'  =>  $model->tr_mersis,
-            'trade_office'  =>  $model->trade_office,
-            'trade_office_number'  =>  $model->trade_office_number,
-            'badges'  =>  $model->badges,
-            'boosts'  =>  $model->boosts,
-            'compliance_certifications'  =>  $model->compliance_certifications,
-            'customer_count'  =>  $model->customer_count,
-            'industry'  =>  $model->industry,
-            'is_approved'  =>  $model->is_approved,
-            'is_brand_ambassador'  =>  $model->is_brand_ambassador,
-            'level'  =>  $model->level,
-            'meeting_link'  =>  $model->meeting_link,
-            'mystery_box'  =>  $model->mystery_box,
-            'reward_points'  =>  $model->reward_points,
-            'sector_focus'  =>  $model->sector_focus,
-            'special_interest'  =>  $model->special_interest,
-            'target_group'  =>  $model->target_group,
-            'technical_capabilities'  =>  $model->technical_capabilities,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'name'  =>  $model->name,
+'phone_number'  =>  $model->phone_number,
+'common_country_id'  =>  $commonCountryId ? $commonCountryId->uuid : null,
+'common_domain_id'  =>  $commonDomainId ? $commonDomainId->uuid : null,
+'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
+'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'tax_number'  =>  $model->tax_number,
+'tax_office'  =>  $model->tax_office,
+'accounting_identifier'  =>  $model->accounting_identifier,
+'credit'  =>  $model->credit,
+'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+'common_currency_code'  =>  $model->common_currency_code,
+'tr_mersis'  =>  $model->tr_mersis,
+'trade_office'  =>  $model->trade_office,
+'trade_office_number'  =>  $model->trade_office_number,
+'badges'  =>  $model->badges,
+'boosts'  =>  $model->boosts,
+'compliance_certifications'  =>  $model->compliance_certifications,
+'customer_count'  =>  $model->customer_count,
+'industry'  =>  $model->industry,
+'is_approved'  =>  $model->is_approved,
+'is_brand_ambassador'  =>  $model->is_brand_ambassador,
+'level'  =>  $model->level,
+'meeting_link'  =>  $model->meeting_link,
+'mystery_box'  =>  $model->mystery_box,
+'reward_points'  =>  $model->reward_points,
+'sector_focus'  =>  $model->sector_focus,
+'special_interest'  =>  $model->special_interest,
+'target_group'  =>  $model->target_group,
+'technical_capabilities'  =>  $model->technical_capabilities,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+    ]);
     }
 
     public function includeStates(AffiliatesPerspective $model)
@@ -186,6 +182,7 @@ class AbstractAffiliatesPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

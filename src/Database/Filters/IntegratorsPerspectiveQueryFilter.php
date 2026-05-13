@@ -14,8 +14,8 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
 {
 
     /**
-     * @var Builder
-     */
+    * @var Builder
+    */
     protected $builder;
     
     public function name($value)
@@ -32,7 +32,7 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         //  This is an alias function of phoneNumber
     public function phone_number($value)
     {
-        return $this->phoneNumber($value);
+    return $this->phoneNumber($value);
     }
         
     public function taxNumber($value)
@@ -43,7 +43,7 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         //  This is an alias function of taxNumber
     public function tax_number($value)
     {
-        return $this->taxNumber($value);
+    return $this->taxNumber($value);
     }
         
     public function taxOffice($value)
@@ -54,7 +54,7 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         //  This is an alias function of taxOffice
     public function tax_office($value)
     {
-        return $this->taxOffice($value);
+    return $this->taxOffice($value);
     }
         
     public function accountingIdentifier($value)
@@ -65,7 +65,7 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         //  This is an alias function of accountingIdentifier
     public function accounting_identifier($value)
     {
-        return $this->accountingIdentifier($value);
+    return $this->accountingIdentifier($value);
     }
         
     public function commonCurrencyCode($value)
@@ -76,7 +76,7 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         //  This is an alias function of commonCurrencyCode
     public function common_currency_code($value)
     {
-        return $this->commonCurrencyCode($value);
+    return $this->commonCurrencyCode($value);
     }
         
     public function trMersis($value)
@@ -87,7 +87,7 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         //  This is an alias function of trMersis
     public function tr_mersis($value)
     {
-        return $this->trMersis($value);
+    return $this->trMersis($value);
     }
         
     public function tradeOffice($value)
@@ -98,7 +98,7 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         //  This is an alias function of tradeOffice
     public function trade_office($value)
     {
-        return $this->tradeOffice($value);
+    return $this->tradeOffice($value);
     }
         
     public function tradeOfficeNumber($value)
@@ -109,73 +109,73 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         //  This is an alias function of tradeOfficeNumber
     public function trade_office_number($value)
     {
-        return $this->tradeOfficeNumber($value);
+    return $this->tradeOfficeNumber($value);
     }
     
     public function createdAtStart($date)
     {
-        return $this->builder->where('created_at', '>=', $date);
+        return $this->builder->where( 'created_at', '>=', $date );
     }
 
     public function createdAtEnd($date)
     {
-        return $this->builder->where('created_at', '<=', $date);
+        return $this->builder->where( 'created_at', '<=', $date );
     }
 
     //  This is an alias function of createdAt
     public function created_at_start($value)
     {
-        return $this->createdAtStart($value);
+    return $this->createdAtStart($value);
     }
 
     //  This is an alias function of createdAt
     public function created_at_end($value)
     {
-        return $this->createdAtEnd($value);
+    return $this->createdAtEnd($value);
     }
 
     public function updatedAtStart($date)
     {
-        return $this->builder->where('updated_at', '>=', $date);
+        return $this->builder->where( 'updated_at', '>=', $date );
     }
 
     public function updatedAtEnd($date)
     {
-        return $this->builder->where('updated_at', '<=', $date);
+        return $this->builder->where( 'updated_at', '<=', $date );
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_start($value)
     {
-        return $this->updatedAtStart($value);
+    return $this->updatedAtStart($value);
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_end($value)
     {
-        return $this->updatedAtEnd($value);
+    return $this->updatedAtEnd($value);
     }
 
     public function deletedAtStart($date)
     {
-        return $this->builder->where('deleted_at', '>=', $date);
+        return $this->builder->where( 'deleted_at', '>=', $date );
     }
 
     public function deletedAtEnd($date)
     {
-        return $this->builder->where('deleted_at', '<=', $date);
+        return $this->builder->where( 'deleted_at', '<=', $date );
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_start($value)
     {
-        return $this->deletedAtStart($value);
+    return $this->deletedAtStart($value);
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_end($value)
     {
-        return $this->deletedAtEnd($value);
+    return $this->deletedAtEnd($value);
     }
 
     public function commonCountryId($value)
@@ -185,12 +185,12 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         if($commonCountry) {
             return $this->builder->where('common_country_id', '=', $commonCountry->id);
         }
-    }
+        }
 
         //  This is an alias function of commonCountry
     public function common_country_id($value)
     {
-        return $this->commonCountry($value);
+    return $this->commonCountry($value);
     }
     
     public function commonDomainId($value)
@@ -200,12 +200,12 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         if($commonDomain) {
             return $this->builder->where('common_domain_id', '=', $commonDomain->id);
         }
-    }
+        }
 
         //  This is an alias function of commonDomain
     public function common_domain_id($value)
     {
-        return $this->commonDomain($value);
+    return $this->commonDomain($value);
     }
     
     public function iamUserId($value)
@@ -215,7 +215,7 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         if($iamUser) {
             return $this->builder->where('iam_user_id', '=', $iamUser->id);
         }
-    }
+        }
 
     
     public function iamAccountTypeId($value)
@@ -225,12 +225,12 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         if($iamAccountType) {
             return $this->builder->where('iam_account_type_id', '=', $iamAccountType->id);
         }
-    }
+        }
 
         //  This is an alias function of iamAccountType
     public function iam_account_type_id($value)
     {
-        return $this->iamAccountType($value);
+    return $this->iamAccountType($value);
     }
     
     public function iamAccountId($value)
@@ -240,7 +240,7 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         if($iamAccount) {
             return $this->builder->where('iam_account_id', '=', $iamAccount->id);
         }
-    }
+        }
 
     
     public function commonCurrencyId($value)
@@ -250,15 +250,16 @@ class IntegratorsPerspectiveQueryFilter extends AbstractQueryFilter
         if($commonCurrency) {
             return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
         }
-    }
+        }
 
         //  This is an alias function of commonCurrency
     public function common_currency_id($value)
     {
-        return $this->commonCurrency($value);
+    return $this->commonCurrency($value);
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

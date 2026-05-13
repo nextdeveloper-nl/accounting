@@ -15,55 +15,55 @@ use Illuminate\Notifications\Notifiable;
 use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
- * Invoices model.
- *
- * @package  NextDeveloper\Accounting\Database\Models
- * @property integer $id
- * @property string $uuid
- * @property integer $accounting_account_id
- * @property string $invoice_number
- * @property $exchange_rate
- * @property $amount
- * @property integer $common_currency_id
- * @property $vat
- * @property boolean $is_paid
- * @property boolean $is_refund
- * @property \Carbon\Carbon $due_date
- * @property integer $iam_account_id
- * @property integer $iam_user_id
- * @property boolean $is_payable
- * @property boolean $is_sealed
- * @property string $note
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon $deleted_at
- * @property integer $term_year
- * @property integer $term_month
- * @property boolean $is_cancelled
- * @property string $cancellation_reason
- * @property string $payment_link_url
- * @property boolean $is_commission_invoice
- * @property integer $distributor_commission_invoice_id
- * @property integer $integrator_commission_invoice_id
- * @property integer $reseller_commission_invoice_id
- * @property integer $affiliate_commission_invoice_id
- */
+* Invoices model.
+*
+* @package NextDeveloper\Accounting\Database\Models
+* @property integer $id
+* @property string $uuid
+* @property integer $accounting_account_id
+* @property string $invoice_number
+* @property  $exchange_rate
+* @property  $amount
+* @property integer $common_currency_id
+* @property  $vat
+* @property boolean $is_paid
+* @property boolean $is_refund
+* @property \Carbon\Carbon $due_date
+* @property integer $iam_account_id
+* @property integer $iam_user_id
+* @property boolean $is_payable
+* @property boolean $is_sealed
+* @property string $note
+* @property \Carbon\Carbon $created_at
+* @property \Carbon\Carbon $updated_at
+* @property \Carbon\Carbon $deleted_at
+* @property integer $term_year
+* @property integer $term_month
+* @property boolean $is_cancelled
+* @property string $cancellation_reason
+* @property string $payment_link_url
+* @property boolean $is_commission_invoice
+* @property integer $distributor_commission_invoice_id
+* @property integer $integrator_commission_invoice_id
+* @property integer $reseller_commission_invoice_id
+* @property integer $affiliate_commission_invoice_id
+*/
 class Invoices extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
-    use SoftDeletes;
+use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
+	use SoftDeletes;
 
-    public $timestamps = true;
+	public $timestamps = true;
 
-    protected $table = 'accounting_invoices';
+protected $table = 'accounting_invoices';
 
 
-    /**
-     @var array
-     */
-    protected $guarded = [];
+/**
+* @var array
+*/
+protected $guarded = [];
 
-    protected $fillable = [
+protected $fillable = [
             'accounting_account_id',
             'invoice_number',
             'exchange_rate',
@@ -90,112 +90,109 @@ class Invoices extends Model
             'affiliate_commission_invoice_id',
     ];
 
-    /**
-      Here we have the fulltext fields. We can use these for fulltext search if enabled.
-     */
-    protected $fullTextFields = [
+/**
+*  Here we have the fulltext fields. We can use these for fulltext search if enabled.
+*/
+protected $fullTextFields = [
 
-    ];
+];
 
-    /**
-     @var array
-     */
-    protected $appends = [
+/**
+* @var array
+*/
+protected $appends = [
 
-    ];
+];
 
-    /**
-     We are casting fields to objects so that we can work on them better
-     *
-     @var array
-     */
-    protected $casts = [
-    'id' => 'integer',
-    'accounting_account_id' => 'integer',
-    'invoice_number' => 'string',
-    'exchange_rate' => 'array',
-    'common_currency_id' => 'integer',
-    'is_paid' => 'boolean',
-    'is_refund' => 'boolean',
-    'due_date' => 'datetime',
-    'is_payable' => 'boolean',
-    'is_sealed' => 'boolean',
-    'note' => 'string',
-    'created_at' => 'datetime',
-    'updated_at' => 'datetime',
-    'deleted_at' => 'datetime',
-    'term_year' => 'integer',
-    'term_month' => 'integer',
-    'is_cancelled' => 'boolean',
-    'cancellation_reason' => 'string',
-    'payment_link_url' => 'string',
-    'is_commission_invoice' => 'boolean',
-    'distributor_commission_invoice_id' => 'integer',
-    'integrator_commission_invoice_id' => 'integer',
-    'reseller_commission_invoice_id' => 'integer',
-    'affiliate_commission_invoice_id' => 'integer',
-    ];
+/**
+* We are casting fields to objects so that we can work on them better
+* @var array
+*/
+protected $casts = [
+'id' => 'integer',
+'accounting_account_id' => 'integer',
+'invoice_number' => 'string',
+'exchange_rate' => 'array',
+'common_currency_id' => 'integer',
+'is_paid' => 'boolean',
+'is_refund' => 'boolean',
+'due_date' => 'datetime',
+'is_payable' => 'boolean',
+'is_sealed' => 'boolean',
+'note' => 'string',
+'created_at' => 'datetime',
+'updated_at' => 'datetime',
+'deleted_at' => 'datetime',
+'term_year' => 'integer',
+'term_month' => 'integer',
+'is_cancelled' => 'boolean',
+'cancellation_reason' => 'string',
+'payment_link_url' => 'string',
+'is_commission_invoice' => 'boolean',
+'distributor_commission_invoice_id' => 'integer',
+'integrator_commission_invoice_id' => 'integer',
+'reseller_commission_invoice_id' => 'integer',
+'affiliate_commission_invoice_id' => 'integer',
+];
 
-    /**
-     We are casting data fields.
-     *
-     @var array
-     */
-    protected $dates = [
-    'due_date',
-    'created_at',
-    'updated_at',
-    'deleted_at',
-    ];
+/**
+* We are casting data fields.
+* @var array
+*/
+protected $dates = [
+'due_date',
+'created_at',
+'updated_at',
+'deleted_at',
+];
 
-    /**
-     @var array
-     */
-    protected $with = [
+/**
+* @var array
+*/
+protected $with = [
 
-    ];
+];
 
-    /**
-     @var int
-     */
-    protected $perPage = 20;
+/**
+* @var int
+*/
+protected $perPage = 20;
 
-    /**
-     @return void
-     */
-    public static function boot()
-    {
-        parent::boot();
+/**
+* @return void
+*/
+public static function boot()
+{
+parent::boot();
 
-        //  We create and add Observer even if we wont use it.
-        parent::observe(InvoicesObserver::class);
+//  We create and add Observer even if we wont use it.
+parent::observe(InvoicesObserver::class);
 
-        self::registerScopes();
-    }
+self::registerScopes();
+}
 
-    public static function registerScopes()
-    {
-        $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_invoices');
+public static function registerScopes()
+{
+$globalScopes = config('accounting.scopes.global');
+$modelScopes = config('accounting.scopes.accounting_invoices');
 
-        if(!$modelScopes) { $modelScopes = [];
-        }
-        if (!$globalScopes) { $globalScopes = [];
-        }
+if(!$modelScopes) $modelScopes = [];
+if (!$globalScopes) $globalScopes = [];
 
-        $scopes = array_merge(
-            $globalScopes,
-            $modelScopes
-        );
+$scopes = array_merge(
+$globalScopes,
+$modelScopes
+);
 
-        if($scopes) {
-            foreach ($scopes as $scope) {
-                static::addGlobalScope(app($scope));
-            }
-        }
-    }
+if($scopes) {
+foreach ($scopes as $scope) {
+static::addGlobalScope(app($scope));
+}
+}
+}
 
-    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

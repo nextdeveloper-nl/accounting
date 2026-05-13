@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractContractItemsTransformer extends AbstractTransformer
-{
+class AbstractContractItemsTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,32 +51,29 @@ class AbstractContractItemsTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(ContractItems $model)
-    {
+    public function transform(ContractItems $model) {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $accountingContractId = \NextDeveloper\Accounting\Database\Models\Contracts::where('id', $model->accounting_contract_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'object_type'  =>  $model->object_type,
-            'object_id'  =>  $model->object_id,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            'accounting_contract_id'  =>  $accountingContractId ? $accountingContractId->uuid : null,
-            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            'price'  =>  $model->price,
-            'discount'  =>  $model->discount,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'contract_type'  =>  $model->contract_type,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'object_type'  =>  $model->object_type,
+'object_id'  =>  $model->object_id,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+'accounting_contract_id'  =>  $accountingContractId ? $accountingContractId->uuid : null,
+'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
+'price'  =>  $model->price,
+'discount'  =>  $model->discount,
+'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+'contract_type'  =>  $model->contract_type,
+    ]);
     }
 
     public function includeStates(ContractItems $model)
@@ -164,6 +160,7 @@ class AbstractContractItemsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

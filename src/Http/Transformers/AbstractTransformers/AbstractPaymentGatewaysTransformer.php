@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractPaymentGatewaysTransformer extends AbstractTransformer
-{
+class AbstractPaymentGatewaysTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,30 +51,27 @@ class AbstractPaymentGatewaysTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(PaymentGateways $model)
-    {
+    public function transform(PaymentGateways $model) {
                                                 $commonCountryId = \NextDeveloper\Commons\Database\Models\Countries::where('id', $model->common_country_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'name'  =>  $model->name,
-            'gateway'  =>  $model->gateway,
-            'is_active'  =>  $model->is_active,
-            'common_country_id'  =>  $commonCountryId ? $commonCountryId->uuid : null,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            'parameters'  =>  $model->parameters,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'vat_rate'  =>  $model->vat_rate,
-            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'name'  =>  $model->name,
+'gateway'  =>  $model->gateway,
+'is_active'  =>  $model->is_active,
+'common_country_id'  =>  $commonCountryId ? $commonCountryId->uuid : null,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+'parameters'  =>  $model->parameters,
+'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+'vat_rate'  =>  $model->vat_rate,
+'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
+    ]);
     }
 
     public function includeStates(PaymentGateways $model)
@@ -162,6 +158,7 @@ class AbstractPaymentGatewaysTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

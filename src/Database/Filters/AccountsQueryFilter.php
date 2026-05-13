@@ -14,8 +14,8 @@ class AccountsQueryFilter extends AbstractQueryFilter
 {
 
     /**
-     * @var Builder
-     */
+    * @var Builder
+    */
     protected $builder;
     
     public function taxOffice($value)
@@ -26,7 +26,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of taxOffice
     public function tax_office($value)
     {
-        return $this->taxOffice($value);
+    return $this->taxOffice($value);
     }
         
     public function taxNumber($value)
@@ -37,7 +37,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of taxNumber
     public function tax_number($value)
     {
-        return $this->taxNumber($value);
+    return $this->taxNumber($value);
     }
         
     public function accountingIdentifier($value)
@@ -48,7 +48,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of accountingIdentifier
     public function accounting_identifier($value)
     {
-        return $this->accountingIdentifier($value);
+    return $this->accountingIdentifier($value);
     }
         
     public function tradeOfficeNumber($value)
@@ -59,7 +59,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of tradeOfficeNumber
     public function trade_office_number($value)
     {
-        return $this->tradeOfficeNumber($value);
+    return $this->tradeOfficeNumber($value);
     }
         
     public function tradeOffice($value)
@@ -70,7 +70,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of tradeOffice
     public function trade_office($value)
     {
-        return $this->tradeOffice($value);
+    return $this->tradeOffice($value);
     }
         
     public function trMersis($value)
@@ -81,7 +81,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of trMersis
     public function tr_mersis($value)
     {
-        return $this->trMersis($value);
+    return $this->trMersis($value);
     }
         
     public function partnerCode($value)
@@ -92,7 +92,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of partnerCode
     public function partner_code($value)
     {
-        return $this->partnerCode($value);
+    return $this->partnerCode($value);
     }
     
     public function affiliateLevel($value)
@@ -100,7 +100,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         $operator = substr($value, 0, 1);
 
         if ($operator != '<' || $operator != '>') {
-            $operator = '=';
+           $operator = '=';
         } else {
             $value = substr($value, 1);
         }
@@ -111,7 +111,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of affiliateLevel
     public function affiliate_level($value)
     {
-        return $this->affiliateLevel($value);
+    return $this->affiliateLevel($value);
     }
     
     public function isSuspended($value)
@@ -122,7 +122,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isSuspended
     public function is_suspended($value)
     {
-        return $this->isSuspended($value);
+    return $this->isSuspended($value);
     }
      
     public function isDisabled($value)
@@ -133,7 +133,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isDisabled
     public function is_disabled($value)
     {
-        return $this->isDisabled($value);
+    return $this->isDisabled($value);
     }
      
     public function isDistributor($value)
@@ -144,7 +144,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isDistributor
     public function is_distributor($value)
     {
-        return $this->isDistributor($value);
+    return $this->isDistributor($value);
     }
      
     public function isIntegrator($value)
@@ -155,7 +155,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isIntegrator
     public function is_integrator($value)
     {
-        return $this->isIntegrator($value);
+    return $this->isIntegrator($value);
     }
      
     public function isVendor($value)
@@ -166,7 +166,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isVendor
     public function is_vendor($value)
     {
-        return $this->isVendor($value);
+    return $this->isVendor($value);
     }
      
     public function isReseller($value)
@@ -177,7 +177,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isReseller
     public function is_reseller($value)
     {
-        return $this->isReseller($value);
+    return $this->isReseller($value);
     }
      
     public function isAffiliate($value)
@@ -188,73 +188,73 @@ class AccountsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isAffiliate
     public function is_affiliate($value)
     {
-        return $this->isAffiliate($value);
+    return $this->isAffiliate($value);
     }
      
     public function createdAtStart($date)
     {
-        return $this->builder->where('created_at', '>=', $date);
+        return $this->builder->where( 'created_at', '>=', $date );
     }
 
     public function createdAtEnd($date)
     {
-        return $this->builder->where('created_at', '<=', $date);
+        return $this->builder->where( 'created_at', '<=', $date );
     }
 
     //  This is an alias function of createdAt
     public function created_at_start($value)
     {
-        return $this->createdAtStart($value);
+    return $this->createdAtStart($value);
     }
 
     //  This is an alias function of createdAt
     public function created_at_end($value)
     {
-        return $this->createdAtEnd($value);
+    return $this->createdAtEnd($value);
     }
 
     public function updatedAtStart($date)
     {
-        return $this->builder->where('updated_at', '>=', $date);
+        return $this->builder->where( 'updated_at', '>=', $date );
     }
 
     public function updatedAtEnd($date)
     {
-        return $this->builder->where('updated_at', '<=', $date);
+        return $this->builder->where( 'updated_at', '<=', $date );
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_start($value)
     {
-        return $this->updatedAtStart($value);
+    return $this->updatedAtStart($value);
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_end($value)
     {
-        return $this->updatedAtEnd($value);
+    return $this->updatedAtEnd($value);
     }
 
     public function deletedAtStart($date)
     {
-        return $this->builder->where('deleted_at', '>=', $date);
+        return $this->builder->where( 'deleted_at', '>=', $date );
     }
 
     public function deletedAtEnd($date)
     {
-        return $this->builder->where('deleted_at', '<=', $date);
+        return $this->builder->where( 'deleted_at', '<=', $date );
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_start($value)
     {
-        return $this->deletedAtStart($value);
+    return $this->deletedAtStart($value);
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_end($value)
     {
-        return $this->deletedAtEnd($value);
+    return $this->deletedAtEnd($value);
     }
 
     public function iamAccountId($value)
@@ -264,7 +264,7 @@ class AccountsQueryFilter extends AbstractQueryFilter
         if($iamAccount) {
             return $this->builder->where('iam_account_id', '=', $iamAccount->id);
         }
-    }
+        }
 
     
     public function commonCurrencyId($value)
@@ -274,12 +274,12 @@ class AccountsQueryFilter extends AbstractQueryFilter
         if($commonCurrency) {
             return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
         }
-    }
+        }
 
         //  This is an alias function of commonCurrency
     public function common_currency_id($value)
     {
-        return $this->commonCurrency($value);
+    return $this->commonCurrency($value);
     }
     
     public function distributorId($value)
@@ -289,12 +289,12 @@ class AccountsQueryFilter extends AbstractQueryFilter
         if($distributor) {
             return $this->builder->where('distributor_id', '=', $distributor->id);
         }
-    }
+        }
 
         //  This is an alias function of distributor
     public function distributor_id($value)
     {
-        return $this->distributor($value);
+    return $this->distributor($value);
     }
     
     public function salesPartnerId($value)
@@ -304,12 +304,12 @@ class AccountsQueryFilter extends AbstractQueryFilter
         if($salesPartner) {
             return $this->builder->where('sales_partner_id', '=', $salesPartner->id);
         }
-    }
+        }
 
         //  This is an alias function of salesPartner
     public function sales_partner_id($value)
     {
-        return $this->salesPartner($value);
+    return $this->salesPartner($value);
     }
     
     public function integratorPartnerId($value)
@@ -319,12 +319,12 @@ class AccountsQueryFilter extends AbstractQueryFilter
         if($integratorPartner) {
             return $this->builder->where('integrator_partner_id', '=', $integratorPartner->id);
         }
-    }
+        }
 
         //  This is an alias function of integratorPartner
     public function integrator_partner_id($value)
     {
-        return $this->integratorPartner($value);
+    return $this->integratorPartner($value);
     }
     
     public function affiliatePartnerId($value)
@@ -334,15 +334,16 @@ class AccountsQueryFilter extends AbstractQueryFilter
         if($affiliatePartner) {
             return $this->builder->where('affiliate_partner_id', '=', $affiliatePartner->id);
         }
-    }
+        }
 
         //  This is an alias function of affiliatePartner
     public function affiliate_partner_id($value)
     {
-        return $this->affiliatePartner($value);
+    return $this->affiliatePartner($value);
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

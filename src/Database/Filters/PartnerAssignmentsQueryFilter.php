@@ -14,8 +14,8 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
 {
 
     /**
-     * @var Builder
-     */
+    * @var Builder
+    */
     protected $builder;
     
     public function type($value)
@@ -32,112 +32,112 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
     
     public function startedAtStart($date)
     {
-        return $this->builder->where('started_at', '>=', $date);
+        return $this->builder->where( 'started_at', '>=', $date );
     }
 
     public function startedAtEnd($date)
     {
-        return $this->builder->where('started_at', '<=', $date);
+        return $this->builder->where( 'started_at', '<=', $date );
     }
 
     //  This is an alias function of startedAt
     public function started_at_start($value)
     {
-        return $this->startedAtStart($value);
+    return $this->startedAtStart($value);
     }
 
     //  This is an alias function of startedAt
     public function started_at_end($value)
     {
-        return $this->startedAtEnd($value);
+    return $this->startedAtEnd($value);
     }
 
     public function finishedAtStart($date)
     {
-        return $this->builder->where('finished_at', '>=', $date);
+        return $this->builder->where( 'finished_at', '>=', $date );
     }
 
     public function finishedAtEnd($date)
     {
-        return $this->builder->where('finished_at', '<=', $date);
+        return $this->builder->where( 'finished_at', '<=', $date );
     }
 
     //  This is an alias function of finishedAt
     public function finished_at_start($value)
     {
-        return $this->finishedAtStart($value);
+    return $this->finishedAtStart($value);
     }
 
     //  This is an alias function of finishedAt
     public function finished_at_end($value)
     {
-        return $this->finishedAtEnd($value);
+    return $this->finishedAtEnd($value);
     }
 
     public function createdAtStart($date)
     {
-        return $this->builder->where('created_at', '>=', $date);
+        return $this->builder->where( 'created_at', '>=', $date );
     }
 
     public function createdAtEnd($date)
     {
-        return $this->builder->where('created_at', '<=', $date);
+        return $this->builder->where( 'created_at', '<=', $date );
     }
 
     //  This is an alias function of createdAt
     public function created_at_start($value)
     {
-        return $this->createdAtStart($value);
+    return $this->createdAtStart($value);
     }
 
     //  This is an alias function of createdAt
     public function created_at_end($value)
     {
-        return $this->createdAtEnd($value);
+    return $this->createdAtEnd($value);
     }
 
     public function updatedAtStart($date)
     {
-        return $this->builder->where('updated_at', '>=', $date);
+        return $this->builder->where( 'updated_at', '>=', $date );
     }
 
     public function updatedAtEnd($date)
     {
-        return $this->builder->where('updated_at', '<=', $date);
+        return $this->builder->where( 'updated_at', '<=', $date );
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_start($value)
     {
-        return $this->updatedAtStart($value);
+    return $this->updatedAtStart($value);
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_end($value)
     {
-        return $this->updatedAtEnd($value);
+    return $this->updatedAtEnd($value);
     }
 
     public function deletedAtStart($date)
     {
-        return $this->builder->where('deleted_at', '>=', $date);
+        return $this->builder->where( 'deleted_at', '>=', $date );
     }
 
     public function deletedAtEnd($date)
     {
-        return $this->builder->where('deleted_at', '<=', $date);
+        return $this->builder->where( 'deleted_at', '<=', $date );
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_start($value)
     {
-        return $this->deletedAtStart($value);
+    return $this->deletedAtStart($value);
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_end($value)
     {
-        return $this->deletedAtEnd($value);
+    return $this->deletedAtEnd($value);
     }
 
     public function accountingAccountId($value)
@@ -147,12 +147,12 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
         if($accountingAccount) {
             return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
         }
-    }
+        }
 
         //  This is an alias function of accountingAccount
     public function accounting_account_id($value)
     {
-        return $this->accountingAccount($value);
+    return $this->accountingAccount($value);
     }
     
     public function oldPartnerId($value)
@@ -162,12 +162,12 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
         if($oldPartner) {
             return $this->builder->where('old_partner_id', '=', $oldPartner->id);
         }
-    }
+        }
 
         //  This is an alias function of oldPartner
     public function old_partner_id($value)
     {
-        return $this->oldPartner($value);
+    return $this->oldPartner($value);
     }
     
     public function newPartnerId($value)
@@ -177,12 +177,12 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
         if($newPartner) {
             return $this->builder->where('new_partner_id', '=', $newPartner->id);
         }
-    }
+        }
 
         //  This is an alias function of newPartner
     public function new_partner_id($value)
     {
-        return $this->newPartner($value);
+    return $this->newPartner($value);
     }
     
     public function iamUserId($value)
@@ -192,7 +192,7 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
         if($iamUser) {
             return $this->builder->where('iam_user_id', '=', $iamUser->id);
         }
-    }
+        }
 
     
     public function iamAccountId($value)
@@ -202,9 +202,10 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
         if($iamAccount) {
             return $this->builder->where('iam_account_id', '=', $iamAccount->id);
         }
-    }
+        }
 
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 }

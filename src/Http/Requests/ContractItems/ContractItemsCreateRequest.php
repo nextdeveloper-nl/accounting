@@ -10,17 +10,16 @@ class ContractItemsCreateRequest extends AbstractFormRequest
     /**
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             'object_type' => 'required|string',
-        'object_id' => 'required',
-        'accounting_contract_id' => 'required|exists:accounting_contracts,uuid|uuid',
-        'accounting_account_id' => 'required|exists:accounting_accounts,uuid|uuid',
-        'price' => '',
-        'discount' => 'nullable|integer',
-        'common_currency_id' => 'nullable|exists:common_currencies,uuid|uuid',
-        'contract_type' => 'string',
+'object_id' => 'required',
+'accounting_contract_id' => 'required|exists:accounting_contracts,uuid|uuid',
+'accounting_account_id' => 'required|exists:accounting_accounts,uuid|uuid',
+'price' => '',
+'discount' => 'nullable|integer',
+'common_currency_id' => 'nullable|exists:common_currencies,uuid|uuid',
+'contract_type' => 'string',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

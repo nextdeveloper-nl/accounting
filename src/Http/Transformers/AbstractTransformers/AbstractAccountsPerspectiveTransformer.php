@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
-{
+class AbstractAccountsPerspectiveTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,8 +51,7 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(AccountsPerspective $model)
-    {
+    public function transform(AccountsPerspective $model) {
                                                 $commonCountryId = \NextDeveloper\Commons\Database\Models\Countries::where('id', $model->common_country_id)->first();
                                                             $commonDomainId = \NextDeveloper\Commons\Database\Models\Domains::where('id', $model->common_domain_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
@@ -64,43 +62,41 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
                                                             $integratorPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
                                                             $salesPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->sales_partner_id)->first();
                                                             $affiliatePartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->affiliate_partner_id)->first();
-
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'name'  =>  $model->name,
-            'phone_number'  =>  $model->phone_number,
-            'common_country_id'  =>  $commonCountryId ? $commonCountryId->uuid : null,
-            'common_domain_id'  =>  $commonDomainId ? $commonDomainId->uuid : null,
-            'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
-            'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'tax_number'  =>  $model->tax_number,
-            'tax_office'  =>  $model->tax_office,
-            'accounting_identifier'  =>  $model->accounting_identifier,
-            'credit'  =>  $model->credit,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'common_currency_code'  =>  $model->common_currency_code,
-            'tr_mersis'  =>  $model->tr_mersis,
-            'trade_office'  =>  $model->trade_office,
-            'trade_office_number'  =>  $model->trade_office_number,
-            'distributor_id'  =>  $distributorId ? $distributorId->uuid : null,
-            'integrator_partner_id'  =>  $integratorPartnerId ? $integratorPartnerId->uuid : null,
-            'sales_partner_id'  =>  $salesPartnerId ? $salesPartnerId->uuid : null,
-            'affiliate_partner_id'  =>  $affiliatePartnerId ? $affiliatePartnerId->uuid : null,
-            'is_distributor'  =>  $model->is_distributor,
-            'is_integrator'  =>  $model->is_integrator,
-            'is_reseller'  =>  $model->is_reseller,
-            'is_affiliate'  =>  $model->is_affiliate,
-            'distributor_partner'  =>  $model->distributor_partner,
-            'integrator_partner'  =>  $model->integrator_partner,
-            'sales_partner'  =>  $model->sales_partner,
-            'affiliate_partner'  =>  $model->affiliate_partner,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            ]
-        );
+                        
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'name'  =>  $model->name,
+'phone_number'  =>  $model->phone_number,
+'common_country_id'  =>  $commonCountryId ? $commonCountryId->uuid : null,
+'common_domain_id'  =>  $commonDomainId ? $commonDomainId->uuid : null,
+'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
+'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'tax_number'  =>  $model->tax_number,
+'tax_office'  =>  $model->tax_office,
+'accounting_identifier'  =>  $model->accounting_identifier,
+'credit'  =>  $model->credit,
+'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+'common_currency_code'  =>  $model->common_currency_code,
+'tr_mersis'  =>  $model->tr_mersis,
+'trade_office'  =>  $model->trade_office,
+'trade_office_number'  =>  $model->trade_office_number,
+'distributor_id'  =>  $distributorId ? $distributorId->uuid : null,
+'integrator_partner_id'  =>  $integratorPartnerId ? $integratorPartnerId->uuid : null,
+'sales_partner_id'  =>  $salesPartnerId ? $salesPartnerId->uuid : null,
+'affiliate_partner_id'  =>  $affiliatePartnerId ? $affiliatePartnerId->uuid : null,
+'is_distributor'  =>  $model->is_distributor,
+'is_integrator'  =>  $model->is_integrator,
+'is_reseller'  =>  $model->is_reseller,
+'is_affiliate'  =>  $model->is_affiliate,
+'distributor_partner'  =>  $model->distributor_partner,
+'integrator_partner'  =>  $model->integrator_partner,
+'sales_partner'  =>  $model->sales_partner,
+'affiliate_partner'  =>  $model->affiliate_partner,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+    ]);
     }
 
     public function includeStates(AccountsPerspective $model)
@@ -187,6 +183,7 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
