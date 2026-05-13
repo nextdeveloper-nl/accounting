@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractPartnershipsTransformer extends AbstractTransformer
-{
+class AbstractPartnershipsTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,39 +51,36 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(Partnerships $model)
-    {
+    public function transform(Partnerships $model) {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'partner_code'  =>  $model->partner_code,
-            'is_brand_ambassador'  =>  $model->is_brand_ambassador,
-            'customer_count'  =>  $model->customer_count,
-            'level'  =>  $model->level,
-            'reward_points'  =>  $model->reward_points,
-            'boosts'  =>  $model->boosts,
-            'mystery_box'  =>  $model->mystery_box,
-            'badges'  =>  $model->badges,
-            'is_approved'  =>  $model->is_approved,
-            'technical_capabilities'  =>  $model->technical_capabilities,
-            'industry'  =>  $model->industry,
-            'sector_focus'  =>  $model->sector_focus,
-            'special_interest'  =>  $model->special_interest,
-            'compliance_certifications'  =>  $model->compliance_certifications,
-            'target_group'  =>  $model->target_group,
-            'meeting_link'  =>  $model->meeting_link,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            'operating_countries'  =>  $model->operating_countries,
-            'operating_cities'  =>  $model->operating_cities,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'partner_code'  =>  $model->partner_code,
+'is_brand_ambassador'  =>  $model->is_brand_ambassador,
+'customer_count'  =>  $model->customer_count,
+'level'  =>  $model->level,
+'reward_points'  =>  $model->reward_points,
+'boosts'  =>  $model->boosts,
+'mystery_box'  =>  $model->mystery_box,
+'badges'  =>  $model->badges,
+'is_approved'  =>  $model->is_approved,
+'technical_capabilities'  =>  $model->technical_capabilities,
+'industry'  =>  $model->industry,
+'sector_focus'  =>  $model->sector_focus,
+'special_interest'  =>  $model->special_interest,
+'compliance_certifications'  =>  $model->compliance_certifications,
+'target_group'  =>  $model->target_group,
+'meeting_link'  =>  $model->meeting_link,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
+'operating_countries'  =>  $model->operating_countries,
+'operating_cities'  =>  $model->operating_cities,
+    ]);
     }
 
     public function includeStates(Partnerships $model)
@@ -171,6 +167,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

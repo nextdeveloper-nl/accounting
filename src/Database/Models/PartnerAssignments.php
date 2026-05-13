@@ -15,40 +15,40 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
- * PartnerAssignments model.
- *
- * @package  NextDeveloper\Accounting\Database\Models
- * @property integer $id
- * @property string $uuid
- * @property integer $accounting_account_id
- * @property string $type
- * @property integer $old_partner_id
- * @property integer $new_partner_id
- * @property \Carbon\Carbon $started_at
- * @property \Carbon\Carbon $finished_at
- * @property integer $iam_user_id
- * @property integer $iam_account_id
- * @property string $reason
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon $deleted_at
- */
+* PartnerAssignments model.
+*
+* @package NextDeveloper\Accounting\Database\Models
+* @property integer $id
+* @property string $uuid
+* @property integer $accounting_account_id
+* @property string $type
+* @property integer $old_partner_id
+* @property integer $new_partner_id
+* @property \Carbon\Carbon $started_at
+* @property \Carbon\Carbon $finished_at
+* @property integer $iam_user_id
+* @property integer $iam_account_id
+* @property string $reason
+* @property \Carbon\Carbon $created_at
+* @property \Carbon\Carbon $updated_at
+* @property \Carbon\Carbon $deleted_at
+*/
 class PartnerAssignments extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
-    use SoftDeletes;
+use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
+	use SoftDeletes;
 
-    public $timestamps = true;
+	public $timestamps = true;
 
-    protected $table = 'accounting_partner_assignments';
+protected $table = 'accounting_partner_assignments';
 
 
-    /**
-     @var array
-     */
-    protected $guarded = [];
+/**
+* @var array
+*/
+protected $guarded = [];
 
-    protected $fillable = [
+protected $fillable = [
             'accounting_account_id',
             'type',
             'old_partner_id',
@@ -60,99 +60,96 @@ class PartnerAssignments extends Model
             'reason',
     ];
 
-    /**
-      Here we have the fulltext fields. We can use these for fulltext search if enabled.
-     */
-    protected $fullTextFields = [
+/**
+*  Here we have the fulltext fields. We can use these for fulltext search if enabled.
+*/
+protected $fullTextFields = [
 
-    ];
+];
 
-    /**
-     @var array
-     */
-    protected $appends = [
+/**
+* @var array
+*/
+protected $appends = [
 
-    ];
+];
 
-    /**
-     We are casting fields to objects so that we can work on them better
-     *
-     @var array
-     */
-    protected $casts = [
-    'id' => 'integer',
-    'accounting_account_id' => 'integer',
-    'type' => 'string',
-    'old_partner_id' => 'integer',
-    'new_partner_id' => 'integer',
-    'started_at' => 'datetime',
-    'finished_at' => 'datetime',
-    'reason' => 'string',
-    'created_at' => 'datetime',
-    'updated_at' => 'datetime',
-    'deleted_at' => 'datetime',
-    ];
+/**
+* We are casting fields to objects so that we can work on them better
+* @var array
+*/
+protected $casts = [
+'id' => 'integer',
+'accounting_account_id' => 'integer',
+'type' => 'string',
+'old_partner_id' => 'integer',
+'new_partner_id' => 'integer',
+'started_at' => 'datetime',
+'finished_at' => 'datetime',
+'reason' => 'string',
+'created_at' => 'datetime',
+'updated_at' => 'datetime',
+'deleted_at' => 'datetime',
+];
 
-    /**
-     We are casting data fields.
-     *
-     @var array
-     */
-    protected $dates = [
-    'started_at',
-    'finished_at',
-    'created_at',
-    'updated_at',
-    'deleted_at',
-    ];
+/**
+* We are casting data fields.
+* @var array
+*/
+protected $dates = [
+'started_at',
+'finished_at',
+'created_at',
+'updated_at',
+'deleted_at',
+];
 
-    /**
-     @var array
-     */
-    protected $with = [
+/**
+* @var array
+*/
+protected $with = [
 
-    ];
+];
 
-    /**
-     @var int
-     */
-    protected $perPage = 20;
+/**
+* @var int
+*/
+protected $perPage = 20;
 
-    /**
-     @return void
-     */
-    public static function boot()
-    {
-        parent::boot();
+/**
+* @return void
+*/
+public static function boot()
+{
+parent::boot();
 
-        //  We create and add Observer even if we wont use it.
-        parent::observe(PartnerAssignmentsObserver::class);
+//  We create and add Observer even if we wont use it.
+parent::observe(PartnerAssignmentsObserver::class);
 
-        self::registerScopes();
-    }
+self::registerScopes();
+}
 
-    public static function registerScopes()
-    {
-        $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_partner_assignments');
+public static function registerScopes()
+{
+$globalScopes = config('accounting.scopes.global');
+$modelScopes = config('accounting.scopes.accounting_partner_assignments');
 
-        if(!$modelScopes) { $modelScopes = [];
-        }
-        if (!$globalScopes) { $globalScopes = [];
-        }
+if(!$modelScopes) $modelScopes = [];
+if (!$globalScopes) $globalScopes = [];
 
-        $scopes = array_merge(
-            $globalScopes,
-            $modelScopes
-        );
+$scopes = array_merge(
+$globalScopes,
+$modelScopes
+);
 
-        if($scopes) {
-            foreach ($scopes as $scope) {
-                static::addGlobalScope(app($scope));
-            }
-        }
-    }
+if($scopes) {
+foreach ($scopes as $scope) {
+static::addGlobalScope(app($scope));
+}
+}
+}
 
-    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 }

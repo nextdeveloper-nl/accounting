@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractWeeklyPaidInvoicesPerformanceTransformer extends AbstractTransformer
-{
+class AbstractWeeklyPaidInvoicesPerformanceTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,19 +51,16 @@ class AbstractWeeklyPaidInvoicesPerformanceTransformer extends AbstractTransform
      *
      * @return array
      */
-    public function transform(WeeklyPaidInvoicesPerformance $model)
-    {
+    public function transform(WeeklyPaidInvoicesPerformance $model) {
             
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->id,
-            'week_start'  =>  $model->week_start,
-            'week_end'  =>  $model->week_end,
-            'week_number'  =>  $model->week_number,
-            'count'  =>  $model->count,
-            'total_amount'  =>  $model->total_amount,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->id,
+'week_start'  =>  $model->week_start,
+'week_end'  =>  $model->week_end,
+'week_number'  =>  $model->week_number,
+'count'  =>  $model->count,
+'total_amount'  =>  $model->total_amount,
+    ]);
     }
 
     public function includeStates(WeeklyPaidInvoicesPerformance $model)
@@ -151,6 +147,7 @@ class AbstractWeeklyPaidInvoicesPerformanceTransformer extends AbstractTransform
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

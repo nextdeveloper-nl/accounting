@@ -15,55 +15,55 @@ use Illuminate\Notifications\Notifiable;
 use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
- * Accounts model.
- *
- * @package  NextDeveloper\Accounting\Database\Models
- * @property integer $id
- * @property string $uuid
- * @property integer $iam_account_id
- * @property string $tax_office
- * @property string $tax_number
- * @property string $accounting_identifier
- * @property $credit
- * @property integer $common_currency_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon $deleted_at
- * @property string $trade_office_number
- * @property string $trade_office
- * @property string $tr_mersis
- * @property boolean $is_suspended
- * @property $balance
- * @property boolean $is_disabled
- * @property integer $distributor_id
- * @property integer $sales_partner_id
- * @property integer $integrator_partner_id
- * @property integer $affiliate_partner_id
- * @property boolean $is_distributor
- * @property boolean $is_integrator
- * @property boolean $is_vendor
- * @property boolean $is_reseller
- * @property boolean $is_affiliate
- * @property integer $affiliate_level
- * @property string $partner_code
- * @property $mapping
- */
+* Accounts model.
+*
+* @package NextDeveloper\Accounting\Database\Models
+* @property integer $id
+* @property string $uuid
+* @property integer $iam_account_id
+* @property string $tax_office
+* @property string $tax_number
+* @property string $accounting_identifier
+* @property  $credit
+* @property integer $common_currency_id
+* @property \Carbon\Carbon $created_at
+* @property \Carbon\Carbon $updated_at
+* @property \Carbon\Carbon $deleted_at
+* @property string $trade_office_number
+* @property string $trade_office
+* @property string $tr_mersis
+* @property boolean $is_suspended
+* @property  $balance
+* @property boolean $is_disabled
+* @property integer $distributor_id
+* @property integer $sales_partner_id
+* @property integer $integrator_partner_id
+* @property integer $affiliate_partner_id
+* @property boolean $is_distributor
+* @property boolean $is_integrator
+* @property boolean $is_vendor
+* @property boolean $is_reseller
+* @property boolean $is_affiliate
+* @property integer $affiliate_level
+* @property string $partner_code
+* @property  $mapping
+*/
 class Accounts extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
-    use SoftDeletes;
+use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
+	use SoftDeletes;
 
-    public $timestamps = true;
+	public $timestamps = true;
 
-    protected $table = 'accounting_accounts';
+protected $table = 'accounting_accounts';
 
 
-    /**
-     @var array
-     */
-    protected $guarded = [];
+/**
+* @var array
+*/
+protected $guarded = [];
 
-    protected $fillable = [
+protected $fillable = [
             'iam_account_id',
             'tax_office',
             'tax_number',
@@ -90,112 +90,114 @@ class Accounts extends Model
             'mapping',
     ];
 
-    /**
-      Here we have the fulltext fields. We can use these for fulltext search if enabled.
-     */
-    protected $fullTextFields = [
+/**
+*  Here we have the fulltext fields. We can use these for fulltext search if enabled.
+*/
+protected $fullTextFields = [
 
-    ];
+];
 
-    /**
-     @var array
-     */
-    protected $appends = [
+/**
+* @var array
+*/
+protected $appends = [
 
-    ];
+];
 
-    /**
-     We are casting fields to objects so that we can work on them better
-     *
-     @var array
-     */
-    protected $casts = [
-    'id' => 'integer',
-    'tax_office' => 'string',
-    'tax_number' => 'string',
-    'accounting_identifier' => 'string',
-    'common_currency_id' => 'integer',
-    'created_at' => 'datetime',
-    'updated_at' => 'datetime',
-    'deleted_at' => 'datetime',
-    'trade_office_number' => 'string',
-    'trade_office' => 'string',
-    'tr_mersis' => 'string',
-    'is_suspended' => 'boolean',
-    'is_disabled' => 'boolean',
-    'distributor_id' => 'integer',
-    'sales_partner_id' => 'integer',
-    'integrator_partner_id' => 'integer',
-    'affiliate_partner_id' => 'integer',
-    'is_distributor' => 'boolean',
-    'is_integrator' => 'boolean',
-    'is_vendor' => 'boolean',
-    'is_reseller' => 'boolean',
-    'is_affiliate' => 'boolean',
-    'affiliate_level' => 'integer',
-    'partner_code' => 'string',
-    'mapping' => 'array',
-    ];
+/**
+* We are casting fields to objects so that we can work on them better
+* @var array
+*/
+protected $casts = [
+'id' => 'integer',
+'tax_office' => 'string',
+'tax_number' => 'string',
+'accounting_identifier' => 'string',
+'common_currency_id' => 'integer',
+'created_at' => 'datetime',
+'updated_at' => 'datetime',
+'deleted_at' => 'datetime',
+'trade_office_number' => 'string',
+'trade_office' => 'string',
+'tr_mersis' => 'string',
+'is_suspended' => 'boolean',
+'is_disabled' => 'boolean',
+'distributor_id' => 'integer',
+'sales_partner_id' => 'integer',
+'integrator_partner_id' => 'integer',
+'affiliate_partner_id' => 'integer',
+'is_distributor' => 'boolean',
+'is_integrator' => 'boolean',
+'is_vendor' => 'boolean',
+'is_reseller' => 'boolean',
+'is_affiliate' => 'boolean',
+'affiliate_level' => 'integer',
+'partner_code' => 'string',
+'mapping' => 'array',
+];
 
-    /**
-     We are casting data fields.
-     *
-     @var array
-     */
-    protected $dates = [
-    'created_at',
-    'updated_at',
-    'deleted_at',
-    ];
+/**
+* We are casting data fields.
+* @var array
+*/
+protected $dates = [
+'created_at',
+'updated_at',
+'deleted_at',
+];
 
-    /**
-     @var array
-     */
-    protected $with = [
+/**
+* @var array
+*/
+protected $with = [
 
-    ];
+];
 
-    /**
-     @var int
-     */
-    protected $perPage = 20;
+/**
+* @var int
+*/
+protected $perPage = 20;
 
-    /**
-     @return void
-     */
-    public static function boot()
+/**
+* @return void
+*/
+public static function boot()
+{
+parent::boot();
+
+//  We create and add Observer even if we wont use it.
+parent::observe(AccountsObserver::class);
+
+self::registerScopes();
+}
+
+public static function registerScopes()
+{
+$globalScopes = config('accounting.scopes.global');
+$modelScopes = config('accounting.scopes.accounting_accounts');
+
+if(!$modelScopes) $modelScopes = [];
+if (!$globalScopes) $globalScopes = [];
+
+$scopes = array_merge(
+$globalScopes,
+$modelScopes
+);
+
+if($scopes) {
+foreach ($scopes as $scope) {
+static::addGlobalScope(app($scope));
+}
+}
+}
+
+public function creditTransactions() : \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        parent::boot();
-
-        //  We create and add Observer even if we wont use it.
-        parent::observe(AccountsObserver::class);
-
-        self::registerScopes();
-    }
-
-    public static function registerScopes()
-    {
-        $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_accounts');
-
-        if(!$modelScopes) { $modelScopes = [];
-        }
-        if (!$globalScopes) { $globalScopes = [];
-        }
-
-        $scopes = array_merge(
-            $globalScopes,
-            $modelScopes
-        );
-
-        if($scopes) {
-            foreach ($scopes as $scope) {
-                static::addGlobalScope(app($scope));
-            }
-        }
+        return $this->hasMany(\NextDeveloper\Accounting\Database\Models\CreditTransactions::class);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

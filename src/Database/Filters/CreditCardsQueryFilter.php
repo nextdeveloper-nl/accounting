@@ -14,8 +14,8 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
 {
 
     /**
-     * @var Builder
-     */
+    * @var Builder
+    */
     protected $builder;
     
     public function name($value)
@@ -38,7 +38,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of ccHolderName
     public function cc_holder_name($value)
     {
-        return $this->ccHolderName($value);
+    return $this->ccHolderName($value);
     }
         
     public function ccNumber($value)
@@ -49,7 +49,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of ccNumber
     public function cc_number($value)
     {
-        return $this->ccNumber($value);
+    return $this->ccNumber($value);
     }
         
     public function ccMonth($value)
@@ -60,7 +60,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of ccMonth
     public function cc_month($value)
     {
-        return $this->ccMonth($value);
+    return $this->ccMonth($value);
     }
         
     public function ccYear($value)
@@ -71,7 +71,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of ccYear
     public function cc_year($value)
     {
-        return $this->ccYear($value);
+    return $this->ccYear($value);
     }
         
     public function ccCvv($value)
@@ -82,7 +82,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of ccCvv
     public function cc_cvv($value)
     {
-        return $this->ccCvv($value);
+    return $this->ccCvv($value);
     }
         
     public function pgCardUserKey($value)
@@ -93,7 +93,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of pgCardUserKey
     public function pg_card_user_key($value)
     {
-        return $this->pgCardUserKey($value);
+    return $this->pgCardUserKey($value);
     }
         
     public function pgCardToken($value)
@@ -104,7 +104,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of pgCardToken
     public function pg_card_token($value)
     {
-        return $this->pgCardToken($value);
+    return $this->pgCardToken($value);
     }
         
     public function pgProvider($value)
@@ -115,7 +115,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of pgProvider
     public function pg_provider($value)
     {
-        return $this->pgProvider($value);
+    return $this->pgProvider($value);
     }
     
     public function isDefault($value)
@@ -126,7 +126,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isDefault
     public function is_default($value)
     {
-        return $this->isDefault($value);
+    return $this->isDefault($value);
     }
      
     public function isValid($value)
@@ -137,7 +137,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isValid
     public function is_valid($value)
     {
-        return $this->isValid($value);
+    return $this->isValid($value);
     }
      
     public function isActive($value)
@@ -148,7 +148,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isActive
     public function is_active($value)
     {
-        return $this->isActive($value);
+    return $this->isActive($value);
     }
      
     public function is3dSecure($value)
@@ -159,7 +159,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of is3dSecure
     public function is_3d_secure($value)
     {
-        return $this->is3dSecure($value);
+    return $this->is3dSecure($value);
     }
      
     public function isStoredAtPg($value)
@@ -170,73 +170,73 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isStoredAtPg
     public function is_stored_at_pg($value)
     {
-        return $this->isStoredAtPg($value);
+    return $this->isStoredAtPg($value);
     }
      
     public function createdAtStart($date)
     {
-        return $this->builder->where('created_at', '>=', $date);
+        return $this->builder->where( 'created_at', '>=', $date );
     }
 
     public function createdAtEnd($date)
     {
-        return $this->builder->where('created_at', '<=', $date);
+        return $this->builder->where( 'created_at', '<=', $date );
     }
 
     //  This is an alias function of createdAt
     public function created_at_start($value)
     {
-        return $this->createdAtStart($value);
+    return $this->createdAtStart($value);
     }
 
     //  This is an alias function of createdAt
     public function created_at_end($value)
     {
-        return $this->createdAtEnd($value);
+    return $this->createdAtEnd($value);
     }
 
     public function updatedAtStart($date)
     {
-        return $this->builder->where('updated_at', '>=', $date);
+        return $this->builder->where( 'updated_at', '>=', $date );
     }
 
     public function updatedAtEnd($date)
     {
-        return $this->builder->where('updated_at', '<=', $date);
+        return $this->builder->where( 'updated_at', '<=', $date );
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_start($value)
     {
-        return $this->updatedAtStart($value);
+    return $this->updatedAtStart($value);
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_end($value)
     {
-        return $this->updatedAtEnd($value);
+    return $this->updatedAtEnd($value);
     }
 
     public function deletedAtStart($date)
     {
-        return $this->builder->where('deleted_at', '>=', $date);
+        return $this->builder->where( 'deleted_at', '>=', $date );
     }
 
     public function deletedAtEnd($date)
     {
-        return $this->builder->where('deleted_at', '<=', $date);
+        return $this->builder->where( 'deleted_at', '<=', $date );
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_start($value)
     {
-        return $this->deletedAtStart($value);
+    return $this->deletedAtStart($value);
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_end($value)
     {
-        return $this->deletedAtEnd($value);
+    return $this->deletedAtEnd($value);
     }
 
     public function iamAccountId($value)
@@ -246,7 +246,7 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         if($iamAccount) {
             return $this->builder->where('iam_account_id', '=', $iamAccount->id);
         }
-    }
+        }
 
     
     public function iamUserId($value)
@@ -256,10 +256,11 @@ class CreditCardsQueryFilter extends AbstractQueryFilter
         if($iamUser) {
             return $this->builder->where('iam_user_id', '=', $iamUser->id);
         }
-    }
+        }
 
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

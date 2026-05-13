@@ -16,20 +16,18 @@ trait AccountingInvoiceTestTraits
     public $http;
 
     /**
-     *   Creating the Guzzle object
-     */
+    *   Creating the Guzzle object
+    */
     public function setupGuzzle()
     {
-        $this->http = new Client(
-            [
+        $this->http = new Client([
             'base_uri'  =>  '127.0.0.1:8000'
-            ]
-        );
+        ]);
     }
 
     /**
-     *   Destroying the Guzzle object
-     */
+    *   Destroying the Guzzle object
+    */
     public function destroyGuzzle()
     {
         $this->http = null;
@@ -44,19 +42,16 @@ trait AccountingInvoiceTestTraits
             ['http_errors' => false]
         );
 
-        $this->assertContains(
-            $response->getStatusCode(), [
+        $this->assertContains($response->getStatusCode(), [
             Response::HTTP_OK,
             Response::HTTP_NOT_FOUND
-            ]
-        );
+        ]);
     }
 
     public function test_http_accountinginvoice_post()
     {
         $this->setupGuzzle();
-        $response = $this->http->request(
-            'POST', '/accounting/accountinginvoice', [
+        $response = $this->http->request('POST', '/accounting/accountinginvoice', [
             'form_params'   =>  [
                 'invoice_number'  =>  'a',
                 'note'  =>  'a',
@@ -74,10 +69,10 @@ trait AccountingInvoiceTestTraits
     }
 
     /**
-     * Get test
-     *
-     * @return bool
-     */
+    * Get test
+    *
+    * @return bool
+    */
     public function test_accountinginvoice_model_get()
     {
         $result = AbstractAccountingInvoiceService::get();
@@ -94,11 +89,9 @@ trait AccountingInvoiceTestTraits
 
     public function test_accountinginvoice_get_paginated()
     {
-        $result = AbstractAccountingInvoiceService::get(
-            null, [
+        $result = AbstractAccountingInvoiceService::get(null, [
             'paginated' =>  'true'
-            ]
-        );
+        ]);
 
         $this->assertIsObject($result, LengthAwarePaginator::class);
     }
@@ -106,7 +99,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_retrieved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRetrievedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRetrievedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -116,7 +109,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_created_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceCreatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceCreatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -126,7 +119,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_creating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceCreatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceCreatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -136,7 +129,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_saving_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceSavingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceSavingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -146,7 +139,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_saved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceSavedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceSavedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -156,7 +149,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_updating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceUpdatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceUpdatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -166,7 +159,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_updated_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceUpdatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceUpdatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -176,7 +169,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_deleting_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceDeletingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceDeletingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -186,7 +179,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_deleted_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceDeletedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceDeletedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -196,7 +189,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_restoring_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRestoringEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRestoringEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -206,7 +199,7 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_restored_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRestoredEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRestoredEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -219,7 +212,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRetrievedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRetrievedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -231,7 +224,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceCreatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceCreatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -243,7 +236,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceCreatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceCreatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -255,7 +248,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceSavingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceSavingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -267,7 +260,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceSavedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceSavedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -279,7 +272,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceUpdatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceUpdatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -291,7 +284,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceUpdatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceUpdatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -303,7 +296,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceDeletingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceDeletingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -315,7 +308,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceDeletedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceDeletedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -327,7 +320,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRestoringEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRestoringEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -339,7 +332,7 @@ trait AccountingInvoiceTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingInvoice::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRestoredEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingInvoice\AccountingInvoiceRestoredEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -350,11 +343,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_invoice_number_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'invoice_number'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -369,11 +360,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_note_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'note'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -388,11 +377,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_cancellation_reason_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'cancellation_reason'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -407,11 +394,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_payment_link_url_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'payment_link_url'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -426,11 +411,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_term_year_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'term_year'  =>  '1'
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -445,11 +428,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_term_month_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'term_month'  =>  '1'
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -464,11 +445,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_due_date_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'due_dateStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -483,11 +462,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_created_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -502,11 +479,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_updated_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -521,11 +496,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_deleted_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -540,11 +513,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_due_date_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'due_dateEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -559,11 +530,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_created_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -578,11 +547,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_updated_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -597,11 +564,9 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_deleted_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -616,12 +581,10 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_due_date_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'due_dateStart'  =>  now(),
                 'due_dateEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -636,12 +599,10 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_created_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now(),
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -656,12 +617,10 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_updated_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now(),
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 
@@ -676,12 +635,10 @@ trait AccountingInvoiceTestTraits
     public function test_accountinginvoice_event_deleted_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now(),
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingInvoiceQueryFilter($request);
 

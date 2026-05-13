@@ -16,20 +16,18 @@ trait AccountingContractTestTraits
     public $http;
 
     /**
-     *   Creating the Guzzle object
-     */
+    *   Creating the Guzzle object
+    */
     public function setupGuzzle()
     {
-        $this->http = new Client(
-            [
+        $this->http = new Client([
             'base_uri'  =>  '127.0.0.1:8000'
-            ]
-        );
+        ]);
     }
 
     /**
-     *   Destroying the Guzzle object
-     */
+    *   Destroying the Guzzle object
+    */
     public function destroyGuzzle()
     {
         $this->http = null;
@@ -44,19 +42,16 @@ trait AccountingContractTestTraits
             ['http_errors' => false]
         );
 
-        $this->assertContains(
-            $response->getStatusCode(), [
+        $this->assertContains($response->getStatusCode(), [
             Response::HTTP_OK,
             Response::HTTP_NOT_FOUND
-            ]
-        );
+        ]);
     }
 
     public function test_http_accountingcontract_post()
     {
         $this->setupGuzzle();
-        $response = $this->http->request(
-            'POST', '/accounting/accountingcontract', [
+        $response = $this->http->request('POST', '/accounting/accountingcontract', [
             'form_params'   =>  [
                 'name'  =>  'a',
                 'description'  =>  'a',
@@ -71,10 +66,10 @@ trait AccountingContractTestTraits
     }
 
     /**
-     * Get test
-     *
-     * @return bool
-     */
+    * Get test
+    *
+    * @return bool
+    */
     public function test_accountingcontract_model_get()
     {
         $result = AbstractAccountingContractService::get();
@@ -91,11 +86,9 @@ trait AccountingContractTestTraits
 
     public function test_accountingcontract_get_paginated()
     {
-        $result = AbstractAccountingContractService::get(
-            null, [
+        $result = AbstractAccountingContractService::get(null, [
             'paginated' =>  'true'
-            ]
-        );
+        ]);
 
         $this->assertIsObject($result, LengthAwarePaginator::class);
     }
@@ -103,7 +96,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_retrieved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRetrievedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRetrievedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -113,7 +106,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_created_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractCreatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractCreatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -123,7 +116,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_creating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractCreatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractCreatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -133,7 +126,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_saving_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractSavingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractSavingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -143,7 +136,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_saved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractSavedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractSavedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -153,7 +146,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_updating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractUpdatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractUpdatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -163,7 +156,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_updated_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractUpdatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractUpdatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -173,7 +166,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_deleting_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractDeletingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractDeletingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -183,7 +176,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_deleted_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractDeletedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractDeletedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -193,7 +186,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_restoring_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRestoringEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRestoringEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -203,7 +196,7 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_restored_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRestoredEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRestoredEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -216,7 +209,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRetrievedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRetrievedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -228,7 +221,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractCreatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractCreatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -240,7 +233,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractCreatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractCreatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -252,7 +245,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractSavingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractSavingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -264,7 +257,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractSavedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractSavedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -276,7 +269,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractUpdatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractUpdatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -288,7 +281,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractUpdatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractUpdatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -300,7 +293,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractDeletingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractDeletingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -312,7 +305,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractDeletedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractDeletedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -324,7 +317,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRestoringEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRestoringEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -336,7 +329,7 @@ trait AccountingContractTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingContract::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRestoredEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingContract\AccountingContractRestoredEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -347,11 +340,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_name_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'name'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -366,11 +357,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_description_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'description'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -385,11 +374,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_term_starts_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'term_startsStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -404,11 +391,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_term_ends_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'term_endsStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -423,11 +408,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_created_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -442,11 +425,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_updated_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -461,11 +442,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_deleted_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -480,11 +459,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_term_starts_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'term_startsEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -499,11 +476,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_term_ends_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'term_endsEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -518,11 +493,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_created_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -537,11 +510,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_updated_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -556,11 +527,9 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_deleted_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -575,12 +544,10 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_term_starts_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'term_startsStart'  =>  now(),
                 'term_startsEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -595,12 +562,10 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_term_ends_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'term_endsStart'  =>  now(),
                 'term_endsEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -615,12 +580,10 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_created_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now(),
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -635,12 +598,10 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_updated_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now(),
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 
@@ -655,12 +616,10 @@ trait AccountingContractTestTraits
     public function test_accountingcontract_event_deleted_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now(),
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingContractQueryFilter($request);
 

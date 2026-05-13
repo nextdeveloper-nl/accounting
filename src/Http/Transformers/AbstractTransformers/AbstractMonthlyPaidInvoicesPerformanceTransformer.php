@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransformer
-{
+class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,25 +51,22 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
      *
      * @return array
      */
-    public function transform(MonthlyPaidInvoicesPerformance $model)
-    {
+    public function transform(MonthlyPaidInvoicesPerformance $model) {
                                                 $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->id,
-            'month_start'  =>  $model->month_start,
-            'month_end'  =>  $model->month_end,
-            'month_name'  =>  $model->month_name,
-            'month_code'  =>  $model->month_code,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'count'  =>  $model->count,
-            'total_amount'  =>  $model->total_amount,
-            'avg_amount'  =>  $model->avg_amount,
-            'min_amount'  =>  $model->min_amount,
-            'max_amount'  =>  $model->max_amount,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->id,
+'month_start'  =>  $model->month_start,
+'month_end'  =>  $model->month_end,
+'month_name'  =>  $model->month_name,
+'month_code'  =>  $model->month_code,
+'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+'count'  =>  $model->count,
+'total_amount'  =>  $model->total_amount,
+'avg_amount'  =>  $model->avg_amount,
+'min_amount'  =>  $model->min_amount,
+'max_amount'  =>  $model->max_amount,
+    ]);
     }
 
     public function includeStates(MonthlyPaidInvoicesPerformance $model)
@@ -157,6 +153,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

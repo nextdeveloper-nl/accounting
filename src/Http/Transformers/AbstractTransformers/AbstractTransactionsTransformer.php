@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractTransactionsTransformer extends AbstractTransformer
-{
+class AbstractTransactionsTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,31 +51,28 @@ class AbstractTransactionsTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(Transactions $model)
-    {
+    public function transform(Transactions $model) {
                                                 $accountingInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->accounting_invoice_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                                                             $accountingPaymentGatewayId = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('id', $model->accounting_payment_gateway_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'accounting_invoice_id'  =>  $accountingInvoiceId ? $accountingInvoiceId->uuid : null,
-            'amount'  =>  $model->amount,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'accounting_payment_gateway_id'  =>  $accountingPaymentGatewayId ? $accountingPaymentGatewayId->uuid : null,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            'gateway_response'  =>  $model->gateway_response,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            'conversation_identifier'  =>  $model->conversation_identifier,
-            'is_pending'  =>  $model->is_pending,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'accounting_invoice_id'  =>  $accountingInvoiceId ? $accountingInvoiceId->uuid : null,
+'amount'  =>  $model->amount,
+'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+'accounting_payment_gateway_id'  =>  $accountingPaymentGatewayId ? $accountingPaymentGatewayId->uuid : null,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
+'gateway_response'  =>  $model->gateway_response,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+'conversation_identifier'  =>  $model->conversation_identifier,
+'is_pending'  =>  $model->is_pending,
+    ]);
     }
 
     public function includeStates(Transactions $model)
@@ -163,6 +159,7 @@ class AbstractTransactionsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

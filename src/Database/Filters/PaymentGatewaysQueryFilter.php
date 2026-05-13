@@ -14,8 +14,8 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
 {
 
     /**
-     * @var Builder
-     */
+    * @var Builder
+    */
     protected $builder;
     
     public function name($value)
@@ -35,7 +35,7 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         $operator = substr($value, 0, 1);
 
         if ($operator != '<' || $operator != '>') {
-            $operator = '=';
+           $operator = '=';
         } else {
             $value = substr($value, 1);
         }
@@ -46,7 +46,7 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         //  This is an alias function of vatRate
     public function vat_rate($value)
     {
-        return $this->vatRate($value);
+    return $this->vatRate($value);
     }
     
     public function isActive($value)
@@ -57,73 +57,73 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isActive
     public function is_active($value)
     {
-        return $this->isActive($value);
+    return $this->isActive($value);
     }
      
     public function createdAtStart($date)
     {
-        return $this->builder->where('created_at', '>=', $date);
+        return $this->builder->where( 'created_at', '>=', $date );
     }
 
     public function createdAtEnd($date)
     {
-        return $this->builder->where('created_at', '<=', $date);
+        return $this->builder->where( 'created_at', '<=', $date );
     }
 
     //  This is an alias function of createdAt
     public function created_at_start($value)
     {
-        return $this->createdAtStart($value);
+    return $this->createdAtStart($value);
     }
 
     //  This is an alias function of createdAt
     public function created_at_end($value)
     {
-        return $this->createdAtEnd($value);
+    return $this->createdAtEnd($value);
     }
 
     public function updatedAtStart($date)
     {
-        return $this->builder->where('updated_at', '>=', $date);
+        return $this->builder->where( 'updated_at', '>=', $date );
     }
 
     public function updatedAtEnd($date)
     {
-        return $this->builder->where('updated_at', '<=', $date);
+        return $this->builder->where( 'updated_at', '<=', $date );
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_start($value)
     {
-        return $this->updatedAtStart($value);
+    return $this->updatedAtStart($value);
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_end($value)
     {
-        return $this->updatedAtEnd($value);
+    return $this->updatedAtEnd($value);
     }
 
     public function deletedAtStart($date)
     {
-        return $this->builder->where('deleted_at', '>=', $date);
+        return $this->builder->where( 'deleted_at', '>=', $date );
     }
 
     public function deletedAtEnd($date)
     {
-        return $this->builder->where('deleted_at', '<=', $date);
+        return $this->builder->where( 'deleted_at', '<=', $date );
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_start($value)
     {
-        return $this->deletedAtStart($value);
+    return $this->deletedAtStart($value);
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_end($value)
     {
-        return $this->deletedAtEnd($value);
+    return $this->deletedAtEnd($value);
     }
 
     public function commonCountryId($value)
@@ -133,12 +133,12 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         if($commonCountry) {
             return $this->builder->where('common_country_id', '=', $commonCountry->id);
         }
-    }
+        }
 
         //  This is an alias function of commonCountry
     public function common_country_id($value)
     {
-        return $this->commonCountry($value);
+    return $this->commonCountry($value);
     }
     
     public function iamAccountId($value)
@@ -148,7 +148,7 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         if($iamAccount) {
             return $this->builder->where('iam_account_id', '=', $iamAccount->id);
         }
-    }
+        }
 
     
     public function commonCurrencyId($value)
@@ -158,12 +158,12 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         if($commonCurrency) {
             return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
         }
-    }
+        }
 
         //  This is an alias function of commonCurrency
     public function common_currency_id($value)
     {
-        return $this->commonCurrency($value);
+    return $this->commonCurrency($value);
     }
     
     public function accountingAccountId($value)
@@ -173,15 +173,16 @@ class PaymentGatewaysQueryFilter extends AbstractQueryFilter
         if($accountingAccount) {
             return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
         }
-    }
+        }
 
         //  This is an alias function of accountingAccount
     public function accounting_account_id($value)
     {
-        return $this->accountingAccount($value);
+    return $this->accountingAccount($value);
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

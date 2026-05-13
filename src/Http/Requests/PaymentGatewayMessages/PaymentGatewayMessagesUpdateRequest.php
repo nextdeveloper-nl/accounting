@@ -10,12 +10,11 @@ class PaymentGatewayMessagesUpdateRequest extends AbstractFormRequest
     /**
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             'message_identifier' => 'nullable|string',
-        'message' => 'nullable|string',
-        'accounting_payment_gateway_id' => 'nullable|exists:accounting_payment_gateways,uuid|uuid',
+'message' => 'nullable|string',
+'accounting_payment_gateway_id' => 'nullable|exists:accounting_payment_gateways,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

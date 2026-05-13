@@ -16,20 +16,18 @@ trait AccountingTransactionTestTraits
     public $http;
 
     /**
-     *   Creating the Guzzle object
-     */
+    *   Creating the Guzzle object
+    */
     public function setupGuzzle()
     {
-        $this->http = new Client(
-            [
+        $this->http = new Client([
             'base_uri'  =>  '127.0.0.1:8000'
-            ]
-        );
+        ]);
     }
 
     /**
-     *   Destroying the Guzzle object
-     */
+    *   Destroying the Guzzle object
+    */
     public function destroyGuzzle()
     {
         $this->http = null;
@@ -44,19 +42,16 @@ trait AccountingTransactionTestTraits
             ['http_errors' => false]
         );
 
-        $this->assertContains(
-            $response->getStatusCode(), [
+        $this->assertContains($response->getStatusCode(), [
             Response::HTTP_OK,
             Response::HTTP_NOT_FOUND
-            ]
-        );
+        ]);
     }
 
     public function test_http_accountingtransaction_post()
     {
         $this->setupGuzzle();
-        $response = $this->http->request(
-            'POST', '/accounting/accountingtransaction', [
+        $response = $this->http->request('POST', '/accounting/accountingtransaction', [
             'form_params'   =>  [
                 'gateway_response'  =>  'a',
                 'conversation_identifier'  =>  'a',
@@ -69,10 +64,10 @@ trait AccountingTransactionTestTraits
     }
 
     /**
-     * Get test
-     *
-     * @return bool
-     */
+    * Get test
+    *
+    * @return bool
+    */
     public function test_accountingtransaction_model_get()
     {
         $result = AbstractAccountingTransactionService::get();
@@ -89,11 +84,9 @@ trait AccountingTransactionTestTraits
 
     public function test_accountingtransaction_get_paginated()
     {
-        $result = AbstractAccountingTransactionService::get(
-            null, [
+        $result = AbstractAccountingTransactionService::get(null, [
             'paginated' =>  'true'
-            ]
-        );
+        ]);
 
         $this->assertIsObject($result, LengthAwarePaginator::class);
     }
@@ -101,7 +94,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_retrieved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRetrievedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRetrievedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -111,7 +104,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_created_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionCreatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionCreatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -121,7 +114,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_creating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionCreatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionCreatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -131,7 +124,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_saving_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionSavingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionSavingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -141,7 +134,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_saved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionSavedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionSavedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -151,7 +144,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_updating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionUpdatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionUpdatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -161,7 +154,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_updated_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionUpdatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionUpdatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -171,7 +164,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_deleting_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionDeletingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionDeletingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -181,7 +174,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_deleted_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionDeletedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionDeletedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -191,7 +184,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_restoring_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRestoringEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRestoringEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -201,7 +194,7 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_restored_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRestoredEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRestoredEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -214,7 +207,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRetrievedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRetrievedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -226,7 +219,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionCreatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionCreatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -238,7 +231,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionCreatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionCreatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -250,7 +243,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionSavingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionSavingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -262,7 +255,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionSavedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionSavedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -274,7 +267,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionUpdatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionUpdatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -286,7 +279,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionUpdatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionUpdatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -298,7 +291,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionDeletingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionDeletingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -310,7 +303,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionDeletedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionDeletedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -322,7 +315,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRestoringEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRestoringEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -334,7 +327,7 @@ trait AccountingTransactionTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingTransaction::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRestoredEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingTransaction\AccountingTransactionRestoredEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -345,11 +338,9 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_gateway_response_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'gateway_response'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -364,11 +355,9 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_conversation_identifier_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'conversation_identifier'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -383,11 +372,9 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_created_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -402,11 +389,9 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_updated_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -421,11 +406,9 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_deleted_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -440,11 +423,9 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_created_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -459,11 +440,9 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_updated_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -478,11 +457,9 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_deleted_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -497,12 +474,10 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_created_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now(),
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -517,12 +492,10 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_updated_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now(),
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 
@@ -537,12 +510,10 @@ trait AccountingTransactionTestTraits
     public function test_accountingtransaction_event_deleted_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now(),
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingTransactionQueryFilter($request);
 

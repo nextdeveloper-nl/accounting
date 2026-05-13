@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractContractsTransformer extends AbstractTransformer
-{
+class AbstractContractsTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,29 +51,26 @@ class AbstractContractsTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(Contracts $model)
-    {
+    public function transform(Contracts $model) {
                                                 $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            'name'  =>  $model->name,
-            'description'  =>  $model->description,
-            'term_starts'  =>  $model->term_starts,
-            'term_ends'  =>  $model->term_ends,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            'is_approved'  =>  $model->is_approved,
-            'is_signed'  =>  $model->is_signed,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
+'name'  =>  $model->name,
+'description'  =>  $model->description,
+'term_starts'  =>  $model->term_starts,
+'term_ends'  =>  $model->term_ends,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+'is_approved'  =>  $model->is_approved,
+'is_signed'  =>  $model->is_signed,
+    ]);
     }
 
     public function includeStates(Contracts $model)
@@ -161,6 +157,7 @@ class AbstractContractsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

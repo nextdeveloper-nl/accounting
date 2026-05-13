@@ -14,8 +14,8 @@ class WeeklyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
 {
 
     /**
-     * @var Builder
-     */
+    * @var Builder
+    */
     protected $builder;
     
     public function weekNumber($value)
@@ -26,7 +26,7 @@ class WeeklyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
         //  This is an alias function of weekNumber
     public function week_number($value)
     {
-        return $this->weekNumber($value);
+    return $this->weekNumber($value);
     }
     
     public function count($value)
@@ -34,7 +34,7 @@ class WeeklyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
         $operator = substr($value, 0, 1);
 
         if ($operator != '<' || $operator != '>') {
-            $operator = '=';
+           $operator = '=';
         } else {
             $value = substr($value, 1);
         }
@@ -45,49 +45,50 @@ class WeeklyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
     
     public function weekStartStart($date)
     {
-        return $this->builder->where('week_start', '>=', $date);
+        return $this->builder->where( 'week_start', '>=', $date );
     }
 
     public function weekStartEnd($date)
     {
-        return $this->builder->where('week_start', '<=', $date);
+        return $this->builder->where( 'week_start', '<=', $date );
     }
 
     //  This is an alias function of weekStart
     public function week_start_start($value)
     {
-        return $this->weekStartStart($value);
+    return $this->weekStartStart($value);
     }
 
     //  This is an alias function of weekStart
     public function week_start_end($value)
     {
-        return $this->weekStartEnd($value);
+    return $this->weekStartEnd($value);
     }
 
     public function weekEndStart($date)
     {
-        return $this->builder->where('week_end', '>=', $date);
+        return $this->builder->where( 'week_end', '>=', $date );
     }
 
     public function weekEndEnd($date)
     {
-        return $this->builder->where('week_end', '<=', $date);
+        return $this->builder->where( 'week_end', '<=', $date );
     }
 
     //  This is an alias function of weekEnd
     public function week_end_start($value)
     {
-        return $this->weekEndStart($value);
+    return $this->weekEndStart($value);
     }
 
     //  This is an alias function of weekEnd
     public function week_end_end($value)
     {
-        return $this->weekEndEnd($value);
+    return $this->weekEndEnd($value);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

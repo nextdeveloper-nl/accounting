@@ -14,8 +14,8 @@ class TransactionsQueryFilter extends AbstractQueryFilter
 {
 
     /**
-     * @var Builder
-     */
+    * @var Builder
+    */
     protected $builder;
     
     public function gatewayResponse($value)
@@ -26,7 +26,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of gatewayResponse
     public function gateway_response($value)
     {
-        return $this->gatewayResponse($value);
+    return $this->gatewayResponse($value);
     }
         
     public function conversationIdentifier($value)
@@ -37,7 +37,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of conversationIdentifier
     public function conversation_identifier($value)
     {
-        return $this->conversationIdentifier($value);
+    return $this->conversationIdentifier($value);
     }
     
     public function isPending($value)
@@ -48,73 +48,73 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         //  This is an alias function of isPending
     public function is_pending($value)
     {
-        return $this->isPending($value);
+    return $this->isPending($value);
     }
      
     public function createdAtStart($date)
     {
-        return $this->builder->where('created_at', '>=', $date);
+        return $this->builder->where( 'created_at', '>=', $date );
     }
 
     public function createdAtEnd($date)
     {
-        return $this->builder->where('created_at', '<=', $date);
+        return $this->builder->where( 'created_at', '<=', $date );
     }
 
     //  This is an alias function of createdAt
     public function created_at_start($value)
     {
-        return $this->createdAtStart($value);
+    return $this->createdAtStart($value);
     }
 
     //  This is an alias function of createdAt
     public function created_at_end($value)
     {
-        return $this->createdAtEnd($value);
+    return $this->createdAtEnd($value);
     }
 
     public function updatedAtStart($date)
     {
-        return $this->builder->where('updated_at', '>=', $date);
+        return $this->builder->where( 'updated_at', '>=', $date );
     }
 
     public function updatedAtEnd($date)
     {
-        return $this->builder->where('updated_at', '<=', $date);
+        return $this->builder->where( 'updated_at', '<=', $date );
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_start($value)
     {
-        return $this->updatedAtStart($value);
+    return $this->updatedAtStart($value);
     }
 
     //  This is an alias function of updatedAt
     public function updated_at_end($value)
     {
-        return $this->updatedAtEnd($value);
+    return $this->updatedAtEnd($value);
     }
 
     public function deletedAtStart($date)
     {
-        return $this->builder->where('deleted_at', '>=', $date);
+        return $this->builder->where( 'deleted_at', '>=', $date );
     }
 
     public function deletedAtEnd($date)
     {
-        return $this->builder->where('deleted_at', '<=', $date);
+        return $this->builder->where( 'deleted_at', '<=', $date );
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_start($value)
     {
-        return $this->deletedAtStart($value);
+    return $this->deletedAtStart($value);
     }
 
     //  This is an alias function of deletedAt
     public function deleted_at_end($value)
     {
-        return $this->deletedAtEnd($value);
+    return $this->deletedAtEnd($value);
     }
 
     public function accountingInvoiceId($value)
@@ -124,12 +124,12 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         if($accountingInvoice) {
             return $this->builder->where('accounting_invoice_id', '=', $accountingInvoice->id);
         }
-    }
+        }
 
         //  This is an alias function of accountingInvoice
     public function accounting_invoice_id($value)
     {
-        return $this->accountingInvoice($value);
+    return $this->accountingInvoice($value);
     }
     
     public function commonCurrencyId($value)
@@ -139,12 +139,12 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         if($commonCurrency) {
             return $this->builder->where('common_currency_id', '=', $commonCurrency->id);
         }
-    }
+        }
 
         //  This is an alias function of commonCurrency
     public function common_currency_id($value)
     {
-        return $this->commonCurrency($value);
+    return $this->commonCurrency($value);
     }
     
     public function accountingPaymentGatewayId($value)
@@ -154,12 +154,12 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         if($accountingPaymentGateway) {
             return $this->builder->where('accounting_payment_gateway_id', '=', $accountingPaymentGateway->id);
         }
-    }
+        }
 
         //  This is an alias function of accountingPaymentGateway
     public function accounting_payment_gateway_id($value)
     {
-        return $this->accountingPaymentGateway($value);
+    return $this->accountingPaymentGateway($value);
     }
     
     public function iamAccountId($value)
@@ -169,7 +169,7 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         if($iamAccount) {
             return $this->builder->where('iam_account_id', '=', $iamAccount->id);
         }
-    }
+        }
 
     
     public function accountingAccountId($value)
@@ -179,15 +179,16 @@ class TransactionsQueryFilter extends AbstractQueryFilter
         if($accountingAccount) {
             return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
         }
-    }
+        }
 
         //  This is an alias function of accountingAccount
     public function accounting_account_id($value)
     {
-        return $this->accountingAccount($value);
+    return $this->accountingAccount($value);
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
-{
+class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,8 +51,7 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(ContractItemsPerspective $model)
-    {
+    public function transform(ContractItemsPerspective $model) {
                                                 $accountingContractId = \NextDeveloper\Accounting\Database\Models\Contracts::where('id', $model->accounting_contract_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
@@ -61,32 +59,30 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'object_type'  =>  $model->object_type,
-            'object_id'  =>  $model->object_id,
-            'accounting_contract_id'  =>  $accountingContractId ? $accountingContractId->uuid : null,
-            'term_starts'  =>  $model->term_starts,
-            'term_ends'  =>  $model->term_ends,
-            'price'  =>  $model->price,
-            'discount'  =>  $model->discount,
-            'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
-            'contract_type'  =>  $model->contract_type,
-            'is_signed'  =>  $model->is_signed,
-            'is_approved'  =>  $model->is_approved,
-            'account_name'  =>  $model->account_name,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
-            'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
-            'accounting_identifier'  =>  $model->accounting_identifier,
-            'credit'  =>  $model->credit,
-            'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'object_type'  =>  $model->object_type,
+'object_id'  =>  $model->object_id,
+'accounting_contract_id'  =>  $accountingContractId ? $accountingContractId->uuid : null,
+'term_starts'  =>  $model->term_starts,
+'term_ends'  =>  $model->term_ends,
+'price'  =>  $model->price,
+'discount'  =>  $model->discount,
+'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
+'contract_type'  =>  $model->contract_type,
+'is_signed'  =>  $model->is_signed,
+'is_approved'  =>  $model->is_approved,
+'account_name'  =>  $model->account_name,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
+'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
+'accounting_identifier'  =>  $model->accounting_identifier,
+'credit'  =>  $model->credit,
+'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+    ]);
     }
 
     public function includeStates(ContractItemsPerspective $model)
@@ -173,6 +169,7 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

@@ -16,20 +16,18 @@ trait AccountingPaymentGatewayMessageTestTraits
     public $http;
 
     /**
-     *   Creating the Guzzle object
-     */
+    *   Creating the Guzzle object
+    */
     public function setupGuzzle()
     {
-        $this->http = new Client(
-            [
+        $this->http = new Client([
             'base_uri'  =>  '127.0.0.1:8000'
-            ]
-        );
+        ]);
     }
 
     /**
-     *   Destroying the Guzzle object
-     */
+    *   Destroying the Guzzle object
+    */
     public function destroyGuzzle()
     {
         $this->http = null;
@@ -44,19 +42,16 @@ trait AccountingPaymentGatewayMessageTestTraits
             ['http_errors' => false]
         );
 
-        $this->assertContains(
-            $response->getStatusCode(), [
+        $this->assertContains($response->getStatusCode(), [
             Response::HTTP_OK,
             Response::HTTP_NOT_FOUND
-            ]
-        );
+        ]);
     }
 
     public function test_http_accountingpaymentgatewaymessage_post()
     {
         $this->setupGuzzle();
-        $response = $this->http->request(
-            'POST', '/accounting/accountingpaymentgatewaymessage', [
+        $response = $this->http->request('POST', '/accounting/accountingpaymentgatewaymessage', [
             'form_params'   =>  [
                 'message_identifier'  =>  'a',
                 'message'  =>  'a',
@@ -69,10 +64,10 @@ trait AccountingPaymentGatewayMessageTestTraits
     }
 
     /**
-     * Get test
-     *
-     * @return bool
-     */
+    * Get test
+    *
+    * @return bool
+    */
     public function test_accountingpaymentgatewaymessage_model_get()
     {
         $result = AbstractAccountingPaymentGatewayMessageService::get();
@@ -89,11 +84,9 @@ trait AccountingPaymentGatewayMessageTestTraits
 
     public function test_accountingpaymentgatewaymessage_get_paginated()
     {
-        $result = AbstractAccountingPaymentGatewayMessageService::get(
-            null, [
+        $result = AbstractAccountingPaymentGatewayMessageService::get(null, [
             'paginated' =>  'true'
-            ]
-        );
+        ]);
 
         $this->assertIsObject($result, LengthAwarePaginator::class);
     }
@@ -101,7 +94,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_retrieved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRetrievedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRetrievedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -111,7 +104,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_created_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageCreatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageCreatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -121,7 +114,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_creating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageCreatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageCreatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -131,7 +124,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_saving_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageSavingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageSavingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -141,7 +134,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_saved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageSavedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageSavedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -151,7 +144,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_updating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageUpdatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageUpdatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -161,7 +154,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_updated_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageUpdatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageUpdatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -171,7 +164,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_deleting_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageDeletingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageDeletingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -181,7 +174,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_deleted_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageDeletedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageDeletedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -191,7 +184,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_restoring_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRestoringEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRestoringEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -201,7 +194,7 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_restored_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRestoredEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRestoredEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -214,7 +207,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRetrievedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRetrievedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -226,7 +219,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageCreatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageCreatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -238,7 +231,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageCreatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageCreatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -250,7 +243,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageSavingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageSavingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -262,7 +255,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageSavedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageSavedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -274,7 +267,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageUpdatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageUpdatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -286,7 +279,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageUpdatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageUpdatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -298,7 +291,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageDeletingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageDeletingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -310,7 +303,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageDeletedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageDeletedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -322,7 +315,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRestoringEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRestoringEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -334,7 +327,7 @@ trait AccountingPaymentGatewayMessageTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingPaymentGatewayMessage::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRestoredEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingPaymentGatewayMessage\AccountingPaymentGatewayMessageRestoredEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -345,11 +338,9 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_message_identifier_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'message_identifier'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -364,11 +355,9 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_message_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'message'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -383,11 +372,9 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_created_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -402,11 +389,9 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_updated_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -421,11 +406,9 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_deleted_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -440,11 +423,9 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_created_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -459,11 +440,9 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_updated_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -478,11 +457,9 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_deleted_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -497,12 +474,10 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_created_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now(),
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -517,12 +492,10 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_updated_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now(),
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 
@@ -537,12 +510,10 @@ trait AccountingPaymentGatewayMessageTestTraits
     public function test_accountingpaymentgatewaymessage_event_deleted_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now(),
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingPaymentGatewayMessageQueryFilter($request);
 

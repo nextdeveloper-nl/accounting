@@ -114,6 +114,14 @@ class AccountsService extends AbstractAccountsService
             }
         }
 
+        $accountBeingUpdated = Accounts::withoutGlobalScope(AuthorizationScope::class)->where('uuid', $id)->first();
+
+        foreach (['distributor_id', 'sales_partner_id', 'integrator_partner_id', 'affiliate_partner_id'] as $field) {
+            if (array_key_exists($field, $data) && $data[$field] == $accountBeingUpdated->id) {
+                unset($data[$field]);
+            }
+        }
+
         $updatedAccount = parent::update($id, $data);
 
         if(!$updatedAccount) {

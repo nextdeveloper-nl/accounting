@@ -16,20 +16,18 @@ trait AccountingCreditCardTestTraits
     public $http;
 
     /**
-     *   Creating the Guzzle object
-     */
+    *   Creating the Guzzle object
+    */
     public function setupGuzzle()
     {
-        $this->http = new Client(
-            [
+        $this->http = new Client([
             'base_uri'  =>  '127.0.0.1:8000'
-            ]
-        );
+        ]);
     }
 
     /**
-     *   Destroying the Guzzle object
-     */
+    *   Destroying the Guzzle object
+    */
     public function destroyGuzzle()
     {
         $this->http = null;
@@ -44,19 +42,16 @@ trait AccountingCreditCardTestTraits
             ['http_errors' => false]
         );
 
-        $this->assertContains(
-            $response->getStatusCode(), [
+        $this->assertContains($response->getStatusCode(), [
             Response::HTTP_OK,
             Response::HTTP_NOT_FOUND
-            ]
-        );
+        ]);
     }
 
     public function test_http_accountingcreditcard_post()
     {
         $this->setupGuzzle();
-        $response = $this->http->request(
-            'POST', '/accounting/accountingcreditcard', [
+        $response = $this->http->request('POST', '/accounting/accountingcreditcard', [
             'form_params'   =>  [
                 'name'  =>  'a',
                 'type'  =>  'a',
@@ -77,10 +72,10 @@ trait AccountingCreditCardTestTraits
     }
 
     /**
-     * Get test
-     *
-     * @return bool
-     */
+    * Get test
+    *
+    * @return bool
+    */
     public function test_accountingcreditcard_model_get()
     {
         $result = AbstractAccountingCreditCardService::get();
@@ -97,11 +92,9 @@ trait AccountingCreditCardTestTraits
 
     public function test_accountingcreditcard_get_paginated()
     {
-        $result = AbstractAccountingCreditCardService::get(
-            null, [
+        $result = AbstractAccountingCreditCardService::get(null, [
             'paginated' =>  'true'
-            ]
-        );
+        ]);
 
         $this->assertIsObject($result, LengthAwarePaginator::class);
     }
@@ -109,7 +102,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_retrieved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRetrievedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRetrievedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -119,7 +112,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_created_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardCreatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardCreatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -129,7 +122,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_creating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardCreatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardCreatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -139,7 +132,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_saving_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardSavingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardSavingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -149,7 +142,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_saved_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardSavedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardSavedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -159,7 +152,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_updating_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardUpdatingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardUpdatingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -169,7 +162,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_updated_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardUpdatedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardUpdatedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -179,7 +172,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_deleting_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardDeletingEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardDeletingEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -189,7 +182,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_deleted_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardDeletedEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardDeletedEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -199,7 +192,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_restoring_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRestoringEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRestoringEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -209,7 +202,7 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_restored_without_object()
     {
         try {
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRestoredEvent());
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRestoredEvent() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -222,7 +215,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRetrievedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRetrievedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -234,7 +227,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardCreatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardCreatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -246,7 +239,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardCreatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardCreatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -258,7 +251,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardSavingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardSavingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -270,7 +263,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardSavedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardSavedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -282,7 +275,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardUpdatingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardUpdatingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -294,7 +287,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardUpdatedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardUpdatedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -306,7 +299,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardDeletingEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardDeletingEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -318,7 +311,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardDeletedEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardDeletedEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -330,7 +323,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRestoringEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRestoringEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -342,7 +335,7 @@ trait AccountingCreditCardTestTraits
         try {
             $model = \NextDeveloper\Accounting\Database\Models\AccountingCreditCard::first();
 
-            event(new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRestoredEvent($model));
+            event( new \NextDeveloper\Accounting\Events\AccountingCreditCard\AccountingCreditCardRestoredEvent($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -353,11 +346,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_name_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'name'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -372,11 +363,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_type_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'type'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -391,11 +380,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_cc_holder_name_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'cc_holder_name'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -410,11 +397,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_cc_number_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'cc_number'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -429,11 +414,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_cc_month_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'cc_month'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -448,11 +431,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_cc_year_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'cc_year'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -467,11 +448,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_cc_cvv_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'cc_cvv'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -486,11 +465,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_pg_card_user_key_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'pg_card_user_key'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -505,11 +482,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_pg_card_token_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'pg_card_token'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -524,11 +499,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_pg_provider_filter()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'pg_provider'  =>  'a'
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -543,11 +516,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_created_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -562,11 +533,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_updated_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -581,11 +550,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_deleted_at_filter_start()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -600,11 +567,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_created_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -619,11 +584,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_updated_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -638,11 +601,9 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_deleted_at_filter_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -657,12 +618,10 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_created_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'created_atStart'  =>  now(),
                 'created_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -677,12 +636,10 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_updated_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'updated_atStart'  =>  now(),
                 'updated_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 
@@ -697,12 +654,10 @@ trait AccountingCreditCardTestTraits
     public function test_accountingcreditcard_event_deleted_at_filter_start_and_end()
     {
         try {
-            $request = new Request(
-                [
+            $request = new Request([
                 'deleted_atStart'  =>  now(),
                 'deleted_atEnd'  =>  now()
-                ]
-            );
+            ]);
 
             $filter = new AccountingCreditCardQueryFilter($request);
 

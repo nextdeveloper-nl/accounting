@@ -16,48 +16,48 @@ use Illuminate\Notifications\Notifiable;
 use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
- * CreditCards model.
- *
- * @package  NextDeveloper\Accounting\Database\Models
- * @property integer $id
- * @property string $uuid
- * @property string $name
- * @property string $type
- * @property string $cc_holder_name
- * @property string $cc_number
- * @property string $cc_month
- * @property string $cc_year
- * @property string $cc_cvv
- * @property boolean $is_default
- * @property boolean $is_valid
- * @property boolean $is_active
- * @property boolean $is_3d_secure
- * @property integer $iam_account_id
- * @property integer $iam_user_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon $deleted_at
- * @property string $pg_card_user_key
- * @property string $pg_card_token
- * @property string $pg_provider
- * @property boolean $is_stored_at_pg
- */
+* CreditCards model.
+*
+* @package NextDeveloper\Accounting\Database\Models
+* @property integer $id
+* @property string $uuid
+* @property string $name
+* @property string $type
+* @property string $cc_holder_name
+* @property string $cc_number
+* @property string $cc_month
+* @property string $cc_year
+* @property string $cc_cvv
+* @property boolean $is_default
+* @property boolean $is_valid
+* @property boolean $is_active
+* @property boolean $is_3d_secure
+* @property integer $iam_account_id
+* @property integer $iam_user_id
+* @property \Carbon\Carbon $created_at
+* @property \Carbon\Carbon $updated_at
+* @property \Carbon\Carbon $deleted_at
+* @property string $pg_card_user_key
+* @property string $pg_card_token
+* @property string $pg_provider
+* @property boolean $is_stored_at_pg
+*/
 class CreditCards extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
-    use SoftDeletes;
+use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
+	use SoftDeletes;
 
-    public $timestamps = true;
+	public $timestamps = true;
 
-    protected $table = 'accounting_credit_cards';
+protected $table = 'accounting_credit_cards';
 
 
-    /**
-     @var array
-     */
-    protected $guarded = [];
+/**
+* @var array
+*/
+protected $guarded = [];
 
-    protected $fillable = [
+protected $fillable = [
             'name',
             'type',
             'cc_holder_name',
@@ -77,106 +77,102 @@ class CreditCards extends Model
             'is_stored_at_pg',
     ];
 
-    /**
-      Here we have the fulltext fields. We can use these for fulltext search if enabled.
-     */
-    protected $fullTextFields = [
+/**
+*  Here we have the fulltext fields. We can use these for fulltext search if enabled.
+*/
+protected $fullTextFields = [
 
-    ];
+];
 
-    /**
-     @var array
-     */
-    protected $appends = [
+/**
+* @var array
+*/
+protected $appends = [
 
-    ];
+];
 
-    /**
-     We are casting fields to objects so that we can work on them better
-     *
-     @var array
-     */
-    protected $casts = [
-    'id' => 'integer',
-    'name' => 'string',
-    'type' => 'string',
-    'cc_holder_name' => 'string',
-    'cc_number' => 'string',
-    'cc_month' => 'string',
-    'cc_year' => 'string',
-    'cc_cvv' => 'string',
-    'is_default' => 'boolean',
-    'is_valid' => 'boolean',
-    'is_active' => 'boolean',
-    'is_3d_secure' => 'boolean',
-    'created_at' => 'datetime',
-    'updated_at' => 'datetime',
-    'deleted_at' => 'datetime',
-    'pg_card_user_key' => 'string',
-    'pg_card_token' => 'string',
-    'pg_provider' => 'string',
-    'is_stored_at_pg' => 'boolean',
-    ];
+/**
+* We are casting fields to objects so that we can work on them better
+* @var array
+*/
+protected $casts = [
+'id' => 'integer',
+'name' => 'string',
+'type' => 'string',
+'cc_holder_name' => 'string',
+'cc_number' => 'string',
+'cc_month' => 'string',
+'cc_year' => 'string',
+'cc_cvv' => 'string',
+'is_default' => 'boolean',
+'is_valid' => 'boolean',
+'is_active' => 'boolean',
+'is_3d_secure' => 'boolean',
+'created_at' => 'datetime',
+'updated_at' => 'datetime',
+'deleted_at' => 'datetime',
+'pg_card_user_key' => 'string',
+'pg_card_token' => 'string',
+'pg_provider' => 'string',
+'is_stored_at_pg' => 'boolean',
+];
 
-    /**
-     We are casting data fields.
-     *
-     @var array
-     */
-    protected $dates = [
-    'created_at',
-    'updated_at',
-    'deleted_at',
-    ];
+/**
+* We are casting data fields.
+* @var array
+*/
+protected $dates = [
+'created_at',
+'updated_at',
+'deleted_at',
+];
 
-    /**
-     @var array
-     */
-    protected $with = [
+/**
+* @var array
+*/
+protected $with = [
 
-    ];
+];
 
-    /**
-     @var int
-     */
-    protected $perPage = 20;
+/**
+* @var int
+*/
+protected $perPage = 20;
 
-    /**
-     @return void
-     */
-    public static function boot()
-    {
-        parent::boot();
+/**
+* @return void
+*/
+public static function boot()
+{
+parent::boot();
 
-        //  We create and add Observer even if we wont use it.
-        parent::observe(CreditCardsObserver::class);
+//  We create and add Observer even if we wont use it.
+parent::observe(CreditCardsObserver::class);
 
-        self::registerScopes();
-    }
+self::registerScopes();
+}
 
-    public static function registerScopes()
-    {
-        $globalScopes = config('accounting.scopes.global');
-        $modelScopes = config('accounting.scopes.accounting_credit_cards');
+public static function registerScopes()
+{
+$globalScopes = config('accounting.scopes.global');
+$modelScopes = config('accounting.scopes.accounting_credit_cards');
 
-        if(!$modelScopes) { $modelScopes = [];
-        }
-        if (!$globalScopes) { $globalScopes = [];
-        }
+if(!$modelScopes) $modelScopes = [];
+if (!$globalScopes) $globalScopes = [];
 
-        $scopes = array_merge(
-            $globalScopes,
-            $modelScopes
-        );
+$scopes = array_merge(
+$globalScopes,
+$modelScopes
+);
 
-        if($scopes) {
-            foreach ($scopes as $scope) {
-                static::addGlobalScope(app($scope));
-            }
-        }
-    }
+if($scopes) {
+foreach ($scopes as $scope) {
+static::addGlobalScope(app($scope));
+}
+}
+}
 
-    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
     protected function ccNumber(): Attribute
     {
@@ -186,6 +182,7 @@ class CreditCards extends Model
             },
         );
     }
+
 
 
 

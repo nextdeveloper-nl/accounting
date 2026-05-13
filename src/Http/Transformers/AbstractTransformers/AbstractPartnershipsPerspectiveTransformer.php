@@ -29,12 +29,11 @@ use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
  *
  * @package NextDeveloper\Accounting\Http\Transformers
  */
-class AbstractPartnershipsPerspectiveTransformer extends AbstractTransformer
-{
+class AbstractPartnershipsPerspectiveTransformer extends AbstractTransformer {
 
     /**
-     * @var array
-     */
+    * @var array
+    */
     protected array $availableIncludes = [
         'states',
         'actions',
@@ -52,36 +51,33 @@ class AbstractPartnershipsPerspectiveTransformer extends AbstractTransformer
      *
      * @return array
      */
-    public function transform(PartnershipsPerspective $model)
-    {
+    public function transform(PartnershipsPerspective $model) {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                         
-        return $this->buildPayload(
-            [
-            'id'  =>  $model->uuid,
-            'name'  =>  $model->name,
-            'partner_code'  =>  $model->partner_code,
-            'is_brand_ambassador'  =>  $model->is_brand_ambassador,
-            'customer_count'  =>  $model->customer_count,
-            'level'  =>  $model->level,
-            'reward_points'  =>  $model->reward_points,
-            'boosts'  =>  $model->boosts,
-            'mystery_box'  =>  $model->mystery_box,
-            'badges'  =>  $model->badges,
-            'is_approved'  =>  $model->is_approved,
-            'technical_capabilities'  =>  $model->technical_capabilities,
-            'industry'  =>  $model->industry,
-            'sector_focus'  =>  $model->sector_focus,
-            'special_interest'  =>  $model->special_interest,
-            'compliance_certifications'  =>  $model->compliance_certifications,
-            'target_group'  =>  $model->target_group,
-            'meeting_link'  =>  $model->meeting_link,
-            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
-            'created_at'  =>  $model->created_at,
-            'updated_at'  =>  $model->updated_at,
-            'deleted_at'  =>  $model->deleted_at,
-            ]
-        );
+        return $this->buildPayload([
+'id'  =>  $model->uuid,
+'name'  =>  $model->name,
+'partner_code'  =>  $model->partner_code,
+'is_brand_ambassador'  =>  $model->is_brand_ambassador,
+'customer_count'  =>  $model->customer_count,
+'level'  =>  $model->level,
+'reward_points'  =>  $model->reward_points,
+'boosts'  =>  $model->boosts,
+'mystery_box'  =>  $model->mystery_box,
+'badges'  =>  $model->badges,
+'is_approved'  =>  $model->is_approved,
+'technical_capabilities'  =>  $model->technical_capabilities,
+'industry'  =>  $model->industry,
+'sector_focus'  =>  $model->sector_focus,
+'special_interest'  =>  $model->special_interest,
+'compliance_certifications'  =>  $model->compliance_certifications,
+'target_group'  =>  $model->target_group,
+'meeting_link'  =>  $model->meeting_link,
+'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
+'created_at'  =>  $model->created_at,
+'updated_at'  =>  $model->updated_at,
+'deleted_at'  =>  $model->deleted_at,
+    ]);
     }
 
     public function includeStates(PartnershipsPerspective $model)
@@ -168,6 +164,7 @@ class AbstractPartnershipsPerspectiveTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
