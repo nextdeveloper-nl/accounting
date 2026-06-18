@@ -3,7 +3,6 @@
 namespace NextDeveloper\Accounting\PaymentGateways;
 
 use App\Products\Products;
-use App\Services\IAM\UsersService;
 use App\Services\Leo\RegisterService;
 use Illuminate\Support\Carbon;
 use Log;
@@ -12,15 +11,15 @@ use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
+use NextDeveloper\Accounting\Database\Models\Transactions;
 use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use NextDeveloper\Accounting\Services\InvoiceItemsService;
 use NextDeveloper\Accounting\Services\InvoicesService;
-use NextDeveloper\Accounting\Services\TransactionsService;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
-use NextDeveloper\Accounting\Database\Models\Transactions;
-use NextDeveloper\IAM\Services\AccountsService;
+use Stripe\Exception\ApiErrorException;
+use Stripe\StripeClient;
 
 class StripeUSA implements PaymentGatewaysInterface
 {
@@ -52,7 +51,7 @@ class StripeUSA implements PaymentGatewaysInterface
         'VUV',
         'XAF',
         'XOF',
-        'XPF'
+        'XPF',
     ];
 
     public function __construct(PaymentGateways $gateway, Accounts $account)
@@ -60,15 +59,15 @@ class StripeUSA implements PaymentGatewaysInterface
         $this->gatewayObject = $gateway;
 
         if ($gateway->parameters['is_test']) {
-            $this->gateway = new \Stripe\StripeClient($gateway->parameters['test_api_secret']);
+            $this->gateway = new StripeClient($gateway->parameters['test_api_secret']);
         } else {
-            $this->gateway = new \Stripe\StripeClient($gateway->parameters['live_api_secret']);
+            $this->gateway = new StripeClient($gateway->parameters['live_api_secret']);
         }
 
         $this->gatewayOwner = $account;
     }
 
-    public function getCheckoutSession(Accounts $account): \NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions
+    public function getCheckoutSession(Accounts $account): PaymentCheckoutSessions
     {
         $checkoutSession = PaymentCheckoutSessions::withoutGlobalScope(AuthorizationScope::class)
             ->where('accounting_account_id', $account->id)
@@ -77,7 +76,7 @@ class StripeUSA implements PaymentGatewaysInterface
         $iamAccount = AccountingHelper::getIamAccount($account);
         $iamUser = UserHelper::getAccountOwner($iamAccount);
 
-        if (!$checkoutSession) {
+        if (! $checkoutSession) {
             $stripeCustomer = $this->getStripeCustomer($account);
 
             //  Here this means that we dont have a checkout session. We need to create a checkout session with predefined Membership product
@@ -105,8 +104,8 @@ class StripeUSA implements PaymentGatewaysInterface
                     'customer' => $stripeCustomer->id,
                     'status' => $session->status,
                     'expires_at' => $session->expires_at,
-                    'approval_url' => $session->url
-                ]
+                    'approval_url' => $session->url,
+                ],
             ]);
         }
 
@@ -122,7 +121,7 @@ class StripeUSA implements PaymentGatewaysInterface
             'query' => "email:'{$iamUser->email}'",
         ]);
 
-        if (!$customers->data || count($customers->data) == 0) {
+        if (! $customers->data || count($customers->data) == 0) {
             //  If we don't have a customer, we need to create one
             $customer = $this->gateway->customers->create([
                 'email' => $iamUser->email,
@@ -151,16 +150,14 @@ class StripeUSA implements PaymentGatewaysInterface
      *
      * Returns null on: already paid, invalid currency, computed amount <= 0, below min (if configured), or Stripe error.
      *
-     * @param Accounts $account
-     * @param Invoices $invoice
-     * @param Transactions $transaction
      * @return string|null Payment link URL or null when creation not possible.
      */
     public function createPaymentLink(Accounts $account, Invoices $invoice, Transactions $transaction): ?string
     {
         $isPaid = $invoice->is_paid;
         if ($isPaid) {
-            Log::info(__METHOD__ . '::' . __LINE__ . ' - Invoice is already paid', ['invoice_id' => $invoice->id]);
+            Log::info(__METHOD__.'::'.__LINE__.' - Invoice is already paid', ['invoice_id' => $invoice->id]);
+
             return null;
         }
 
@@ -168,8 +165,9 @@ class StripeUSA implements PaymentGatewaysInterface
         $currency = Currencies::where('id', $invoice->common_currency_id)
             ->first();
 
-        if (!$currency) {
-            Log::error(__METHOD__ . '::' . __LINE__ . ' - Currency not found', ['currency_code' => $invoice->common_currency_id]);
+        if (! $currency) {
+            Log::error(__METHOD__.'::'.__LINE__.' - Currency not found', ['currency_code' => $invoice->common_currency_id]);
+
             return null;
         }
 
@@ -177,11 +175,11 @@ class StripeUSA implements PaymentGatewaysInterface
         $unitAmount = $this->convertToMinorUnits($invoice->amount, $currencyCode);
 
         if ($unitAmount <= 0) {
-            Log::warning(__METHOD__ . '::' . __LINE__ . ' - Calculated unit amount is not positive', [
+            Log::warning(__METHOD__.'::'.__LINE__.' - Calculated unit amount is not positive', [
                 'accounting_invoice_id' => $invoice->id,
                 'raw_amount' => $invoice->amount,
                 'unit_amount' => $unitAmount,
-                'currency' => $currencyCode
+                'currency' => $currencyCode,
             ]);
         }
 
@@ -191,7 +189,7 @@ class StripeUSA implements PaymentGatewaysInterface
                 'unit_amount' => $unitAmount,
                 'currency' => strtolower($currencyCode),
                 'product_data' => [
-                    'name' => "Invoice #" . now()->year . "-" .  $invoice->id,
+                    'name' => 'Invoice #'.now()->year.'-'.$invoice->id,
                     'metadata' => [
                         'accounting_transaction_id' => $transaction->uuid,
                     ],
@@ -211,20 +209,87 @@ class StripeUSA implements PaymentGatewaysInterface
             ]);
 
             return $paymentLink->url;
-        } catch (\Stripe\Exception\ApiErrorException $e) {
-            Log::error(__METHOD__ . ' Stripe API error creating payment link', [
+        } catch (ApiErrorException $e) {
+            Log::error(__METHOD__.' Stripe API error creating payment link', [
                 'accounting_invoice_id' => $invoice->id,
                 'stripe_error_type' => method_exists($e, 'getError') && $e->getError() ? $e->getError()->type : null,
                 'stripe_error_code' => method_exists($e, 'getError') && $e->getError() ? $e->getError()->code : null,
                 'message' => $e->getMessage(),
             ]);
+
             return null;
         } catch (\Throwable $e) {
-            Log::error(__METHOD__ . ' Unexpected error creating payment link', [
+            Log::error(__METHOD__.' Unexpected error creating payment link', [
                 'accounting_invoice_id' => $invoice->id,
                 'exception' => get_class($e),
                 'message' => $e->getMessage(),
             ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Creates a Stripe Checkout Session (mode=payment) from a raw amount + currency and
+     * returns the hosted checkout URL. Used by the credit top-up flow, which creates no
+     * invoice up front and carries its intent in $metadata.
+     *
+     * @param  array<string, string>  $metadata  Intent + return_url, echoed back on the webhook/session.
+     */
+    public function createTopupCheckout(
+        float $amount,
+        string $currencyCode,
+        array $metadata,
+        string $successUrl,
+        string $cancelUrl
+    ): ?string {
+        $currencyCode = strtoupper($currencyCode);
+        $unitAmount = $this->convertToMinorUnits($amount, $currencyCode);
+
+        if ($unitAmount <= 0) {
+            Log::warning(__METHOD__.'::'.__LINE__.' - Calculated unit amount is not positive', [
+                'raw_amount' => $amount,
+                'unit_amount' => $unitAmount,
+                'currency' => $currencyCode,
+            ]);
+
+            return null;
+        }
+
+        try {
+            $session = $this->gateway->checkout->sessions->create([
+                'mode' => 'payment',
+                'success_url' => $successUrl,
+                'cancel_url' => $cancelUrl,
+                'line_items' => [
+                    [
+                        'quantity' => 1,
+                        'price_data' => [
+                            'currency' => strtolower($currencyCode),
+                            'unit_amount' => $unitAmount,
+                            'product_data' => [
+                                'name' => 'Account credit top-up',
+                            ],
+                        ],
+                    ],
+                ],
+                'metadata' => $metadata,
+                'payment_intent_data' => [
+                    'metadata' => $metadata,
+                ],
+            ]);
+
+            return $session->url;
+        } catch (ApiErrorException $e) {
+            Log::error(__METHOD__.' Stripe API error creating checkout session', ['message' => $e->getMessage()]);
+
+            return null;
+        } catch (\Throwable $e) {
+            Log::error(__METHOD__.' Unexpected error creating checkout session', [
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+            ]);
+
             return null;
         }
     }
@@ -255,12 +320,14 @@ class StripeUSA implements PaymentGatewaysInterface
     {
         try {
             $session = $this->gateway->checkout->sessions->retrieve($sessionId);
+
             return $session->customer_details->email ?? $session->customer_email ?? null;
         } catch (\Exception $e) {
             Log::error('Error retrieving Stripe session', [
                 'session_id' => $sessionId,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -268,8 +335,8 @@ class StripeUSA implements PaymentGatewaysInterface
     /**
      * Handle payment callback from Stripe
      *
-     * @param array $callbackData The webhook data from Stripe
-     * @param array $headers The HTTP headers from the webhook request (for signature validation)
+     * @param  array  $callbackData  The webhook data from Stripe
+     * @param  array  $headers  The HTTP headers from the webhook request (for signature validation)
      * @return array Result of callback processing
      */
     public function handleCallback(array $callbackData, array $headers = []): array
@@ -280,10 +347,10 @@ class StripeUSA implements PaymentGatewaysInterface
             // Stripe sends event type to identify the webhook
             $eventType = $callbackData['type'] ?? null;
 
-            if (!$eventType) {
+            if (! $eventType) {
                 return [
                     'success' => false,
-                    'message' => 'No event type found in callback data'
+                    'message' => 'No event type found in callback data',
                 ];
             }
 
@@ -312,25 +379,26 @@ class StripeUSA implements PaymentGatewaysInterface
 
                 default:
                     Log::info('Unhandled Stripe event type', ['type' => $eventType]);
+
                     return [
                         'success' => true,
-                        'message' => 'Event type not processed: ' . $eventType
+                        'message' => 'Event type not processed: '.$eventType,
                     ];
             }
 
         } catch (\Exception $e) {
-            if(config('app.debug')) {
+            if (config('app.debug')) {
                 throw $e;
             }
 
             Log::error('Error processing Stripe callback', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return [
                 'success' => false,
-                'message' => 'Error processing callback: ' . $e->getMessage()
+                'message' => 'Error processing callback: '.$e->getMessage(),
             ];
         }
     }
@@ -340,14 +408,14 @@ class StripeUSA implements PaymentGatewaysInterface
         $data = $callbackData['data']['object'];
 
         $existingInvoice = Invoices::withoutGlobalScope(AuthorizationScope::class)
-            ->where('invoice_number', 'stripe_' . $data['id'])
+            ->where('invoice_number', 'stripe_'.$data['id'])
             ->first();
 
-        if(!$existingInvoice) {
+        if (! $existingInvoice) {
             $this->handleInvoiceCreated($callbackData);
 
             $existingInvoice = Invoices::withoutGlobalScope(AuthorizationScope::class)
-                ->where('invoice_number', 'stripe_' . $data['id'])
+                ->where('invoice_number', 'stripe_'.$data['id'])
                 ->first();
         }
 
@@ -368,10 +436,10 @@ class StripeUSA implements PaymentGatewaysInterface
         $data = $callbackData['data']['object'];
 
         $existingInvoice = Invoices::withoutGlobalScope(AuthorizationScope::class)
-            ->where('invoice_number', 'stripe_' . $data['id'])
+            ->where('invoice_number', 'stripe_'.$data['id'])
             ->first();
 
-        if($existingInvoice) {
+        if ($existingInvoice) {
             return [
                 'success' => true,
             ];
@@ -379,13 +447,13 @@ class StripeUSA implements PaymentGatewaysInterface
 
         $customerEmail = $data['customer_email'] ?? null;
 
-        if(!$customerEmail) {
+        if (! $customerEmail) {
             throw new \Exception('No customer email found in callback data');
         }
 
         $user = UserHelper::getWithEmail($customerEmail);
 
-        if(!$user) {
+        if (! $user) {
             $user = RegisterService::register(
                 email: $customerEmail,
                 name: $data['customer_name']
@@ -399,23 +467,23 @@ class StripeUSA implements PaymentGatewaysInterface
         //  WE ARE MAPPING THE CUSTOMER HERE FOR LATER USAGE
         $mapping = $accountingAccount->mapping;
 
-        if(!$mapping) {
+        if (! $mapping) {
             UserHelper::runAsAdmin(function () use ($accountingAccount, $data) {
                 $accountingAccount->update([
-                    'mapping'   =>  [
-                        'stripe'    =>  $data['customer']
-                    ]
+                    'mapping' => [
+                        'stripe' => $data['customer'],
+                    ],
                 ]);
             });
         } else {
-            if(!array_key_exists('stripe', $mapping)) {
+            if (! array_key_exists('stripe', $mapping)) {
                 UserHelper::runAsAdmin(function () use ($accountingAccount, $mapping, $data) {
                     $accountingAccount->update([
-                        'mapping'   =>  array_merge(
+                        'mapping' => array_merge(
                             $mapping, [
-                            'stripe'    =>  $data['customer']
+                                'stripe' => $data['customer'],
                             ]
-                        )
+                        ),
                     ]);
                 });
             }
@@ -428,7 +496,7 @@ class StripeUSA implements PaymentGatewaysInterface
 
         $createData = [
             'accounting_account_id' => $accountingAccount->id,
-            'invoice_number' => 'stripe_' . $data['id'],
+            'invoice_number' => 'stripe_'.$data['id'],
             'common_currency_id' => Currencies::where('code', 'ilike', $data['currency'])->first()->id,
             'exchange_rate' => [],
             'amount' => floatval($data['amount_paid']) / 100,
@@ -446,7 +514,7 @@ class StripeUSA implements PaymentGatewaysInterface
 
         $invoice = null;
 
-        UserHelper::runAsAdmin(function() use (&$invoice, $createData) {
+        UserHelper::runAsAdmin(function () use (&$invoice, $createData) {
             $invoice = InvoicesService::create($createData);
         });
 
@@ -464,24 +532,24 @@ class StripeUSA implements PaymentGatewaysInterface
             }
 
             $invoiceItem = [
-                'object_type'   =>  $productSold,
-                'object_id'     =>  0,
-                'quantity'      =>  $line['quantity'],
-                'unit_price'    =>  $line['amount'] / 100,
-                'common_currency_id'    =>  Currencies::where('code', 'ilike', $line['currency'])->first()->id,
+                'object_type' => $productSold,
+                'object_id' => 0,
+                'quantity' => $line['quantity'],
+                'unit_price' => $line['amount'] / 100,
+                'common_currency_id' => Currencies::where('code', 'ilike', $line['currency'])->first()->id,
                 'iam_account_id' => $gatewayOwner->id,
                 'accounting_invoice_id' => $invoice->id,
                 'accounting_account_id' => $accountingAccount->id,
-                'details'   =>  $line
+                'details' => $line,
             ];
 
-            UserHelper::runAsAdmin(function() use (&$invoiceItem) {
+            UserHelper::runAsAdmin(function () use (&$invoiceItem) {
                 $invoiceItem = InvoiceItemsService::create($invoiceItem);
             });
         }
 
         return [
-            'success'   =>  true
+            'success' => true,
         ];
     }
 
@@ -492,17 +560,29 @@ class StripeUSA implements PaymentGatewaysInterface
 
     /**
      * Handle successful payment from Stripe
-     *
-     * @param array $eventData
-     * @return array
      */
     private function handleSuccessfulPayment(array $eventData): array
     {
         $data = $eventData['data']['object'] ?? [];
 
         $existingInvoice = Invoices::withoutGlobalScope(AuthorizationScope::class)
-            ->where('invoice_number', 'stripe_' . $data['id'])
+            ->where('invoice_number', 'stripe_'.$data['id'])
             ->first();
+
+        //  Dynamic payment-link callbacks (e.g. credit top-ups) have no
+        //  "stripe_{id}" invoice; the invoice is resolved by the coordinator via the
+        //  transaction UUID carried in metadata. Return that and let
+        //  PaymentProcessingService::markInvoiceAsPaid() finalize the invoice.
+        if (! $existingInvoice) {
+            return [
+                'success' => true,
+                'accounting_transaction_id' => $data['metadata']['accounting_transaction_id'] ?? null,
+                'transaction_id' => $data['id'] ?? $data['payment_intent'] ?? null,
+                'paid' => true,
+                'payment_method' => 'stripe',
+                'raw_data' => $eventData,
+            ];
+        }
 
         $invoiceItems = InvoiceItems::withoutGlobalScope(AuthorizationScope::class)
             ->where('accounting_invoice_id', $existingInvoice->id)
@@ -512,7 +592,7 @@ class StripeUSA implements PaymentGatewaysInterface
 
         foreach ($invoiceItems as $item) {
             foreach ($products as $product) {
-                if($item['object_type'] == $product) {
+                if ($item['object_type'] == $product) {
                     $app = app($item['object_type']);
                     $account = AccountingHelper::getIamAccountFromInvoice($existingInvoice);
                     $app->subscribeFor($account);
@@ -524,14 +604,14 @@ class StripeUSA implements PaymentGatewaysInterface
         $transactionId = $data['metadata']['accounting_transaction_id'] ?? null;
         $paymentIntentId = $data['id'] ?? $data['payment_intent'] ?? null;
 
-        if (!$transactionId) {
+        if (! $transactionId) {
             $existingTransaction = Transactions::withoutGlobalScope(AuthorizationScope::class)
                 ->where('conversation_identifier', $existingInvoice->invoice_number)
                 ->first();
 
-            if(!$existingTransaction) {
+            if (! $existingTransaction) {
                 //  We need to create the transaction here.
-                UserHelper::runAsAdmin(function () use (&$transactionId, $data, $existingInvoice) {
+                UserHelper::runAsAdmin(function () use (&$transactionId, $existingInvoice) {
                     $transaction = Transactions::create([
                         'accounting_invoice_id' => $existingInvoice->id,
                         'amount' => $existingInvoice->amount,
@@ -539,9 +619,9 @@ class StripeUSA implements PaymentGatewaysInterface
                         'accounting_payment_gateway_id' => $this->gatewayObject->id,
                         'iam_account_id' => UserHelper::me()->id,
                         'accounting_account_id' => $existingInvoice->accounting_account_id,
-                        'gateway_response'   =>  'invoice.payment_succeeded',
+                        'gateway_response' => 'invoice.payment_succeeded',
                         'conversation_identifier' => $existingInvoice->invoice_number,
-                        'is_pending' => false
+                        'is_pending' => false,
                     ]);
 
                     $transactionId = $transaction->id;
@@ -555,15 +635,12 @@ class StripeUSA implements PaymentGatewaysInterface
             'transaction_id' => $paymentIntentId,
             'paid' => true,
             'payment_method' => 'stripe',
-            'raw_data' => $eventData
+            'raw_data' => $eventData,
         ];
     }
 
     /**
      * Handle failed payment from Stripe
-     *
-     * @param array $eventData
-     * @return array
      */
     private function handleFailedPayment(array $eventData): array
     {
@@ -572,7 +649,7 @@ class StripeUSA implements PaymentGatewaysInterface
 
         Log::info('Stripe payment failed', [
             'accounting_transaction_id' => $transactionId,
-            'event_type' => $eventData['type'] ?? 'unknown'
+            'event_type' => $eventData['type'] ?? 'unknown',
         ]);
 
         return [
@@ -580,7 +657,7 @@ class StripeUSA implements PaymentGatewaysInterface
             'paid' => false,
             'accounting_transaction_id' => $transactionId,
             'message' => 'Payment failed or expired',
-            'raw_data' => $eventData
+            'raw_data' => $eventData,
         ];
     }
 
@@ -596,7 +673,7 @@ class StripeUSA implements PaymentGatewaysInterface
     /**
      * Build a Stripe API client from an `accounting_payment_gateways` row.
      */
-    public static function client(PaymentGateways|string $gateway): \Stripe\StripeClient
+    public static function client(PaymentGateways|string $gateway): StripeClient
     {
         $row = $gateway instanceof PaymentGateways
             ? $gateway
@@ -606,8 +683,8 @@ class StripeUSA implements PaymentGatewaysInterface
                 ->whereNull('deleted_at')
                 ->first();
 
-        if (!$row) {
-            throw new \RuntimeException('Active payment gateway not found: ' . (is_string($gateway) ? $gateway : 'n/a'));
+        if (! $row) {
+            throw new \RuntimeException('Active payment gateway not found: '.(is_string($gateway) ? $gateway : 'n/a'));
         }
 
         $params = $row->parameters ?? [];
@@ -615,11 +692,11 @@ class StripeUSA implements PaymentGatewaysInterface
             ? ($params['test_api_secret'] ?? null)
             : ($params['live_api_secret'] ?? null);
 
-        if (!$secret) {
+        if (! $secret) {
             throw new \RuntimeException("No API secret configured on gateway '{$row->name}'.");
         }
 
-        return new \Stripe\StripeClient($secret);
+        return new StripeClient($secret);
     }
 
     /**
@@ -634,11 +711,11 @@ class StripeUSA implements PaymentGatewaysInterface
 
         foreach ($client->products->all(['limit' => 100, 'active' => true])->autoPagingIterator() as $product) {
             $row = [
-                'id'          => $product->id,
-                'name'        => $product->name,
-                'active'      => (bool) $product->active,
+                'id' => $product->id,
+                'name' => $product->name,
+                'active' => (bool) $product->active,
                 'description' => $product->description,
-                'metadata'    => (array) $product->metadata->toArray(),
+                'metadata' => (array) $product->metadata->toArray(),
             ];
 
             if ($withPrices) {
@@ -669,11 +746,11 @@ class StripeUSA implements PaymentGatewaysInterface
 
         foreach ($client->prices->all($params)->autoPagingIterator() as $price) {
             $out[] = [
-                'id'          => $price->id,
-                'currency'    => $price->currency,
+                'id' => $price->id,
+                'currency' => $price->currency,
                 'unit_amount' => $price->unit_amount,
-                'recurring'   => $price->recurring ? (array) $price->recurring->toArray() : null,
-                'nickname'    => $price->nickname,
+                'recurring' => $price->recurring ? (array) $price->recurring->toArray() : null,
+                'nickname' => $price->nickname,
             ];
         }
 
