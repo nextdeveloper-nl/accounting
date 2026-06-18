@@ -4,39 +4,44 @@ namespace NextDeveloper\Accounting\PaymentGateways;
 
 use Illuminate\Support\Facades\Log;
 use Iyzipay\FileBase64Encoder;
+use Iyzipay\Model\Card as IyzipayCard;
+use Iyzipay\Model\CardInformation;
 use Iyzipay\Model\Currency;
 use Iyzipay\Model\Iyzilink\IyziLinkSaveProduct;
 use Iyzipay\Model\Locale;
 use Iyzipay\Options;
-use Iyzipay\Request\Iyzilink\IyziLinkSaveProductRequest;
-
-use Iyzipay\Model\Card as IyzipayCard;
-use Iyzipay\Model\CardInformation;
 use Iyzipay\Request\CreateCardRequest;
+use Iyzipay\Request\Iyzilink\IyziLinkSaveProductRequest;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\CreditCards;
 use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Database\Models\PaymentCheckoutSessions;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
-use NextDeveloper\IAM\Database\Models\Users;
-
-use Omnipay\Iyzico\Gateway as IyzicoGateway;
-
-use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Accounting\Database\Models\Transactions;
+use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
-
+use NextDeveloper\IAM\Database\Models\Users;
+use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
+use Omnipay\Iyzico\Gateway as IyzicoGateway;
 
 class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
 {
     private $gateway;
+
     private $options;
+
     private $apiKey;
+
     private $apiSecret;
 
     public function __construct()
     {
-        $this->gateway = PaymentGateways::where('name', 'iyzico-turkey')->first();
+        //  Gateway credentials are system configuration, not user-owned, so the
+        //  authorization scope must be bypassed (this runs in request/admin contexts
+        //  where the gateway's owning account is not the current account).
+        $this->gateway = PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
+            ->where('name', 'iyzico-turkey')
+            ->first();
 
         $gateway = $this->gateway;
 
@@ -48,7 +53,7 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             : $gateway->parameters['live_api_secret'];
 
         // Initialize Iyzico Options
-        $this->options = new Options();
+        $this->options = new Options;
         $this->options->setApiKey($this->apiKey);
         $this->options->setSecretKey($this->apiSecret);
 
@@ -81,24 +86,23 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
      *
      * Returns null on: already paid, invalid currency, amount <= 0, or Iyzico API error.
      *
-     * @param Accounts $account
-     * @param Invoices $invoice
-     * @param Transactions $transaction
      * @return string|null Payment link URL or null when creation not possible.
      */
     public function createPaymentLink(Accounts $account, Invoices $invoice, Transactions $transaction): ?string
     {
         $isPaid = $invoice->is_paid;
         if ($isPaid) {
-            Log::info(__METHOD__ . '::' . __LINE__ . ' - Invoice is already paid', ['invoice_id' => $invoice->id]);
+            Log::info(__METHOD__.'::'.__LINE__.' - Invoice is already paid', ['invoice_id' => $invoice->id]);
+
             return null;
         }
 
         // Get currency and amount from the invoice
         $currency = Currencies::where('id', $invoice->common_currency_id)->first();
 
-        if (!$currency) {
-            Log::error(__METHOD__ . '::' . __LINE__ . ' - Currency not found', ['invoice_id' => $invoice->id]);
+        if (! $currency) {
+            Log::error(__METHOD__.'::'.__LINE__.' - Currency not found', ['invoice_id' => $invoice->id]);
+
             return null;
         }
 
@@ -106,11 +110,12 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
         $amount = $invoice->amount;
 
         if ($amount <= 0) {
-            Log::warning(__METHOD__ . '::' . __LINE__ . ' - Invoice amount is not positive', [
+            Log::warning(__METHOD__.'::'.__LINE__.' - Invoice amount is not positive', [
                 'accounting_invoice_id' => $invoice->id,
                 'amount' => $amount,
-                'currency' => $currencyCode
+                'currency' => $currencyCode,
             ]);
+
             return null;
         }
 
@@ -122,46 +127,47 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             $amount = ExchangeRateHelper::convert($currency->code, 'TRY', $amount);
         }
 
-
         // Apply VAT rate if applicable
         $amount = $amount * (1 + $this->gateway->vat_rate);
 
         // Format amount to 2 decimal places as required by Iyzico
-        $formattedAmount = number_format((float)$amount, 2, '.', '');
+        $formattedAmount = number_format((float) $amount, 2, '.', '');
 
         try {
             // Get the logo file path - use public_path() to get absolute path
             $logoPath = public_path(config('leo.iyzico_product_image'));
 
             // Check if file exists before trying to encode
-            if (!file_exists($logoPath)) {
-                Log::error(__METHOD__ . '::' . __LINE__ . ' - Logo file not found', [
+            if (! file_exists($logoPath)) {
+                Log::error(__METHOD__.'::'.__LINE__.' - Logo file not found', [
                     'accounting_invoice_id' => $invoice->id,
-                    'path' => $logoPath
+                    'path' => $logoPath,
                 ]);
+
                 return null;
             }
 
             // The picture must be PNG or JPG only
             $allowedExtensions = ['png', 'jpg', 'jpeg'];
             $fileExtension = strtolower(pathinfo($logoPath, PATHINFO_EXTENSION));
-            if (!in_array($fileExtension, $allowedExtensions)) {
-                Log::error(__METHOD__ . '::' . __LINE__ . ' - Logo file must be PNG or JPG', [
+            if (! in_array($fileExtension, $allowedExtensions)) {
+                Log::error(__METHOD__.'::'.__LINE__.' - Logo file must be PNG or JPG', [
                     'accounting_invoice_id' => $invoice->id,
                     'path' => $logoPath,
-                    'extension' => $fileExtension
+                    'extension' => $fileExtension,
                 ]);
+
                 return null;
             }
 
-            $invoiceNumber = "Invoice #" . now()->year . "-" . $invoice->id;
+            $invoiceNumber = 'Invoice #'.now()->year.'-'.$invoice->id;
 
             // Create IyziLink product request
-            $request = new IyziLinkSaveProductRequest();
+            $request = new IyziLinkSaveProductRequest;
             $request->setLocale(Locale::TR);
             $request->setConversationId($transaction->uuid);
             $request->setName($invoiceNumber);
-            $request->setDescription("Payment for " . $invoiceNumber);
+            $request->setDescription('Payment for '.$invoiceNumber);
             $request->setPrice($formattedAmount);
             $request->setCurrency($iyzicoCurrency);
             $request->setAddressIgnorable(false); // Address is required by Iyzico
@@ -176,36 +182,103 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             $response = IyziLinkSaveProduct::create($request, $this->options);
 
             if ($response->getStatus() === 'success' && $response->getUrl()) {
-                Log::info(__METHOD__ . '::' . __LINE__ . ' - Payment link created successfully', [
+                Log::info(__METHOD__.'::'.__LINE__.' - Payment link created successfully', [
                     'accounting_invoice_id' => $invoice->id,
-                    'url' => $response->getUrl()
+                    'url' => $response->getUrl(),
                 ]);
+
                 return $response->getUrl();
             } else {
-                Log::error(__METHOD__ . '::' . __LINE__ . ' - Iyzico API error creating payment link', [
+                Log::error(__METHOD__.'::'.__LINE__.' - Iyzico API error creating payment link', [
                     'accounting_invoice_id' => $invoice->id,
                     'status' => $response->getStatus(),
                     'error_code' => $response->getErrorCode(),
                     'error_message' => $response->getErrorMessage(),
                 ]);
+
                 return null;
             }
         } catch (\Throwable $e) {
-            Log::error(__METHOD__ . ' Unexpected error creating payment link', [
+            Log::error(__METHOD__.' Unexpected error creating payment link', [
                 'accounting_invoice_id' => $invoice->id,
                 'exception' => get_class($e),
                 'message' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
 
+    /**
+     * Creates an Iyzico Payment Link (IyziLink) from a raw amount + currency, used by the
+     * credit top-up flow (no invoice). The $conversationId round-trips back as
+     * paymentConversationId on the webhook and carries the signed top-up intent.
+     */
+    public function createTopupLink(float $amount, string $currencyCode, string $conversationId, string $name): ?string
+    {
+        if ($amount <= 0) {
+            return null;
+        }
+
+        //  IyziLink charges in TRY; convert when the requested currency differs.
+        if (strtoupper($currencyCode) !== 'TRY') {
+            $amount = ExchangeRateHelper::convert($currencyCode, 'TRY', $amount);
+        }
+
+        $amount = $amount * (1 + ($this->gateway->vat_rate ?? 0));
+        $formattedAmount = number_format((float) $amount, 2, '.', '');
+
+        try {
+            $logoPath = public_path(config('leo.iyzico_product_image'));
+
+            if (! file_exists($logoPath)) {
+                Log::error(__METHOD__.'::'.__LINE__.' - Logo file not found', ['path' => $logoPath]);
+
+                return null;
+            }
+
+            $request = new IyziLinkSaveProductRequest;
+            $request->setLocale(Locale::TR);
+            $request->setConversationId($conversationId);
+            $request->setName($name);
+            $request->setDescription($name);
+            $request->setPrice($formattedAmount);
+            $request->setCurrency(Currency::TL);
+            $request->setAddressIgnorable(false);
+            $request->setSoldLimit(1);
+            $request->setInstallmentRequest(false);
+            $request->setSourceType('API');
+            $request->setStockEnabled(true);
+            $request->setStockCount(1);
+            $request->setBase64EncodedImage(FileBase64Encoder::encode($logoPath));
+
+            $response = IyziLinkSaveProduct::create($request, $this->options);
+
+            if ($response->getStatus() === 'success' && $response->getUrl()) {
+                return $response->getUrl();
+            }
+
+            Log::error(__METHOD__.'::'.__LINE__.' - Iyzico API error creating top-up link', [
+                'status' => $response->getStatus(),
+                'error_message' => $response->getErrorMessage(),
+            ]);
+
+            return null;
+        } catch (\Throwable $e) {
+            Log::error(__METHOD__.' Unexpected error creating top-up link', [
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
 
     /**
      * Handle payment callback from iyzico
      *
-     * @param array $callbackData The POST data from iyzico webhook
-     * @param array $headers The HTTP headers from the webhook request
+     * @param  array  $callbackData  The POST data from iyzico webhook
+     * @param  array  $headers  The HTTP headers from the webhook request
      * @return array Result of callback processing
      */
     public function handleCallback(array $callbackData, array $headers = []): array
@@ -217,16 +290,16 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             $signature = $headers['X-IYZ-SIGNATURE-V3'] ?? $headers['x-iyz-signature-v3'] ?? null;
 
             // TODO: Uncomment signature validation after testing
-//            if ($signature && !$this->validateWebhookSignature($callbackData, $signature)) {
-//                Log::error('iyzico webhook signature validation failed', [
-//                    'signature' => $signature,
-//                    'callback_data' => $callbackData
-//                ]);
-//                return [
-//                    'success' => false,
-//                    'message' => 'Invalid webhook signature'
-//                ];
-//            }
+            //            if ($signature && !$this->validateWebhookSignature($callbackData, $signature)) {
+            //                Log::error('iyzico webhook signature validation failed', [
+            //                    'signature' => $signature,
+            //                    'callback_data' => $callbackData
+            //                ]);
+            //                return [
+            //                    'success' => false,
+            //                    'message' => 'Invalid webhook signature'
+            //                ];
+            //            }
 
             // Extract fields according to HPP Format (used by IyziLink)
             // Fields: iyziEventType, iyziPaymentId, token, paymentConversationId, status
@@ -236,20 +309,20 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             $paymentConversationId = $callbackData['paymentConversationId'] ?? null;
             $status = $callbackData['status'] ?? null;
 
-            if (!$iyziPaymentId && !$token) {
+            if (! $iyziPaymentId && ! $token) {
                 return [
                     'success' => false,
-                    'message' => 'No iyziPaymentId or token found in callback data'
+                    'message' => 'No iyziPaymentId or token found in callback data',
                 ];
             }
 
             // Extract invoice UUID from paymentConversationId (we set invoice UUID there)
             $transactionUuid = $paymentConversationId;
 
-            if (!$transactionUuid) {
+            if (! $transactionUuid) {
                 return [
                     'success' => false,
-                    'message' => 'Transaction UUID not found in paymentConversationId'
+                    'message' => 'Transaction UUID not found in paymentConversationId',
                 ];
             }
 
@@ -262,7 +335,7 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
                     'accounting_transaction_id' => $transactionUuid,
                     'payment_id' => $iyziPaymentId,
                     'event_type' => $iyziEventType,
-                    'status' => $status
+                    'status' => $status,
                 ]);
 
                 return [
@@ -272,14 +345,14 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
                     'paid' => true,
                     'payment_method' => 'iyzico',
                     'event_type' => $iyziEventType,
-                    'raw_data' => $callbackData
+                    'raw_data' => $callbackData,
                 ];
             } else {
                 Log::info('iyzico payment not successful', [
                     'accounting_transaction_id' => $transactionUuid,
                     'status' => $status,
                     'event_type' => $iyziEventType,
-                    'error' => $callbackData['errorMessage'] ?? $callbackData['errorCode'] ?? 'Unknown error'
+                    'error' => $callbackData['errorMessage'] ?? $callbackData['errorCode'] ?? 'Unknown error',
                 ]);
 
                 return [
@@ -288,19 +361,19 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
                     'accounting_transaction_id' => $transactionUuid,
                     'message' => $callbackData['errorMessage'] ?? 'Payment failed',
                     'event_type' => $iyziEventType,
-                    'raw_data' => $callbackData
+                    'raw_data' => $callbackData,
                 ];
             }
 
         } catch (\Exception $e) {
             Log::error('Error processing iyzico callback', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return [
                 'success' => false,
-                'message' => 'Error processing callback: ' . $e->getMessage()
+                'message' => 'Error processing callback: '.$e->getMessage(),
             ];
         }
     }
@@ -311,14 +384,13 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
      * For HPP Format (IyziLink), a signature is created from:
      * SECRET KEY + iyziEventType + iyziPaymentId + token + paymentConversationId + status
      *
-     * @param array $callbackData The webhook payload
-     * @param string $signature The X-IYZ-SIGNATURE-V3 header value
+     * @param  array  $callbackData  The webhook payload
+     * @param  string  $signature  The X-IYZ-SIGNATURE-V3 header value
      * @return bool True if a signature is valid, false otherwise
      */
     private function validateWebhookSignature(array $callbackData, string $signature): bool
     {
         try {
-
 
             // Extract fields according to HPP Format
             $iyziEventType = $callbackData['iyziEventType'] ?? '';
@@ -328,7 +400,7 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             $status = $callbackData['status'] ?? '';
 
             // Create the key for HMAC (order is important!)
-            $key = $this->apiSecret . $iyziEventType . $iyziPaymentId . $token . $paymentConversationId . $status;
+            $key = $this->apiSecret.$iyziEventType.$iyziPaymentId.$token.$paymentConversationId.$status;
 
             // Generate HMAC SHA256 signature and encode as hex
             $calculatedSignature = hash_hmac('sha256', $key, $this->apiSecret);
@@ -337,8 +409,9 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             return hash_equals($calculatedSignature, $signature);
         } catch (\Exception $e) {
             Log::error('Error validating webhook signature', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -354,8 +427,8 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
     public function storeCard(CreditCards $card): array
     {
         try {
-            $request = new CreateCardRequest();
-            $request->setLocale(\Iyzipay\Model\Locale::TR);
+            $request = new CreateCardRequest;
+            $request->setLocale(Locale::TR);
             $request->setConversationId($card->uuid);
 
             $existingCardWithKey = CreditCards::query()
@@ -370,8 +443,9 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             } else {
                 $user = Users::find($card->iam_user_id);
 
-                if (!$user) {
-                    Log::error(__METHOD__ . ' - User not found for card', ['credit_card_id' => $card->id]);
+                if (! $user) {
+                    Log::error(__METHOD__.' - User not found for card', ['credit_card_id' => $card->id]);
+
                     return ['success' => false, 'cardUserKey' => null, 'cardToken' => null, 'errorMessage' => 'User not found'];
                 }
 
@@ -379,7 +453,7 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
                 $request->setExternalId((string) $card->iam_account_id);
             }
 
-            $cardInformation = new CardInformation();
+            $cardInformation = new CardInformation;
             $cardInformation->setCardAlias($card->name);
             $cardInformation->setCardHolderName($card->cc_holder_name);
             $cardInformation->setCardNumber(decrypt($card->cc_number));
@@ -390,43 +464,43 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             $response = IyzipayCard::create($request, $this->options);
 
             if ($response->getStatus() === 'success') {
-                Log::info(__METHOD__ . ' - Card stored at Iyzico', [
-                    'credit_card_id'  => $card->id,
-                    'card_user_key'   => $response->getCardUserKey(),
-                    'card_token'      => $response->getCardToken(),
+                Log::info(__METHOD__.' - Card stored at Iyzico', [
+                    'credit_card_id' => $card->id,
+                    'card_user_key' => $response->getCardUserKey(),
+                    'card_token' => $response->getCardToken(),
                 ]);
 
                 return [
-                    'success'      => true,
-                    'cardUserKey'  => $response->getCardUserKey(),
-                    'cardToken'    => $response->getCardToken(),
+                    'success' => true,
+                    'cardUserKey' => $response->getCardUserKey(),
+                    'cardToken' => $response->getCardToken(),
                     'errorMessage' => null,
                 ];
             }
 
-            Log::error(__METHOD__ . ' - Iyzico card storage failed', [
+            Log::error(__METHOD__.' - Iyzico card storage failed', [
                 'credit_card_id' => $card->id,
-                'error_code'     => $response->getErrorCode(),
-                'error_message'  => $response->getErrorMessage(),
+                'error_code' => $response->getErrorCode(),
+                'error_message' => $response->getErrorMessage(),
             ]);
 
             return [
-                'success'      => false,
-                'cardUserKey'  => null,
-                'cardToken'    => null,
+                'success' => false,
+                'cardUserKey' => null,
+                'cardToken' => null,
                 'errorMessage' => $response->getErrorMessage(),
             ];
         } catch (\Throwable $e) {
-            Log::error(__METHOD__ . ' - Unexpected error storing card at Iyzico', [
+            Log::error(__METHOD__.' - Unexpected error storing card at Iyzico', [
                 'credit_card_id' => $card->id,
-                'exception'      => get_class($e),
-                'message'        => $e->getMessage(),
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
             ]);
 
             return [
-                'success'      => false,
-                'cardUserKey'  => null,
-                'cardToken'    => null,
+                'success' => false,
+                'cardUserKey' => null,
+                'cardToken' => null,
                 'errorMessage' => $e->getMessage(),
             ];
         }
