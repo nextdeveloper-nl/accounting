@@ -259,6 +259,12 @@ class AccountingHelper
             ->where('id', $accounts->iam_account_id)
             ->first();
 
+        if (!$iamAccount) {
+            Log::warning(__METHOD__ . '| IAM account not found for accounting account ID: ' . $accounts->id
+                . ' (iam_account_id: ' . $accounts->iam_account_id . '). The account may have been deleted. Skipping invoice calculation.');
+            throw new \Exception('IAM account (ID: ' . $accounts->iam_account_id . ') not found. The account may have been deleted.');
+        }
+
         $provider = null;
 
         //  We will find the country of the account and then we will find the provider for that country.
