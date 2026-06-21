@@ -4,13 +4,24 @@ namespace NextDeveloper\Accounting\PaymentGateways;
 
 use Illuminate\Support\Facades\Log;
 use Iyzipay\FileBase64Encoder;
+use Iyzipay\Model\Address as IyzipayAddress;
+use Iyzipay\Model\BasketItem;
+use Iyzipay\Model\BasketItemType;
+use Iyzipay\Model\Buyer;
 use Iyzipay\Model\Card as IyzipayCard;
 use Iyzipay\Model\CardInformation;
 use Iyzipay\Model\Currency;
 use Iyzipay\Model\Iyzilink\IyziLinkSaveProduct;
 use Iyzipay\Model\Locale;
+use Iyzipay\Model\PaymentCard;
+use Iyzipay\Model\PaymentChannel;
+use Iyzipay\Model\PaymentGroup;
+use Iyzipay\Model\ThreedsInitialize;
+use Iyzipay\Model\ThreedsPayment;
 use Iyzipay\Options;
 use Iyzipay\Request\CreateCardRequest;
+use Iyzipay\Request\CreatePaymentRequest;
+use Iyzipay\Request\CreateThreedsPaymentRequest;
 use Iyzipay\Request\Iyzilink\IyziLinkSaveProductRequest;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\CreditCards;
@@ -272,6 +283,151 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
 
             return null;
         }
+    }
+
+    /**
+     * Initializes a 3-D Secure card payment. Returns the base64 3DS HTML form to render
+     * (it auto-submits to the bank); the bank then POSTs the result to $callbackUrl.
+     *
+     * @param  array{address:string,city:string,country:string,zipCode:?string,ip:?string}  $billing
+     * @return array{success:bool, html:?string, paymentId:?string, error:?string}
+     */
+    public function initiate3dsPayment(
+        CreditCards $card,
+        float $amount,
+        string $conversationId,
+        Users $buyer,
+        array $billing,
+        string $callbackUrl
+    ): array {
+        try {
+            $price = number_format($amount, 2, '.', '');
+
+            $paymentCard = new PaymentCard;
+            $paymentCard->setCardHolderName($card->cc_holder_name);
+            $paymentCard->setCardNumber(str_replace(' ', '', decrypt($card->cc_number)));
+            $paymentCard->setExpireMonth($card->cc_month);
+            $paymentCard->setExpireYear($card->cc_year);
+            $paymentCard->setCvc($card->cc_cvv);
+            $paymentCard->setRegisterCard(0);
+
+            $iyzicoBuyer = new Buyer;
+            $iyzicoBuyer->setId((string) $buyer->id);
+            $iyzicoBuyer->setName($buyer->name ?: 'Customer');
+            $iyzicoBuyer->setSurname($buyer->surname ?: 'Customer');
+            $iyzicoBuyer->setEmail($buyer->email);
+            $iyzicoBuyer->setIdentityNumber($buyer->nin ?: '11111111111');
+            $iyzicoBuyer->setRegistrationAddress($billing['address']);
+            $iyzicoBuyer->setCity($billing['city']);
+            $iyzicoBuyer->setCountry($billing['country']);
+            $iyzicoBuyer->setZipCode($billing['zipCode'] ?? null);
+            $iyzicoBuyer->setIp($billing['ip'] ?? '0.0.0.0');
+
+            $address = new IyzipayAddress;
+            $address->setContactName($card->cc_holder_name);
+            $address->setCity($billing['city']);
+            $address->setCountry($billing['country']);
+            $address->setAddress($billing['address']);
+            $address->setZipCode($billing['zipCode'] ?? null);
+
+            $basketItem = new BasketItem;
+            $basketItem->setId('credit-topup');
+            $basketItem->setName('Account credit top-up');
+            $basketItem->setCategory1('Cloud Service');
+            $basketItem->setItemType(BasketItemType::VIRTUAL);
+            $basketItem->setPrice($price);
+
+            $request = new CreatePaymentRequest;
+            $request->setLocale(Locale::TR);
+            $request->setConversationId($conversationId);
+            $request->setPrice($price);
+            $request->setPaidPrice($price);
+            $request->setCurrency(Currency::TL);
+            $request->setInstallment(1);
+            $request->setBasketId('topup-'.$card->id);
+            $request->setPaymentChannel(PaymentChannel::WEB);
+            $request->setPaymentGroup(PaymentGroup::PRODUCT);
+            $request->setCallbackUrl($callbackUrl);
+            $request->setPaymentCard($paymentCard);
+            $request->setBuyer($iyzicoBuyer);
+            $request->setShippingAddress($address);
+            $request->setBillingAddress($address);
+            $request->setBasketItems([$basketItem]);
+
+            $init = ThreedsInitialize::create($request, $this->options);
+
+            if ($init->getStatus() === 'success' && $init->getHtmlContent()) {
+                //  getHtmlContent() is already base64-decoded by the SDK; re-encode for JSON transport.
+                return [
+                    'success' => true,
+                    'html' => base64_encode($init->getHtmlContent()),
+                    'paymentId' => $init->getPaymentId(),
+                    'error' => null,
+                ];
+            }
+
+            Log::error(__METHOD__.' - Iyzico 3DS initialize failed', [
+                'status' => $init->getStatus(),
+                'error_code' => $init->getErrorCode(),
+                'error_message' => $init->getErrorMessage(),
+            ]);
+
+            return ['success' => false, 'html' => null, 'paymentId' => null, 'error' => $init->getErrorMessage() ?: 'Could not initialize 3D Secure.'];
+        } catch (\Throwable $e) {
+            Log::error(__METHOD__.' - Unexpected error initializing 3DS', ['exception' => get_class($e), 'message' => $e->getMessage()]);
+
+            return ['success' => false, 'html' => null, 'paymentId' => null, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Completes a 3-D Secure payment after the bank callback.
+     *
+     * @return array{success:bool, paymentId:?string, error:?string}
+     */
+    public function complete3dsPayment(string $paymentId, string $conversationData, string $conversationId): array
+    {
+        try {
+            $request = new CreateThreedsPaymentRequest;
+            $request->setLocale(Locale::TR);
+            $request->setConversationId($conversationId);
+            $request->setPaymentId($paymentId);
+            $request->setConversationData($conversationData);
+
+            $payment = ThreedsPayment::create($request, $this->options);
+
+            if ($payment->getStatus() === 'success') {
+                return ['success' => true, 'paymentId' => $payment->getPaymentId(), 'error' => null];
+            }
+
+            Log::error(__METHOD__.' - Iyzico 3DS completion failed', [
+                'status' => $payment->getStatus(),
+                'error_message' => $payment->getErrorMessage(),
+            ]);
+
+            return ['success' => false, 'paymentId' => $payment->getPaymentId(), 'error' => $payment->getErrorMessage() ?: 'Payment could not be completed.'];
+        } catch (\Throwable $e) {
+            Log::error(__METHOD__.' - Unexpected error completing 3DS', ['message' => $e->getMessage()]);
+
+            return ['success' => false, 'paymentId' => null, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Validates the HMAC-SHA256 signature on a 3DS callback (HPP order:
+     * conversationData:conversationId:mdStatus:paymentId:status).
+     */
+    public function validate3dsSignature(array $cb): bool
+    {
+        $data = ($cb['conversationData'] ?? '').':'
+            .($cb['conversationId'] ?? '').':'
+            .($cb['mdStatus'] ?? '').':'
+            .($cb['paymentId'] ?? '').':'
+            .($cb['status'] ?? '');
+
+        $calculated = bin2hex(hash_hmac('sha256', $data, $this->apiSecret, true));
+
+        return hash_equals($calculated, $cb['signature'] ?? '');
     }
 
     /**
