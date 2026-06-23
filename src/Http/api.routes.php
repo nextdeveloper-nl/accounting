@@ -571,7 +571,7 @@ Route::post('{awpip}/addresses ', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoi
 
         Route::prefix('webhooks')->group(
             function () {
-                Route::get('/stripe/{event}', 'Webhooks\PaymentGatewayWorkhooksController@index');
+                Route::get('/stripe/{event}', 'PaymentGateways\PaymentGatewayWebhooksController@stripe');
             }
         );
 
