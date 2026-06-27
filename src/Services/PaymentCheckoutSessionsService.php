@@ -3,9 +3,10 @@
 namespace NextDeveloper\Accounting\Services;
 
 use Helpers\InvoiceHelper;
+use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Exceptions\CheckoutSessionException;
 use NextDeveloper\Accounting\PaymentGateways\IyzicoTurkey;
-use NextDeveloper\Accounting\PaymentGateways\StripeUSA;
+use NextDeveloper\Accounting\PaymentGateways\Stripe;
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractPaymentCheckoutSessionsService;
 
 /**
@@ -39,11 +40,11 @@ class PaymentCheckoutSessionsService extends AbstractPaymentCheckoutSessionsServ
             throw new CheckoutSessionException('Checkout sessions is not available in your country. Please consult to your administrator.');
         }
 
-        switch($gateway->name) {
-            case 'stripe-usa':
-                $sessionData = (new StripeUSA($gateway))->createCheckoutSession($invoice);
+        switch(true) {
+            case Str::contains($gateway->name, 'stripe'):
+                $sessionData = (new Stripe($gateway))->createCheckoutSession($invoice);
                 break;
-            case 'iyzico-turkey':
+            case $gateway->name === 'iyzico-turkey':
                 $sessionData = (new IyzicoTurkey($gateway))->createCheckoutSession($invoice);
                 break;
         }
