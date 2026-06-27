@@ -241,7 +241,9 @@ class Stripe implements PaymentGatewaysInterface
         string $currencyCode,
         array $metadata,
         string $successUrl,
-        string $cancelUrl
+        string $cancelUrl,
+        ?string $customerEmail = null,
+        ?string $productName = null
     ): ?string {
         $currencyCode = strtoupper($currencyCode);
         $unitAmount = $this->convertToMinorUnits($amount, $currencyCode);
@@ -257,7 +259,7 @@ class Stripe implements PaymentGatewaysInterface
         }
 
         try {
-            $session = $this->gateway->checkout->sessions->create([
+            $payload = [
                 'mode' => 'payment',
                 'success_url' => $successUrl,
                 'cancel_url' => $cancelUrl,
@@ -268,7 +270,7 @@ class Stripe implements PaymentGatewaysInterface
                             'currency' => strtolower($currencyCode),
                             'unit_amount' => $unitAmount,
                             'product_data' => [
-                                'name' => 'Account credit top-up',
+                                'name' => $productName ?: 'Account credit top-up',
                             ],
                         ],
                     ],
@@ -277,7 +279,14 @@ class Stripe implements PaymentGatewaysInterface
                 'payment_intent_data' => [
                     'metadata' => $metadata,
                 ],
-            ]);
+            ];
+
+            // Prefill (and lock) the email field on the Stripe Checkout page.
+            if ($customerEmail) {
+                $payload['customer_email'] = $customerEmail;
+            }
+
+            $session = $this->gateway->checkout->sessions->create($payload);
 
             return $session->url;
         } catch (ApiErrorException $e) {
