@@ -2,7 +2,7 @@
 
 namespace NextDeveloper\Accounting\PaymentGateways;
 
-use App\Products\Products;
+use App\Products\PlanRegistry;
 use App\Services\Leo\RegisterService;
 use Illuminate\Support\Carbon;
 use Log;
@@ -21,7 +21,7 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 
-class StripeUSA implements PaymentGatewaysInterface
+class Stripe implements PaymentGatewaysInterface
 {
     private $gateway;
 
@@ -521,15 +521,8 @@ class StripeUSA implements PaymentGatewaysInterface
         foreach ($data['lines']['data'] as $line) {
             $product = $line['pricing']['price_details']['product'];
 
-            $availableProducts = Products::availableProducts();
-
-            $productSold = null;
-
-            foreach ($availableProducts as $availableProduct) {
-                if ($product == $availableProduct::STRIPE_CODE) {
-                    $productSold = $availableProduct;
-                }
-            }
+            $productClass = PlanRegistry::byStripeCode($product);
+            $productSold = $productClass ? $productClass::SLUG : null;
 
             $invoiceItem = [
                 'object_type' => $productSold,
@@ -588,15 +581,12 @@ class StripeUSA implements PaymentGatewaysInterface
             ->where('accounting_invoice_id', $existingInvoice->id)
             ->get();
 
-        $products = Products::availableProducts();
-
         foreach ($invoiceItems as $item) {
-            foreach ($products as $product) {
-                if ($item['object_type'] == $product) {
-                    $app = app($item['object_type']);
-                    $account = AccountingHelper::getIamAccountFromInvoice($existingInvoice);
-                    $app->subscribeFor($account);
-                }
+            $productClass = PlanRegistry::resolve($item['object_type']);
+
+            if ($productClass) {
+                $account = AccountingHelper::getIamAccountFromInvoice($existingInvoice);
+                app($productClass)->subscribeFor($account);
             }
         }
 

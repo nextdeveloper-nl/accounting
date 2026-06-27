@@ -14,7 +14,7 @@ use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
 use NextDeveloper\Accounting\Database\Models\PaymentGateways;
 use NextDeveloper\Accounting\Database\Models\Transactions;
 use NextDeveloper\Accounting\Helpers\AccountingHelper;
-use Nextdeveloper\Accounting\PaymentGateways\StripeUSA;
+use NextDeveloper\Accounting\PaymentGateways\Stripe;
 use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Database\Models\Addresses;
 use NextDeveloper\Commons\Database\Models\Currencies;
@@ -133,11 +133,13 @@ class Pay extends AbstractAction
                 $this->setProgress(30, 'Payment gateway is Iyzico. We will use Iyzico payment gateway to charge the customer.');
                 $this->payWithIyzico();
                 break;
-            case 'stripe-usa':
-                $this->setProgress(30, 'Payment gateway is Stripe USA. We will use Stripe USA payment gateway to charge the customer.');
-                $this->payWithStripe();
-                break;
             default:
+                if (Str::contains($this->paymentGateway->name, 'stripe')) {
+                    $this->setProgress(30, 'Payment gateway is Stripe. We will use Stripe payment gateway to charge the customer.');
+                    $this->payWithStripe();
+                    break;
+                }
+
                 $this->setFinishedWithError("The payment gateway " . $this->paymentGateway->name . " is not supported.");
                 return;
         }
@@ -185,7 +187,7 @@ class Pay extends AbstractAction
 
         $this->setProgress(50, 'Building the payment request for payment processor.');
 
-        $gateway = new StripeUSA($this->paymentGateway);
+        $gateway = new Stripe($this->paymentGateway);
 
         dd($gateway);
     }

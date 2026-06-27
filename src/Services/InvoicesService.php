@@ -5,6 +5,7 @@ namespace NextDeveloper\Accounting\Services;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Filters\InvoicesQueryFilter;
 use NextDeveloper\Accounting\Database\Models\Accounts;
 use NextDeveloper\Accounting\Database\Models\Invoices;
@@ -63,14 +64,17 @@ class InvoicesService extends AbstractInvoicesService
         $gateways = PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
             ->where('accounting_account_id', $distributorAccount->id)
             ->where('is_active', true)
-            ->whereIn('name', ['iyzico-link', 'stripe-usa'])
+            ->where(function ($query) {
+                $query->where('name', 'iyzico-link')
+                    ->orWhere('name', 'ilike', 'stripe-%');
+            })
             ->get();
 
         $paymentGateway = $gateways->firstWhere('name', 'iyzico-link')
-            ?? $gateways->firstWhere('name', 'stripe-usa');
+            ?? $gateways->first(fn ($gateway) => Str::contains($gateway->name, 'stripe'));
 
         if (! $paymentGateway) {
-            Log::error(__METHOD__.'::'.__LINE__.' - Payment gateway not found', ['invoice_id' => $invoice->id, 'gateways' => ['iyzico-link', 'stripe-usa']]);
+            Log::error(__METHOD__.'::'.__LINE__.' - Payment gateway not found', ['invoice_id' => $invoice->id, 'gateways' => ['iyzico-link', 'stripe-*']]);
 
             return null;
         }
