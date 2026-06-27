@@ -225,7 +225,7 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
      * credit top-up flow (no invoice). The $conversationId round-trips back as
      * paymentConversationId on the webhook and carries the signed top-up intent.
      */
-    public function createTopupLink(float $amount, string $currencyCode, string $conversationId, string $name): ?string
+    public function createTopupLink(float $amount, string $currencyCode, string $conversationId, string $name, bool $applyVat = true): ?string
     {
         if ($amount <= 0) {
             return null;
@@ -236,7 +236,12 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             $amount = ExchangeRateHelper::convert($currencyCode, 'TRY', $amount);
         }
 
-        $amount = $amount * (1 + ($this->gateway->vat_rate ?? 0));
+        //  Credit top-ups add VAT on top; product purchases charge the catalog price as-is
+        //  (KDV-included, matching the displayed price and the Stripe checkout).
+        if ($applyVat) {
+            $amount = $amount * (1 + ($this->gateway->vat_rate ?? 0));
+        }
+
         $formattedAmount = number_format((float) $amount, 2, '.', '');
 
         try {
