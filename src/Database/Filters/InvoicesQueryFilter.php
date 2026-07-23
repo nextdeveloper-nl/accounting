@@ -17,7 +17,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     * @var Builder
     */
     protected $builder;
-    
+
     public function invoiceNumber($value)
     {
         return $this->builder->where('invoice_number', 'ilike', '%' . $value . '%');
@@ -28,13 +28,13 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->invoiceNumber($value);
     }
-        
+
     public function note($value)
     {
         return $this->builder->where('note', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function cancellationReason($value)
     {
         return $this->builder->where('cancellation_reason', 'ilike', '%' . $value . '%');
@@ -45,7 +45,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->cancellationReason($value);
     }
-        
+
     public function paymentLinkUrl($value)
     {
         return $this->builder->where('payment_link_url', 'ilike', '%' . $value . '%');
@@ -56,7 +56,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->paymentLinkUrl($value);
     }
-    
+
     public function termYear($value)
     {
         $operator = substr($value, 0, 1);
@@ -75,7 +75,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->termYear($value);
     }
-    
+
     public function termMonth($value)
     {
         $operator = substr($value, 0, 1);
@@ -94,7 +94,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->termMonth($value);
     }
-    
+
     public function isPaid($value)
     {
         return $this->builder->where('is_paid', $value);
@@ -105,7 +105,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->isPaid($value);
     }
-     
+
     public function isRefund($value)
     {
         return $this->builder->where('is_refund', $value);
@@ -116,7 +116,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->isRefund($value);
     }
-     
+
     public function isPayable($value)
     {
         return $this->builder->where('is_payable', $value);
@@ -127,7 +127,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->isPayable($value);
     }
-     
+
     public function isSealed($value)
     {
         return $this->builder->where('is_sealed', $value);
@@ -138,7 +138,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->isSealed($value);
     }
-     
+
     public function isCancelled($value)
     {
         return $this->builder->where('is_cancelled', $value);
@@ -149,7 +149,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->isCancelled($value);
     }
-     
+
     public function isCommissionInvoice($value)
     {
         return $this->builder->where('is_commission_invoice', $value);
@@ -160,7 +160,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->isCommissionInvoice($value);
     }
-     
+
     public function dueDateStart($date)
     {
         return $this->builder->where( 'due_date', '>=', $date );
@@ -263,7 +263,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->accountingAccount($value);
     }
-    
+
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -278,7 +278,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->commonCurrency($value);
     }
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -288,7 +288,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -298,7 +298,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     public function distributorCommissionInvoiceId($value)
     {
             $distributorCommissionInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
@@ -313,7 +313,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->distributorCommissionInvoice($value);
     }
-    
+
     public function integratorCommissionInvoiceId($value)
     {
             $integratorCommissionInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
@@ -328,7 +328,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->integratorCommissionInvoice($value);
     }
-    
+
     public function resellerCommissionInvoiceId($value)
     {
             $resellerCommissionInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
@@ -343,7 +343,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->resellerCommissionInvoice($value);
     }
-    
+
     public function affiliateCommissionInvoiceId($value)
     {
             $affiliateCommissionInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
@@ -358,7 +358,7 @@ class InvoicesQueryFilter extends AbstractQueryFilter
     {
     return $this->affiliateCommissionInvoice($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

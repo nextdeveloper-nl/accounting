@@ -17,7 +17,7 @@ class MonthlyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
     * @var Builder
     */
     protected $builder;
-    
+
     public function monthName($value)
     {
         return $this->builder->where('month_name', 'ilike', '%' . $value . '%');
@@ -28,7 +28,7 @@ class MonthlyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
     {
     return $this->monthName($value);
     }
-        
+
     public function monthCode($value)
     {
         return $this->builder->where('month_code', 'ilike', '%' . $value . '%');
@@ -39,7 +39,7 @@ class MonthlyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
     {
     return $this->monthCode($value);
     }
-    
+
     public function count($value)
     {
         $operator = substr($value, 0, 1);
@@ -53,7 +53,7 @@ class MonthlyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
         return $this->builder->where('count', $operator, $value);
     }
 
-    
+
     public function monthStartStart($date)
     {
         return $this->builder->where( 'month_start', '>=', $date );
@@ -112,7 +112,7 @@ class MonthlyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
     {
     return $this->commonCurrency($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

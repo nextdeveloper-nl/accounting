@@ -17,13 +17,13 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     * @var Builder
     */
     protected $builder;
-    
+
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function phoneNumber($value)
     {
         return $this->builder->where('phone_number', 'ilike', '%' . $value . '%');
@@ -34,7 +34,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->phoneNumber($value);
     }
-        
+
     public function taxNumber($value)
     {
         return $this->builder->where('tax_number', 'ilike', '%' . $value . '%');
@@ -45,7 +45,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->taxNumber($value);
     }
-        
+
     public function taxOffice($value)
     {
         return $this->builder->where('tax_office', 'ilike', '%' . $value . '%');
@@ -56,7 +56,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->taxOffice($value);
     }
-        
+
     public function accountingIdentifier($value)
     {
         return $this->builder->where('accounting_identifier', 'ilike', '%' . $value . '%');
@@ -67,7 +67,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->accountingIdentifier($value);
     }
-        
+
     public function commonCurrencyCode($value)
     {
         return $this->builder->where('common_currency_code', 'ilike', '%' . $value . '%');
@@ -78,7 +78,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->commonCurrencyCode($value);
     }
-        
+
     public function trMersis($value)
     {
         return $this->builder->where('tr_mersis', 'ilike', '%' . $value . '%');
@@ -89,7 +89,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->trMersis($value);
     }
-        
+
     public function tradeOffice($value)
     {
         return $this->builder->where('trade_office', 'ilike', '%' . $value . '%');
@@ -100,7 +100,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->tradeOffice($value);
     }
-        
+
     public function tradeOfficeNumber($value)
     {
         return $this->builder->where('trade_office_number', 'ilike', '%' . $value . '%');
@@ -111,7 +111,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->tradeOfficeNumber($value);
     }
-        
+
     public function distributorPartner($value)
     {
         return $this->builder->where('distributor_partner', 'ilike', '%' . $value . '%');
@@ -122,7 +122,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->distributorPartner($value);
     }
-        
+
     public function integratorPartner($value)
     {
         return $this->builder->where('integrator_partner', 'ilike', '%' . $value . '%');
@@ -133,7 +133,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->integratorPartner($value);
     }
-        
+
     public function salesPartner($value)
     {
         return $this->builder->where('sales_partner', 'ilike', '%' . $value . '%');
@@ -144,7 +144,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->salesPartner($value);
     }
-        
+
     public function affiliatePartner($value)
     {
         return $this->builder->where('affiliate_partner', 'ilike', '%' . $value . '%');
@@ -155,7 +155,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->affiliatePartner($value);
     }
-    
+
     public function isDistributor($value)
     {
         return $this->builder->where('is_distributor', $value);
@@ -166,7 +166,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->isDistributor($value);
     }
-     
+
     public function isIntegrator($value)
     {
         return $this->builder->where('is_integrator', $value);
@@ -177,7 +177,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->isIntegrator($value);
     }
-     
+
     public function isReseller($value)
     {
         return $this->builder->where('is_reseller', $value);
@@ -188,7 +188,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->isReseller($value);
     }
-     
+
     public function isAffiliate($value)
     {
         return $this->builder->where('is_affiliate', $value);
@@ -199,7 +199,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->isAffiliate($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where( 'created_at', '>=', $date );
@@ -280,7 +280,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->commonCountry($value);
     }
-    
+
     public function commonDomainId($value)
     {
             $commonDomain = \NextDeveloper\Commons\Database\Models\Domains::where('uuid', $value)->first();
@@ -295,7 +295,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->commonDomain($value);
     }
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -305,7 +305,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     public function iamAccountTypeId($value)
     {
             $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
@@ -320,7 +320,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->iamAccountType($value);
     }
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -330,7 +330,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -345,7 +345,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->commonCurrency($value);
     }
-    
+
     public function distributorId($value)
     {
             $distributor = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -360,7 +360,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->distributor($value);
     }
-    
+
     public function integratorPartnerId($value)
     {
             $integratorPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -375,7 +375,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->integratorPartner($value);
     }
-    
+
     public function salesPartnerId($value)
     {
             $salesPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -390,7 +390,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->salesPartner($value);
     }
-    
+
     public function affiliatePartnerId($value)
     {
             $affiliatePartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -405,7 +405,7 @@ class AccountsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->affiliatePartner($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

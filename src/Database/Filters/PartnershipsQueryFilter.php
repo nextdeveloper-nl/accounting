@@ -17,7 +17,7 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
     * @var Builder
     */
     protected $builder;
-    
+
     public function partnerCode($value)
     {
         return $this->builder->where('partner_code', 'ilike', '%' . $value . '%');
@@ -28,13 +28,13 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
     {
     return $this->partnerCode($value);
     }
-        
+
     public function industry($value)
     {
         return $this->builder->where('industry', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function meetingLink($value)
     {
         return $this->builder->where('meeting_link', 'ilike', '%' . $value . '%');
@@ -45,7 +45,7 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
     {
     return $this->meetingLink($value);
     }
-    
+
     public function customerCount($value)
     {
         $operator = substr($value, 0, 1);
@@ -64,7 +64,7 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
     {
     return $this->customerCount($value);
     }
-    
+
     public function level($value)
     {
         $operator = substr($value, 0, 1);
@@ -78,7 +78,7 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('level', $operator, $value);
     }
 
-    
+
     public function rewardPoints($value)
     {
         $operator = substr($value, 0, 1);
@@ -97,7 +97,7 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
     {
     return $this->rewardPoints($value);
     }
-    
+
     public function isBrandAmbassador($value)
     {
         return $this->builder->where('is_brand_ambassador', $value);
@@ -108,7 +108,7 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
     {
     return $this->isBrandAmbassador($value);
     }
-     
+
     public function isApproved($value)
     {
         return $this->builder->where('is_approved', $value);
@@ -119,7 +119,7 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
     {
     return $this->isApproved($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where( 'created_at', '>=', $date );
@@ -195,7 +195,7 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     public function accountingAccountId($value)
     {
             $accountingAccount = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -210,7 +210,7 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
     {
     return $this->accountingAccount($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

@@ -57,7 +57,7 @@ class AbstractInvoiceItemsTransformer extends AbstractTransformer {
                                                             $accountingInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->accounting_invoice_id)->first();
                                                             $accountingPromoCodeId = \NextDeveloper\Accounting\Database\Models\PromoCodes::where('id', $model->accounting_promo_code_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'object_type'  =>  $model->object_type,

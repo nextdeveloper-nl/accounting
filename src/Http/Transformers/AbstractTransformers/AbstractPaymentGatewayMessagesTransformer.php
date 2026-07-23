@@ -53,7 +53,7 @@ class AbstractPaymentGatewayMessagesTransformer extends AbstractTransformer {
      */
     public function transform(PaymentGatewayMessages $model) {
                                                 $accountingPaymentGatewayId = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('id', $model->accounting_payment_gateway_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'message_identifier'  =>  $model->message_identifier,

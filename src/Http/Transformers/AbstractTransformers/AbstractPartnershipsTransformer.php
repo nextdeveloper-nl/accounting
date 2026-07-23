@@ -54,7 +54,7 @@ class AbstractPartnershipsTransformer extends AbstractTransformer {
     public function transform(Partnerships $model) {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,

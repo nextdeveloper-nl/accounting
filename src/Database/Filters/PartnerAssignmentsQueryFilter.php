@@ -17,19 +17,19 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
     * @var Builder
     */
     protected $builder;
-    
+
     public function type($value)
     {
         return $this->builder->where('type', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function reason($value)
     {
         return $this->builder->where('reason', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function startedAtStart($date)
     {
         return $this->builder->where( 'started_at', '>=', $date );
@@ -154,7 +154,7 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
     {
     return $this->accountingAccount($value);
     }
-    
+
     public function oldPartnerId($value)
     {
             $oldPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -169,7 +169,7 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
     {
     return $this->oldPartner($value);
     }
-    
+
     public function newPartnerId($value)
     {
             $newPartner = \NextDeveloper\Accounting\Database\Models\Accounts::where('uuid', $value)->first();
@@ -184,7 +184,7 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
     {
     return $this->newPartner($value);
     }
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -194,7 +194,7 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -204,7 +204,7 @@ class PartnerAssignmentsQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

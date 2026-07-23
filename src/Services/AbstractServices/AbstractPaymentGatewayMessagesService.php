@@ -22,7 +22,7 @@ use NextDeveloper\Commons\Helpers\DatabaseHelper;
  */
 class AbstractPaymentGatewayMessagesService
 {
-    public static function get(PaymentGatewayMessagesQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
+    public static function get(?PaymentGatewayMessagesQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
     {
         $enablePaginate = array_key_exists('paginate', $params);
 

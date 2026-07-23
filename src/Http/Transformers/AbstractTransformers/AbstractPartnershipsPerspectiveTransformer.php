@@ -53,7 +53,7 @@ class AbstractPartnershipsPerspectiveTransformer extends AbstractTransformer {
      */
     public function transform(PartnershipsPerspective $model) {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'name'  =>  $model->name,

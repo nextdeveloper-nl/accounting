@@ -236,7 +236,7 @@ class AccountingHelper
      * @param \NextDeveloper\IAM\Database\Models\Accounts|null $account
      * @return Accounts
      */
-    public static function getAccount(\NextDeveloper\IAM\Database\Models\Accounts $account = null): Accounts
+    public static function getAccount(?\NextDeveloper\IAM\Database\Models\Accounts $account = null): Accounts
     {
         if (!$account)
             $account = UserHelper::currentAccount();
