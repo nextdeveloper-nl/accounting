@@ -241,9 +241,17 @@ class AccountingHelper
         if (!$account)
             $account = UserHelper::currentAccount();
 
-        return Accounts::withoutGlobalScope(AuthorizationScope::class)
+        $accountingAccount = Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('iam_account_id', $account->id)
             ->first();
+
+        if (!$accountingAccount) {
+            Log::warning(__METHOD__ . '| No accounting account found for IAM account ID: ' . $account->id
+                . '. The account may not have been provisioned in the accounting module yet.');
+            throw new \Exception('Accounting account not found for IAM account (ID: ' . $account->id . ').');
+        }
+
+        return $accountingAccount;
     }
 
     public static function getAccountFromCrmAccount(\NextDeveloper\CRM\Database\Models\Accounts $account): Accounts
