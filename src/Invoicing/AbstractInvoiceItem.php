@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use NextDeveloper\Accounting\Database\Models\ContractItemsPerspective;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
 use NextDeveloper\Accounting\Helpers\AccountingHelper;
+use NextDeveloper\Accounting\Helpers\ContractHelper;
 use NextDeveloper\Accounting\Services\InvoiceItemsService;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
@@ -102,12 +103,19 @@ abstract class AbstractInvoiceItem
             return $item;
         }
 
+        //  The item may already carry details of its own, they have to survive this.
+        $details = $item->details ?? [];
+
         //  If we have fixed price, we are running this
-        if($contract->contract_type == 'price') {
+        if($this->isFixedPriceContract($contract)) {
             Log::info('Contract currency id: ' . $contract->common_currency_id);
 
+            $currencyCode = $contract->common_currency_id
+                ? CurrenciesService::getCurrencyById($contract->common_currency_id)->code
+                : '';
+
             $details['contract_price_discoount'] = 'We set the price to ' . $contract->price
-                . CurrenciesService::getCurrencyById($contract->common_currency_id)->code
+                . $currencyCode
                 . ' because of the contract: '
                 . $contract->uuid;
 
@@ -120,24 +128,34 @@ abstract class AbstractInvoiceItem
                 $item->update(['common_currency_id'    =>  $contract->common_currency_id]);
             }
 
-            Log::info('[##HAS FIXED PRICE DISCOUNT##] We set the price to ' . $contract->price
-                . CurrenciesService::getCurrencyById($contract->common_currency_id)->code
-                . ' because of the contract: '
-                . $contract->uuid);
-        } else {
-            //  If we have discount only we apply this.
-            $cost = $item->unit_price * ((100 - $contract->discount) / 100);
-            $details['contract_percent_discount'] = 'We applied %' . $contract->discount . ' discount because of the contract: '
-                . $contract->uuid;
+            Log::info('[##HAS FIXED PRICE DISCOUNT##] ' . $details['contract_price_discoount']);
 
-            Log::info('[##HAS DISCOUNT##] We applied %' . $contract->discount . ' discount because of the contract: '
-                . $contract->uuid);
-
-            $item->update([
-                'unit_price'    =>  $cost,
-                'details'   =>  $details
-            ]);
+            return $item;
         }
+
+        //  If we have discount only we apply this.
+        $cost = $item->unit_price * ((100 - $contract->discount) / 100);
+        $details['contract_percent_discount'] = 'We applied %' . $contract->discount . ' discount because of the contract: '
+            . $contract->uuid;
+
+        Log::info('[##HAS DISCOUNT##] We applied %' . $contract->discount . ' discount because of the contract: '
+            . $contract->uuid);
+
+        $item->update([
+            'unit_price'    =>  $cost,
+            'details'   =>  $details
+        ]);
+
+        return $item;
+    }
+
+    /**
+     * The contract items carry `fixed-price` today. `price` is what the older rows were
+     * written with, so both mean the same thing here.
+     */
+    private function isFixedPriceContract($contract): bool
+    {
+        return in_array($contract->contract_type, [ContractHelper::FIXED_PRICE, 'price'], true);
     }
 
     protected function convertToLocalCurrency($item)
