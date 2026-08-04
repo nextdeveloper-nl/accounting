@@ -58,7 +58,7 @@ class AbstractAccountsTransformer extends AbstractTransformer {
                                                             $salesPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->sales_partner_id)->first();
                                                             $integratorPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
                                                             $affiliatePartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->affiliate_partner_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,

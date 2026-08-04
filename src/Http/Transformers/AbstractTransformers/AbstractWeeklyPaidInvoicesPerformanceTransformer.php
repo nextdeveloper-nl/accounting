@@ -52,7 +52,7 @@ class AbstractWeeklyPaidInvoicesPerformanceTransformer extends AbstractTransform
      * @return array
      */
     public function transform(WeeklyPaidInvoicesPerformance $model) {
-            
+
         return $this->buildPayload([
 'id'  =>  $model->id,
 'week_start'  =>  $model->week_start,

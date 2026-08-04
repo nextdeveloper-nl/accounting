@@ -53,7 +53,7 @@ class AbstractMonthlyPaidInvoicesPerformanceTransformer extends AbstractTransfor
      */
     public function transform(MonthlyPaidInvoicesPerformance $model) {
                                                 $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->id,
 'month_start'  =>  $model->month_start,

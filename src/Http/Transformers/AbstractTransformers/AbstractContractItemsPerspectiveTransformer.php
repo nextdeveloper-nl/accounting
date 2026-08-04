@@ -58,7 +58,7 @@ class AbstractContractItemsPerspectiveTransformer extends AbstractTransformer {
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'object_type'  =>  $model->object_type,

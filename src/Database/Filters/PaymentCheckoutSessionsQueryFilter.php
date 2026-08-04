@@ -28,7 +28,7 @@ class PaymentCheckoutSessionsQueryFilter extends AbstractQueryFilter
     {
     return $this->isInvalidated($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where( 'created_at', '>=', $date );
@@ -109,7 +109,7 @@ class PaymentCheckoutSessionsQueryFilter extends AbstractQueryFilter
     {
     return $this->accountingPaymentGateway($value);
     }
-    
+
     public function accountingInvoiceId($value)
     {
             $accountingInvoice = \NextDeveloper\Accounting\Database\Models\Invoices::where('uuid', $value)->first();
@@ -124,7 +124,7 @@ class PaymentCheckoutSessionsQueryFilter extends AbstractQueryFilter
     {
     return $this->accountingInvoice($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

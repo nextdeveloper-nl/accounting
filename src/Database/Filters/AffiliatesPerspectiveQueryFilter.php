@@ -17,13 +17,13 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     * @var Builder
     */
     protected $builder;
-    
+
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function phoneNumber($value)
     {
         return $this->builder->where('phone_number', 'ilike', '%' . $value . '%');
@@ -34,7 +34,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->phoneNumber($value);
     }
-        
+
     public function taxNumber($value)
     {
         return $this->builder->where('tax_number', 'ilike', '%' . $value . '%');
@@ -45,7 +45,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->taxNumber($value);
     }
-        
+
     public function taxOffice($value)
     {
         return $this->builder->where('tax_office', 'ilike', '%' . $value . '%');
@@ -56,7 +56,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->taxOffice($value);
     }
-        
+
     public function accountingIdentifier($value)
     {
         return $this->builder->where('accounting_identifier', 'ilike', '%' . $value . '%');
@@ -67,7 +67,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->accountingIdentifier($value);
     }
-        
+
     public function commonCurrencyCode($value)
     {
         return $this->builder->where('common_currency_code', 'ilike', '%' . $value . '%');
@@ -78,7 +78,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->commonCurrencyCode($value);
     }
-        
+
     public function trMersis($value)
     {
         return $this->builder->where('tr_mersis', 'ilike', '%' . $value . '%');
@@ -89,7 +89,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->trMersis($value);
     }
-        
+
     public function tradeOffice($value)
     {
         return $this->builder->where('trade_office', 'ilike', '%' . $value . '%');
@@ -100,7 +100,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->tradeOffice($value);
     }
-        
+
     public function tradeOfficeNumber($value)
     {
         return $this->builder->where('trade_office_number', 'ilike', '%' . $value . '%');
@@ -111,13 +111,13 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->tradeOfficeNumber($value);
     }
-        
+
     public function industry($value)
     {
         return $this->builder->where('industry', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function meetingLink($value)
     {
         return $this->builder->where('meeting_link', 'ilike', '%' . $value . '%');
@@ -128,7 +128,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->meetingLink($value);
     }
-    
+
     public function customerCount($value)
     {
         $operator = substr($value, 0, 1);
@@ -147,7 +147,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->customerCount($value);
     }
-    
+
     public function level($value)
     {
         $operator = substr($value, 0, 1);
@@ -161,7 +161,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('level', $operator, $value);
     }
 
-    
+
     public function rewardPoints($value)
     {
         $operator = substr($value, 0, 1);
@@ -180,7 +180,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->rewardPoints($value);
     }
-    
+
     public function isApproved($value)
     {
         return $this->builder->where('is_approved', $value);
@@ -191,7 +191,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->isApproved($value);
     }
-     
+
     public function isBrandAmbassador($value)
     {
         return $this->builder->where('is_brand_ambassador', $value);
@@ -202,7 +202,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->isBrandAmbassador($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where( 'created_at', '>=', $date );
@@ -283,7 +283,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->commonCountry($value);
     }
-    
+
     public function commonDomainId($value)
     {
             $commonDomain = \NextDeveloper\Commons\Database\Models\Domains::where('uuid', $value)->first();
@@ -298,7 +298,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->commonDomain($value);
     }
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -308,7 +308,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     public function iamAccountTypeId($value)
     {
             $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
@@ -323,7 +323,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->iamAccountType($value);
     }
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -333,7 +333,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     public function commonCurrencyId($value)
     {
             $commonCurrency = \NextDeveloper\Commons\Database\Models\Currencies::where('uuid', $value)->first();
@@ -348,7 +348,7 @@ class AffiliatesPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->commonCurrency($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

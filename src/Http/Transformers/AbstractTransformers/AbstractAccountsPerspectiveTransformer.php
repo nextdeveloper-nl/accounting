@@ -62,7 +62,7 @@ class AbstractAccountsPerspectiveTransformer extends AbstractTransformer {
                                                             $integratorPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->integrator_partner_id)->first();
                                                             $salesPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->sales_partner_id)->first();
                                                             $affiliatePartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->affiliate_partner_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'name'  =>  $model->name,

@@ -54,7 +54,7 @@ class AbstractPaymentCheckoutSessionsTransformer extends AbstractTransformer {
     public function transform(PaymentCheckoutSessions $model) {
                                                 $accountingPaymentGatewayId = \NextDeveloper\Accounting\Database\Models\PaymentGateways::where('id', $model->accounting_payment_gateway_id)->first();
                                                             $accountingInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->accounting_invoice_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'accounting_payment_gateway_id'  =>  $accountingPaymentGatewayId ? $accountingPaymentGatewayId->uuid : null,

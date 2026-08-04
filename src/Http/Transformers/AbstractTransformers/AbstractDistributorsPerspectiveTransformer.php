@@ -58,7 +58,7 @@ class AbstractDistributorsPerspectiveTransformer extends AbstractTransformer {
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $commonCurrencyId = \NextDeveloper\Commons\Database\Models\Currencies::where('id', $model->common_currency_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'name'  =>  $model->name,

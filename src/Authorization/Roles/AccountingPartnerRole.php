@@ -185,7 +185,7 @@ class AccountingPartnerRole extends AbstractRole implements IAuthorizationRole
         return self::DB_PREFIX;
     }
 
-    public function checkRules(Users $users = null): bool
+    public function checkRules(?Users $users = null): bool
     {
         return false;
     }

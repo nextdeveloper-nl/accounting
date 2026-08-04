@@ -60,7 +60,7 @@ class AbstractInvoicesTransformer extends AbstractTransformer {
                                                             $integratorCommissionInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->integrator_commission_invoice_id)->first();
                                                             $resellerCommissionInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->reseller_commission_invoice_id)->first();
                                                             $affiliateCommissionInvoiceId = \NextDeveloper\Accounting\Database\Models\Invoices::where('id', $model->affiliate_commission_invoice_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,

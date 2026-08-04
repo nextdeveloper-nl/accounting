@@ -25,7 +25,7 @@ use NextDeveloper\Commons\Exceptions\NotAllowedException;
  */
 class AbstractVendorsPerspectiveService
 {
-    public static function get(VendorsPerspectiveQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
+    public static function get(?VendorsPerspectiveQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
     {
         $enablePaginate = array_key_exists('paginate', $params);
 
@@ -202,7 +202,7 @@ class AbstractVendorsPerspectiveService
                 $data['iam_user_id']
             );
         }
-                    
+
         if(!array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id']    = UserHelper::me()->id;
         }
@@ -218,7 +218,7 @@ class AbstractVendorsPerspectiveService
                 $data['iam_account_id']
             );
         }
-            
+
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
@@ -228,7 +228,7 @@ class AbstractVendorsPerspectiveService
                 $data['common_currency_id']
             );
         }
-                        
+
         try {
             $model = VendorsPerspective::create($data);
         } catch(\Exception $e) {
@@ -310,7 +310,7 @@ class AbstractVendorsPerspectiveService
                 $data['common_currency_id']
             );
         }
-    
+
         try {
             $isUpdated = $model->update($data);
             $model = $model->fresh();

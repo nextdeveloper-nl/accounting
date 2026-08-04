@@ -17,13 +17,13 @@ class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
     * @var Builder
     */
     protected $builder;
-    
+
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function partnerCode($value)
     {
         return $this->builder->where('partner_code', 'ilike', '%' . $value . '%');
@@ -34,13 +34,13 @@ class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->partnerCode($value);
     }
-        
+
     public function industry($value)
     {
         return $this->builder->where('industry', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function meetingLink($value)
     {
         return $this->builder->where('meeting_link', 'ilike', '%' . $value . '%');
@@ -51,7 +51,7 @@ class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->meetingLink($value);
     }
-    
+
     public function customerCount($value)
     {
         $operator = substr($value, 0, 1);
@@ -70,7 +70,7 @@ class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->customerCount($value);
     }
-    
+
     public function level($value)
     {
         $operator = substr($value, 0, 1);
@@ -84,7 +84,7 @@ class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('level', $operator, $value);
     }
 
-    
+
     public function rewardPoints($value)
     {
         $operator = substr($value, 0, 1);
@@ -103,7 +103,7 @@ class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->rewardPoints($value);
     }
-    
+
     public function isBrandAmbassador($value)
     {
         return $this->builder->where('is_brand_ambassador', $value);
@@ -114,7 +114,7 @@ class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->isBrandAmbassador($value);
     }
-     
+
     public function isApproved($value)
     {
         return $this->builder->where('is_approved', $value);
@@ -125,7 +125,7 @@ class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
     {
     return $this->isApproved($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where( 'created_at', '>=', $date );
@@ -201,7 +201,7 @@ class PartnershipsPerspectiveQueryFilter extends AbstractQueryFilter
         }
         }
 
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
 

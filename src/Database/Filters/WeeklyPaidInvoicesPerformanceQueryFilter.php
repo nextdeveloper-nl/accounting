@@ -17,7 +17,7 @@ class WeeklyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
     * @var Builder
     */
     protected $builder;
-    
+
     public function weekNumber($value)
     {
         return $this->builder->where('week_number', 'ilike', '%' . $value . '%');
@@ -28,7 +28,7 @@ class WeeklyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
     {
     return $this->weekNumber($value);
     }
-    
+
     public function count($value)
     {
         $operator = substr($value, 0, 1);
@@ -42,7 +42,7 @@ class WeeklyPaidInvoicesPerformanceQueryFilter extends AbstractQueryFilter
         return $this->builder->where('count', $operator, $value);
     }
 
-    
+
     public function weekStartStart($date)
     {
         return $this->builder->where( 'week_start', '>=', $date );

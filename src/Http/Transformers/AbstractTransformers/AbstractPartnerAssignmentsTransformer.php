@@ -57,7 +57,7 @@ class AbstractPartnerAssignmentsTransformer extends AbstractTransformer {
                                                             $newPartnerId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->new_partner_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
-                        
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
