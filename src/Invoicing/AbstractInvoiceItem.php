@@ -6,8 +6,8 @@ use App\Helpers\LeoAccountsHelper;
 use Carbon\Carbon;
 use Helpers\InvoiceHelper;
 use Illuminate\Support\Facades\Log;
-use NextDeveloper\Accounting\Database\Models\ContractItemsPerspective;
 use NextDeveloper\Accounting\Database\Models\InvoiceItems;
+use NextDeveloper\Accounting\Database\Models\Invoices;
 use NextDeveloper\Accounting\Helpers\AccountingHelper;
 use NextDeveloper\Accounting\Helpers\ContractHelper;
 use NextDeveloper\Accounting\Services\InvoiceItemsService;
@@ -31,50 +31,94 @@ abstract class AbstractInvoiceItem
 
     protected $to;
 
+    private $year;
+
+    private $month;
+
     public function __construct($model, $year, $month)
     {
         $this->model = $model;
 
+        $this->year = $year;
+        $this->month = $month;
+
         $this->from = Carbon::createFromDate($year, $month)->setTimezone('GMT')->startOfMonth();
         $this->to = $this->from->copy()->endOfMonth();
+    }
 
-        $this->invoice = InvoiceHelper::getInvoice(
-            AccountingHelper::getAccount(
-                UserHelper::getAccountById( $this->model->iam_account_id )
-            ),
-            $year,
-            $month
+    /**
+     * An object that is under contract for the whole term is not invoiced at all, so the
+     * invoice is only reached for when there is really something to bill. Otherwise a
+     * fully contracted customer would still get an empty invoice raised every month.
+     */
+    private function getInvoice()
+    {
+        if(!$this->invoice) {
+            $this->invoice = InvoiceHelper::getInvoice(
+                $this->getAccountingAccount(),
+                $this->year,
+                $this->month
+            );
+        }
+
+        return $this->invoice;
+    }
+
+    private function getAccountingAccount()
+    {
+        return AccountingHelper::getAccount(
+            UserHelper::getAccountById( $this->model->iam_account_id )
         );
+    }
+
+    /**
+     * The invoice of this term if the customer already has one. Unlike getInvoice() this
+     * never creates one.
+     */
+    private function findInvoice()
+    {
+        return Invoices::withoutGlobalScope(AuthorizationScope::class)
+            ->where('accounting_account_id', $this->getAccountingAccount()->id)
+            ->where('term_year', $this->year)
+            ->where('term_month', $this->month)
+            ->latest()
+            ->first();
     }
 
     protected function getItemContract()
     {
-        return ContractItemsPerspective::withoutGlobalScope(AuthorizationScope::class)
-            ->where('object_type', get_class($this->model))
-            ->where('object_id', $this->model->id)
-            ->where('term_starts', '<', Carbon::createFromDate($this->invoice->term_year, $this->invoice->term_month))
-            ->where('term_ends', '>', Carbon::createFromDate($this->invoice->term_year, $this->invoice->term_month))
-            ->where('is_signed', true)
-            ->where('is_approved', true)
-            ->first();
+        return ContractHelper::getContractItemForWindow($this->model, $this->from, $this->to);
     }
 
     protected function setItemCost($cost, Currencies $currency, $details = [], $contractItem = null) {
+        $contract = $this->getItemContract();
+        $coverage = $contract ? ContractHelper::getCoverageRatio($contract, $this->from, $this->to) : 0;
+
+        /**
+         * The contract of this term is paid with the contract invoice, not month by
+         * month. A term that covers the whole month leaves nothing to invoice here.
+         */
+        if($coverage >= 1) {
+            return $this->settleCoveredItem($contract);
+        }
+
+        $invoice = $this->getInvoice();
+
         $item = InvoiceItems::withoutGlobalScope(AuthorizationScope::class)
             ->where('object_type', get_class($this->model))
             ->where('object_id', $this->model->id)
-            ->where('accounting_invoice_id', $this->invoice->id)
+            ->where('accounting_invoice_id', $invoice->id)
             ->first();
 
         if(!$item) {
             $item = InvoiceItemsService::create([
-                'accounting_invoice_id' =>  $this->invoice->id,
+                'accounting_invoice_id' =>  $invoice->id,
                 'object_type'   =>  is_object($this->model) ? get_class($this->model) : $this->model,
                 'object_id'     =>  is_object($this->model) ? $this->model->id : 0,
                 'quantity'      =>  1,
                 'unit_price'    =>  $cost,
                 'common_currency_id'    =>  $currency->id,
-                'accounting_account_id' =>  $this->invoice->accounting_account_id
+                'accounting_account_id' =>  $invoice->accounting_account_id
             ]);
         }
 
@@ -82,7 +126,7 @@ abstract class AbstractInvoiceItem
             'unit_price'    =>  $cost
         ]);
 
-        $this->applyContract($item);
+        $this->applyContract($item, $contract, $coverage);
         $this->convertToLocalCurrency($item);
 
         Events::fire('updated:NextDeveloper\Accounting\InvoiceItems', $item);
@@ -90,84 +134,81 @@ abstract class AbstractInvoiceItem
         //  We are removing this from here because it is creating almost infinite loop.
         //  We will be calculating invoice amounts, every hour, or just before the customer wants to pay it
         //  We will be doing this calculation at the database
-        InvoiceHelper::updateInvoiceAmount($this->invoice);
-
-        return $item;
-    }
-
-    protected function applyContract(InvoiceItems $item)
-    {
-        $contract = $this->getItemContract();
-
-        if(!$contract) {
-            return $item;
-        }
-
-        //  The item may already carry details of its own, they have to survive this.
-        $details = $item->details ?? [];
-
-        //  If we have fixed price, we are running this
-        if($this->isFixedPriceContract($contract)) {
-            Log::info('Contract currency id: ' . $contract->common_currency_id);
-
-            $currencyCode = $contract->common_currency_id
-                ? CurrenciesService::getCurrencyById($contract->common_currency_id)->code
-                : '';
-
-            $details['contract_price_discoount'] = 'We set the price to ' . $contract->price
-                . $currencyCode
-                . ' because of the contract: '
-                . $contract->uuid;
-
-            $item->update([
-                'unit_price'    =>  $contract->price,
-                'details'   =>  $details
-            ]);
-
-            if($contract->common_currency_id) {
-                $item->update(['common_currency_id'    =>  $contract->common_currency_id]);
-            }
-
-            Log::info('[##HAS FIXED PRICE DISCOUNT##] ' . $details['contract_price_discoount']);
-
-            return $item;
-        }
-
-        //  If we have discount only we apply this.
-        $cost = $item->unit_price * ((100 - $contract->discount) / 100);
-        $details['contract_percent_discount'] = 'We applied %' . $contract->discount . ' discount because of the contract: '
-            . $contract->uuid;
-
-        Log::info('[##HAS DISCOUNT##] We applied %' . $contract->discount . ' discount because of the contract: '
-            . $contract->uuid);
-
-        $item->update([
-            'unit_price'    =>  $cost,
-            'details'   =>  $details
-        ]);
+        InvoiceHelper::updateInvoiceAmount($invoice);
 
         return $item;
     }
 
     /**
-     * The contract items carry `fixed-price` today. `price` is what the older rows were
-     * written with, so both mean the same thing here.
+     * The object is under contract for this whole term. If it was already invoiced
+     * before the contract was signed, that line is dropped to zero; otherwise there is
+     * nothing to do and no invoice is created.
      */
-    private function isFixedPriceContract($contract): bool
+    private function settleCoveredItem($contract)
     {
-        return in_array($contract->contract_type, [ContractHelper::FIXED_PRICE, 'price'], true);
+        $invoice = $this->findInvoice();
+
+        if(!$invoice) {
+            Log::info('[##COVERED BY CONTRACT##] ' . get_class($this->model) . ' ' . $this->model->id
+                . ' is covered by the contract ' . $contract->uuid . ' for the whole term, so it is not invoiced.');
+
+            return null;
+        }
+
+        $item = InvoiceItems::withoutGlobalScope(AuthorizationScope::class)
+            ->where('object_type', get_class($this->model))
+            ->where('object_id', $this->model->id)
+            ->where('accounting_invoice_id', $invoice->id)
+            ->first();
+
+        if(!$item) {
+            return null;
+        }
+
+        ContractHelper::settleInvoiceItem($item, $contract, 1);
+
+        InvoiceHelper::updateInvoiceAmount($invoice);
+
+        return $item;
+    }
+
+    /**
+     * A contract is paid with its own invoice, for the whole of its term, so the part of
+     * this term that the contract covers is not billed here a second time. Only the part
+     * of the term that falls outside the contract stays on this invoice.
+     *
+     * A term that is fully covered never reaches this point: setItemCost() stops before
+     * an invoice is even opened.
+     */
+    protected function applyContract(InvoiceItems $item, $contract = null, $coverage = null)
+    {
+        $contract = $contract ?? $this->getItemContract();
+
+        if(!$contract) {
+            return $item;
+        }
+
+        $coverage = $coverage ?? ContractHelper::getCoverageRatio($contract, $this->from, $this->to);
+
+        if($coverage <= 0) {
+            return $item;
+        }
+
+        ContractHelper::settleInvoiceItem($item, $contract, $coverage);
+
+        return $item;
     }
 
     protected function convertToLocalCurrency($item)
     {
         //  Now we are finding the provider, from there we will find the invoice amount
         $provider = AccountingHelper::getCustomerProvider(
-            InvoiceHelper::getAccount($this->invoice)
+            InvoiceHelper::getAccount($this->getInvoice())
         );
 
         if(!$provider) {
-            Log::info(__METHOD__ . ' | Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->invoice)->id);
-            throw new \Exception('Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->invoice)->id);
+            Log::info(__METHOD__ . ' | Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->getInvoice())->id);
+            throw new \Exception('Cannot find the provider for the account: ' . InvoiceHelper::getAccount($this->getInvoice())->id);
         }
 
         $providerAccountingAccount = AccountingHelper::getAccount($provider);
