@@ -19,6 +19,7 @@ class ContractsCreateRequest extends AbstractFormRequest
 'term_ends' => 'required|date',
 'is_approved' => 'boolean',
 'is_signed' => 'boolean',
+'installment_count' => 'nullable|integer|min:1',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

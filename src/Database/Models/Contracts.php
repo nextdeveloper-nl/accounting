@@ -32,6 +32,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
 * @property \Carbon\Carbon $deleted_at
 * @property boolean $is_approved
 * @property boolean $is_signed
+* @property integer $installment_count
 */
 class Contracts extends Model
 {
@@ -58,6 +59,7 @@ protected $fillable = [
             'iam_user_id',
             'is_approved',
             'is_signed',
+            'installment_count',
     ];
 
 /**
@@ -90,6 +92,7 @@ protected $casts = [
 'deleted_at' => 'datetime',
 'is_approved' => 'boolean',
 'is_signed' => 'boolean',
+'installment_count' => 'integer',
 ];
 
 /**

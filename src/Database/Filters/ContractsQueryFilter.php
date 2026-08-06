@@ -41,6 +41,17 @@ class ContractsQueryFilter extends AbstractQueryFilter
     return $this->isApproved($value);
     }
 
+    public function installmentCount($value)
+    {
+        return $this->builder->where('installment_count', $value);
+    }
+
+        //  This is an alias function of installmentCount
+    public function installment_count($value)
+    {
+    return $this->installmentCount($value);
+    }
+
     public function isSigned($value)
     {
         return $this->builder->where('is_signed', $value);
