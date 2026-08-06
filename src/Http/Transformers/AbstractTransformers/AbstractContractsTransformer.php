@@ -70,6 +70,7 @@ class AbstractContractsTransformer extends AbstractTransformer {
 'deleted_at'  =>  $model->deleted_at,
 'is_approved'  =>  $model->is_approved,
 'is_signed'  =>  $model->is_signed,
+'installment_count'  =>  $model->installment_count,
     ]);
     }
 
