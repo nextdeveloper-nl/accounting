@@ -39,29 +39,43 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
 {
     private $gateway;
 
+    /** The account the gateway belongs to, when the caller knows it. */
+    private $gatewayOwner;
+
     private $options;
 
     private $apiKey;
 
     private $apiSecret;
 
-    public function __construct()
+    /** The row credentials are read from when the caller does not name one. */
+    private const DEFAULT_GATEWAY = 'iyzico-turkey';
+
+    /**
+     * @param PaymentGateways|null $gateway The gateway row to work as. Callers that pick
+     *                                      a row - `iyzico-link` for payment links, for
+     *                                      instance - get that row's credentials; the
+     *                                      ones that just want Iyzico pass nothing and
+     *                                      get the default row.
+     * @param Accounts|null $account The account the gateway belongs to, kept for the
+     *                               signature the other gateways share.
+     */
+    public function __construct($gateway = null, $account = null)
     {
         //  Gateway credentials are system configuration, not user-owned, so the
         //  authorization scope must be bypassed (this runs in request/admin contexts
         //  where the gateway's owning account is not the current account).
-        $this->gateway = PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
-            ->where('name', 'iyzico-turkey')
-            ->first();
+        $this->gateway = $gateway instanceof PaymentGateways
+            ? $gateway
+            : self::getGatewayByName(self::DEFAULT_GATEWAY);
 
-        $gateway = $this->gateway;
+        $this->gatewayOwner = $account;
 
-        $this->apiKey = $gateway->parameters['is_test']
-            ? $gateway->parameters['test_api_key']
-            : $gateway->parameters['live_api_key'];
-        $this->apiSecret = $gateway->parameters['is_test']
-            ? $gateway->parameters['test_api_secret']
-            : $gateway->parameters['live_api_secret'];
+        if (! $this->gateway) {
+            throw new \RuntimeException('There is no Iyzico payment gateway configured.');
+        }
+
+        [$this->apiKey, $this->apiSecret, $isTest] = $this->resolveCredentials($this->gateway);
 
         // Initialize Iyzico Options
         $this->options = new Options;
@@ -69,11 +83,60 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
         $this->options->setSecretKey($this->apiSecret);
 
         // Set base URL based on test/production mode
-        if (isset($gateway->parameters['is_test']) && $gateway->parameters['is_test']) {
-            $this->options->setBaseUrl('https://sandbox-api.iyzipay.com');
-        } else {
-            $this->options->setBaseUrl('https://api.iyzipay.com');
+        $this->options->setBaseUrl($isTest
+            ? 'https://sandbox-api.iyzipay.com'
+            : 'https://api.iyzipay.com');
+    }
+
+    /**
+     * The key, the secret and whether they are the sandbox ones.
+     *
+     * A row that carries no credentials of its own borrows them from the default
+     * gateway: several rows exist for the one Iyzico merchant (one per product, such as
+     * the payment link one), and only the main row is guaranteed to be filled in.
+     *
+     * `is_test` is read leniently because it reaches the database both as a boolean and
+     * as a string, and the string "false" is true to PHP.
+     *
+     * @return array{0: string|null, 1: string|null, 2: bool}
+     */
+    private function resolveCredentials(PaymentGateways $gateway): array
+    {
+        $parameters = (array) $gateway->parameters;
+        $isTest = filter_var($parameters['is_test'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        $keyField = $isTest ? 'test_api_key' : 'live_api_key';
+        $secretField = $isTest ? 'test_api_secret' : 'live_api_secret';
+
+        if (! empty($parameters[$keyField]) && ! empty($parameters[$secretField])) {
+            return [$parameters[$keyField], $parameters[$secretField], $isTest];
         }
+
+        if ($gateway->name !== self::DEFAULT_GATEWAY) {
+            $fallback = self::getGatewayByName(self::DEFAULT_GATEWAY);
+
+            if ($fallback) {
+                Log::warning(__METHOD__.' - The gateway '.$gateway->name.' has no '
+                    .($isTest ? 'test' : 'live').' credentials, falling back to '
+                    .self::DEFAULT_GATEWAY.'.', ['accounting_payment_gateway_id' => $gateway->id]);
+
+                return $this->resolveCredentials($fallback);
+            }
+        }
+
+        Log::error(__METHOD__.' - The gateway '.$gateway->name.' has no '
+            .($isTest ? 'test' : 'live').' credentials.', [
+                'accounting_payment_gateway_id' => $gateway->id,
+            ]);
+
+        return [null, null, $isTest];
+    }
+
+    private static function getGatewayByName(string $name): ?PaymentGateways
+    {
+        return PaymentGateways::withoutGlobalScope(AuthorizationScope::class)
+            ->where('name', $name)
+            ->first();
     }
 
     public function createCheckoutSession(Invoices $invoice): PaymentCheckoutSessions
