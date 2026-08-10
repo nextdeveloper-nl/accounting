@@ -40,6 +40,8 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
 * @property integer $common_currency_id
 * @property string $common_currency_code
 * @property integer $accounting_account_id
+* @property \Carbon\Carbon $due_date
+* @property string $invoice_number
 * @property \Carbon\Carbon $created_at
 * @property \Carbon\Carbon $updated_at
 * @property \Carbon\Carbon $deleted_at
@@ -80,6 +82,8 @@ protected $fillable = [
             'common_currency_id',
             'common_currency_code',
             'accounting_account_id',
+            'due_date',
+            'invoice_number',
     ];
 
 /**
@@ -118,6 +122,8 @@ protected $casts = [
 'common_currency_id' => 'integer',
 'common_currency_code' => 'string',
 'accounting_account_id' => 'integer',
+'due_date' => 'datetime',
+'invoice_number' => 'string',
 'created_at' => 'datetime',
 'updated_at' => 'datetime',
 'deleted_at' => 'datetime',
