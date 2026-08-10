@@ -82,6 +82,8 @@ class AbstractInvoicesPerspectiveTransformer extends AbstractTransformer {
 'common_currency_id'  =>  $commonCurrencyId ? $commonCurrencyId->uuid : null,
 'common_currency_code'  =>  $model->common_currency_code,
 'accounting_account_id'  =>  $accountingAccountId ? $accountingAccountId->uuid : null,
+'due_date'  =>  $model->due_date,
+'invoice_number'  =>  $model->invoice_number,
 'created_at'  =>  $model->created_at,
 'updated_at'  =>  $model->updated_at,
 'deleted_at'  =>  $model->deleted_at,
