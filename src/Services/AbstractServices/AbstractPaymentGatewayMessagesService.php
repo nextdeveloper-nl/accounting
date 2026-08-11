@@ -8,9 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Filters\PaymentGatewayMessagesQueryFilter;
 use NextDeveloper\Accounting\Database\Models\PaymentGatewayMessages;
+use NextDeveloper\Accounting\Helpers\ActionDispatchHelper;
 use NextDeveloper\Commons\Database\Models\AvailableActions;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
+use NextDeveloper\Commons\Exceptions\NotFoundException;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
 
 /**
@@ -111,22 +113,33 @@ class AbstractPaymentGatewayMessagesService
     {
         $object = PaymentGatewayMessages::where('uuid', $objectId)->first();
 
-        $action = AvailableActions::where('name', $action)
+        if(!$object) {
+            throw new ModelNotFoundException('Cannot find the PaymentGatewayMessages object with the id: ' . $objectId);
+        }
+
+        $availableAction = AvailableActions::where('name', $action)
             ->where('input', 'NextDeveloper\Accounting\PaymentGatewayMessages')
             ->first();
 
-        $class = $action->class;
-
-        if(class_exists($class)) {
-            $action = new $class($object, $params);
-            $actionId = $action->getActionId();
-
-            dispatch($action);
-
-            return $actionId;
+        if(!$availableAction) {
+            throw new NotFoundException('Cannot find the action "' . $action . '" for NextDeveloper\Accounting\PaymentGatewayMessages.');
         }
 
-        return null;
+        $class = $availableAction->class;
+
+        if(!class_exists($class)) {
+            throw new NotFoundException('The action "' . $action . '" is registered with the class ' .
+                $class . ' but that class does not exist.');
+        }
+
+        $actionObject = new $class($object, $params);
+        $actionId = $actionObject->getActionId();
+
+        ActionDispatchHelper::markAsQueued($actionObject, $class);
+
+        dispatch($actionObject);
+
+        return $actionId;
     }
 
     /**

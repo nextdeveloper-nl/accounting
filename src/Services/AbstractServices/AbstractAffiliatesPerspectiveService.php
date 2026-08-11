@@ -9,12 +9,14 @@ use Illuminate\Support\Str;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
+use NextDeveloper\Accounting\Helpers\ActionDispatchHelper;
 use NextDeveloper\Commons\Database\Models\AvailableActions;
 use NextDeveloper\Accounting\Database\Models\AffiliatesPerspective;
 use NextDeveloper\Accounting\Database\Filters\AffiliatesPerspectiveQueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
+use NextDeveloper\Commons\Exceptions\NotFoundException;
 
 /**
  * This class is responsible from managing the data for AffiliatesPerspective
@@ -114,27 +116,38 @@ class AbstractAffiliatesPerspectiveService
     {
         $object = AffiliatesPerspective::where('uuid', $objectId)->first();
 
-        $action = AvailableActions::where('name', $action)
+        if(!$object) {
+            throw new ModelNotFoundException('Cannot find the AffiliatesPerspective object with the id: ' . $objectId);
+        }
+
+        $availableAction = AvailableActions::where('name', $action)
             ->where('input', 'NextDeveloper\Accounting\AffiliatesPerspective')
             ->first();
 
-        $class = $action->class;
+        if(!$availableAction) {
+            throw new NotFoundException('Cannot find the action "' . $action . '" for NextDeveloper\Accounting\AffiliatesPerspective.');
+        }
 
-        if(class_exists($class)) {
-            $action = new $class($object, $params);
-            $actionId = $action->getActionId();
+        $class = $availableAction->class;
 
-            if(request()->get('fg') == 'true') {
-                $action->handle();
-                return $actionId;
-            }
+        if(!class_exists($class)) {
+            throw new NotFoundException('The action "' . $action . '" is registered with the class ' .
+                $class . ' but that class does not exist.');
+        }
 
-            dispatch($action);
+        $actionObject = new $class($object, $params);
+        $actionId = $actionObject->getActionId();
 
+        if(request()->get('fg') == 'true') {
+            $actionObject->handle();
             return $actionId;
         }
 
-        return null;
+        ActionDispatchHelper::markAsQueued($actionObject, $class);
+
+        dispatch($actionObject);
+
+        return $actionId;
     }
 
     /**

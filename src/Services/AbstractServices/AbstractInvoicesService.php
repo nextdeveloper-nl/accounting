@@ -8,9 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use NextDeveloper\Accounting\Database\Filters\InvoicesQueryFilter;
 use NextDeveloper\Accounting\Database\Models\Invoices;
+use NextDeveloper\Accounting\Helpers\ActionDispatchHelper;
 use NextDeveloper\Commons\Database\Models\AvailableActions;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
+use NextDeveloper\Commons\Exceptions\NotFoundException;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
@@ -112,27 +114,38 @@ class AbstractInvoicesService
     {
         $object = Invoices::where('uuid', $objectId)->first();
 
-        $action = AvailableActions::where('name', $action)
+        if(!$object) {
+            throw new ModelNotFoundException('Cannot find the Invoices object with the id: ' . $objectId);
+        }
+
+        $availableAction = AvailableActions::where('name', $action)
             ->where('input', 'NextDeveloper\Accounting\Invoices')
             ->first();
 
-        $class = $action->class;
+        if(!$availableAction) {
+            throw new NotFoundException('Cannot find the action "' . $action . '" for NextDeveloper\Accounting\Invoices.');
+        }
 
-        if(class_exists($class)) {
-            $action = new $class($object, $params);
-            $actionId = $action->getActionId();
+        $class = $availableAction->class;
 
-            if(request()->get('fg') == 'true') {
-                $action->handle();
-                return $actionId;
-            }
+        if(!class_exists($class)) {
+            throw new NotFoundException('The action "' . $action . '" is registered with the class ' .
+                $class . ' but that class does not exist.');
+        }
 
-            dispatch($action);
+        $actionObject = new $class($object, $params);
+        $actionId = $actionObject->getActionId();
 
+        if(request()->get('fg') == 'true') {
+            $actionObject->handle();
             return $actionId;
         }
 
-        return null;
+        ActionDispatchHelper::markAsQueued($actionObject, $class);
+
+        dispatch($actionObject);
+
+        return $actionId;
     }
 
     /**
