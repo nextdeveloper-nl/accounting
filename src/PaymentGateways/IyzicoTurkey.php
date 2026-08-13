@@ -14,6 +14,7 @@ use Iyzipay\Model\Currency;
 use Iyzipay\Model\Iyzilink\IyziLinkSaveProduct;
 use Iyzipay\Model\Locale;
 use Iyzipay\Model\PaymentCard;
+use Iyzipay\Model\Payment;
 use Iyzipay\Model\PaymentChannel;
 use Iyzipay\Model\PaymentGroup;
 use Iyzipay\Model\ThreedsInitialize;
@@ -638,6 +639,137 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
 
             return false;
         }
+    }
+
+
+    /**
+     * Charges a card straight away - no 3-D Secure step, so the caller gets the bank's
+     * answer in the same request.
+     *
+     * The card is charged through its vault entry (cardUserKey + cardToken) when it has
+     * one, which keeps the PAN out of the request; a card that was stored before the
+     * vault existed is charged with the number we hold.
+     *
+     * @param array{address:string, city:string, country:string, zipCode:?string, ip:?string} $billing
+     * @param array{id:string, name:string, category:?string} $basket What the charge is for.
+     *
+     * @return array{success:bool, paymentId:?string, errorCode:?string, error:?string}
+     */
+    public function chargeCard(
+        CreditCards $card,
+        float $amount,
+        string $currencyCode,
+        string $conversationId,
+        Users $buyer,
+        array $billing,
+        array $basket
+    ): array {
+        try {
+            $price = number_format($amount, 2, '.', '');
+
+            $paymentCard = new PaymentCard;
+
+            if ($card->is_stored_at_pg && $card->pg_card_token && $card->pg_card_user_key) {
+                $paymentCard->setCardUserKey($card->pg_card_user_key);
+                $paymentCard->setCardToken($card->pg_card_token);
+            } else {
+                $paymentCard->setCardHolderName($card->cc_holder_name);
+                $paymentCard->setCardNumber(str_replace(' ', '', decrypt($card->cc_number)));
+                $paymentCard->setExpireMonth($card->cc_month);
+                $paymentCard->setExpireYear($card->cc_year);
+                $paymentCard->setCvc($card->cc_cvv);
+                $paymentCard->setRegisterCard(0);
+            }
+
+            $iyzicoBuyer = new Buyer;
+            $iyzicoBuyer->setId((string) $buyer->id);
+            $iyzicoBuyer->setName($buyer->name ?: 'Customer');
+            $iyzicoBuyer->setSurname($buyer->surname ?: 'Customer');
+            $iyzicoBuyer->setEmail($buyer->email);
+            $iyzicoBuyer->setIdentityNumber($buyer->nin ?: '11111111111');
+            $iyzicoBuyer->setRegistrationAddress($billing['address']);
+            $iyzicoBuyer->setCity($billing['city']);
+            $iyzicoBuyer->setCountry($billing['country']);
+            $iyzicoBuyer->setZipCode($billing['zipCode'] ?? null);
+            $iyzicoBuyer->setIp($billing['ip'] ?? '0.0.0.0');
+
+            $address = new IyzipayAddress;
+            $address->setContactName($card->cc_holder_name ?: ($buyer->name ?: 'Customer'));
+            $address->setCity($billing['city']);
+            $address->setCountry($billing['country']);
+            $address->setAddress($billing['address']);
+            $address->setZipCode($billing['zipCode'] ?? null);
+
+            $basketItem = new BasketItem;
+            $basketItem->setId($basket['id']);
+            $basketItem->setName($basket['name']);
+            $basketItem->setCategory1($basket['category'] ?? 'Cloud Service');
+            $basketItem->setItemType(BasketItemType::VIRTUAL);
+            $basketItem->setPrice($price);
+
+            $request = new CreatePaymentRequest;
+            $request->setLocale(Locale::TR);
+            $request->setConversationId($conversationId);
+            $request->setPrice($price);
+            $request->setPaidPrice($price);
+            $request->setCurrency(self::iyzicoCurrency($currencyCode));
+            $request->setInstallment(1);
+            $request->setBasketId($basket['id']);
+            $request->setPaymentChannel(PaymentChannel::WEB);
+            $request->setPaymentGroup(PaymentGroup::PRODUCT);
+            $request->setPaymentCard($paymentCard);
+            $request->setBuyer($iyzicoBuyer);
+            $request->setShippingAddress($address);
+            $request->setBillingAddress($address);
+            $request->setBasketItems([$basketItem]);
+
+            $payment = Payment::create($request, $this->options);
+
+            if ($payment->getStatus() === 'success') {
+                return [
+                    'success' => true,
+                    'paymentId' => $payment->getPaymentId(),
+                    'errorCode' => null,
+                    'error' => null,
+                ];
+            }
+
+            Log::error(__METHOD__.' - Iyzico charge failed', [
+                'credit_card_id' => $card->id,
+                'conversation_id' => $conversationId,
+                'error_code' => $payment->getErrorCode(),
+                'error_message' => $payment->getErrorMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'paymentId' => $payment->getPaymentId(),
+                'errorCode' => $payment->getErrorCode(),
+                'error' => $payment->getErrorMessage() ?: 'The payment was declined.',
+            ];
+        } catch (\Throwable $e) {
+            Log::error(__METHOD__.' - Unexpected error charging card', [
+                'credit_card_id' => $card->id,
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+            ]);
+
+            return ['success' => false, 'paymentId' => null, 'errorCode' => null, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Iyzico names its currencies with its own constants; anything it does not know is
+     * charged in Lira, which is the only currency the Turkish gateway settles in anyway.
+     */
+    private static function iyzicoCurrency(string $currencyCode): string
+    {
+        return match (strtoupper($currencyCode)) {
+            'USD' => Currency::USD,
+            'EUR' => Currency::EUR,
+            'GBP' => Currency::GBP,
+            default => Currency::TL,
+        };
     }
 
     /**
