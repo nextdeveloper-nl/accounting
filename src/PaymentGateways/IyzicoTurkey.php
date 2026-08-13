@@ -652,6 +652,9 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
      *
      * @param array{address:string, city:string, country:string, zipCode:?string, ip:?string} $billing
      * @param array{id:string, name:string, category:?string} $basket What the charge is for.
+     * @param string $locale The language Iyzico writes its refusal in - it is shown to
+     *                       whoever asked for the charge, so it follows their language
+     *                       rather than the gateway's country.
      *
      * @return array{success:bool, paymentId:?string, errorCode:?string, error:?string}
      */
@@ -662,7 +665,8 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
         string $conversationId,
         Users $buyer,
         array $billing,
-        array $basket
+        array $basket,
+        string $locale = Locale::TR
     ): array {
         try {
             $price = number_format($amount, 2, '.', '');
@@ -708,7 +712,7 @@ class IyzicoTurkey extends IyzicoGateway implements PaymentGatewaysInterface
             $basketItem->setPrice($price);
 
             $request = new CreatePaymentRequest;
-            $request->setLocale(Locale::TR);
+            $request->setLocale($locale === Locale::EN ? Locale::EN : Locale::TR);
             $request->setConversationId($conversationId);
             $request->setPrice($price);
             $request->setPaidPrice($price);
