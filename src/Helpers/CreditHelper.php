@@ -40,9 +40,11 @@ class CreditHelper
     ): Accounts {
         $account                 = self::resolve($account);
         $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
+        $newCredit               = $account->credit + $amountInAccountCurrency;
 
         $account->updateQuietly([
-            'credit' => $account->credit + $amountInAccountCurrency,
+            'credit'  => $newCredit,
+            'balance' => $newCredit,
         ]);
 
         $account = $account->fresh();
@@ -73,9 +75,11 @@ class CreditHelper
     ): Accounts {
         $account                 = self::resolve($account);
         $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
+        $newCredit               = $account->credit - $amountInAccountCurrency;
 
         $account->updateQuietly([
-            'credit' => $account->credit - $amountInAccountCurrency,
+            'credit'  => $newCredit,
+            'balance' => $newCredit,
         ]);
 
         $account = $account->fresh();
