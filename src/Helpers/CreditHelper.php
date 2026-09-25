@@ -3,7 +3,9 @@
 namespace NextDeveloper\Accounting\Helpers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use NextDeveloper\Accounting\Database\Models\Accounts;
+use NextDeveloper\Accounting\Database\Models\CreditTransactions;
 use NextDeveloper\Accounting\Exceptions\InsufficientCreditException;
 use NextDeveloper\Commons\Database\Models\Currencies;
 use NextDeveloper\Commons\Helpers\ExchangeRateHelper;
@@ -38,26 +40,11 @@ class CreditHelper
         ?string   $description = null,
         ?Model    $object = null
     ): Accounts {
-        $account                 = self::resolve($account);
-        $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
-        $newCredit               = $account->credit + $amountInAccountCurrency;
+        $account = self::resolve($account);
 
-        $account->updateQuietly([
-            'credit'  => $newCredit,
-            'balance' => $newCredit,
-        ]);
+        self::apply($account, $amountUsd, 'credit', $description, $object);
 
-        $account = $account->fresh();
-
-        CreditTransactionsHelper::logCredit(
-            $account,
-            $amountUsd,
-            $description,
-            $object ? get_class($object) : null,
-            $object?->id
-        );
-
-        return $account;
+        return $account->fresh();
     }
 
     /**
@@ -73,26 +60,63 @@ class CreditHelper
         ?string   $description = null,
         ?Model    $object = null
     ): Accounts {
-        $account                 = self::resolve($account);
-        $amountInAccountCurrency = self::fromUsd($amountUsd, $account);
-        $newCredit               = $account->credit - $amountInAccountCurrency;
+        $account = self::resolve($account);
 
-        $account->updateQuietly([
-            'credit'  => $newCredit,
-            'balance' => $newCredit,
-        ]);
+        self::apply($account, $amountUsd, 'debit', $description, $object);
 
-        $account = $account->fresh();
+        return $account->fresh();
+    }
 
-        CreditTransactionsHelper::logDebit(
-            $account,
-            $amountUsd,
-            $description,
-            $object ? get_class($object) : null,
-            $object?->id
-        );
+    /**
+     * Same as decrease() but returns the ledger row, so the caller can link the charged
+     * object (e.g. an AI run) to the exact transaction that paid for it.
+     */
+    public static function debit(
+        ?Accounts $account = null,
+        float     $amountUsd = 0,
+        ?string   $description = null,
+        ?Model    $object = null
+    ): CreditTransactions {
+        return self::apply(self::resolve($account), $amountUsd, 'debit', $description, $object);
+    }
 
-        return $account;
+    /**
+     * Applies a credit change atomically: the account row is locked and the new value is
+     * computed by the database (credit = credit - x), so concurrent charges can't overwrite
+     * each other, and balance_after in the ledger is exactly the value this change produced.
+     */
+    private static function apply(
+        Accounts $account,
+        float    $amountUsd,
+        string   $type,
+        ?string  $description,
+        ?Model   $object
+    ): CreditTransactions {
+        return DB::transaction(function () use ($account, $amountUsd, $type, $description, $object): CreditTransactions {
+            $locked = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                ->whereKey($account->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $delta    = number_format(abs(self::fromUsd($amountUsd, $locked)), 6, '.', '');
+            $operator = $type === 'credit' ? '+' : '-';
+
+            DB::table($locked->getTable())
+                ->where('id', $locked->id)
+                ->update([
+                    // Postgres evaluates every SET expression against the old row, so both
+                    // columns end up at the same new value.
+                    'credit'     => DB::raw("COALESCE(credit, 0) {$operator} {$delta}"),
+                    'balance'    => DB::raw("COALESCE(credit, 0) {$operator} {$delta}"),
+                    'updated_at' => now(),
+                ]);
+
+            $objectType = $object ? get_class($object) : null;
+
+            return $type === 'credit'
+                ? CreditTransactionsHelper::logCredit($locked, $amountUsd, $description, $objectType, $object?->id)
+                : CreditTransactionsHelper::logDebit($locked, $amountUsd, $description, $objectType, $object?->id);
+        });
     }
 
     /**

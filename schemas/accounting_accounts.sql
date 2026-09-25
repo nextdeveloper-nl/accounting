@@ -18,8 +18,8 @@ create table if not exists accounting_accounts
 
     accounting_identifier text                                     null,
 
-    credit                numeric(10, 2) default 0,
-    balance               numeric(10, 2) default 0,
+    credit                numeric(18, 6) default 0,
+    balance               numeric(18, 6) default 0,
     common_currency_id    bigint                                   not null,
 
     distributor_id        bigint                                   null,
