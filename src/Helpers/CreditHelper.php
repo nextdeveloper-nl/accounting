@@ -45,6 +45,9 @@ class CreditHelper
             'credit' => $account->credit + $amountInAccountCurrency,
         ]);
 
+        //  updateQuietly() skips the model events that clear the cached API response.
+        $account->cleanCache();
+
         $account = $account->fresh();
 
         CreditTransactionsHelper::logCredit(
@@ -77,6 +80,9 @@ class CreditHelper
         $account->updateQuietly([
             'credit' => $account->credit - $amountInAccountCurrency,
         ]);
+
+        //  updateQuietly() skips the model events that clear the cached API response.
+        $account->cleanCache();
 
         $account = $account->fresh();
 
