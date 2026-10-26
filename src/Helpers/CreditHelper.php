@@ -15,16 +15,40 @@ use NextDeveloper\IAM\Helpers\UserHelper;
 class CreditHelper
 {
     /**
-     * Returns the credit balance of the given accounting account in USD.
+     * Returns the credit granted to the given accounting account in USD: how far below zero
+     * its balance may go. Only changed by hand (admin recharge, signup bonus), never by
+     * payments or usage.
      * If the account's currency is not USD, the stored value is converted before returning.
      * Falls back to the current session's accounting account when $account is null.
      */
     public static function getCredit(?Accounts $account = null): float
     {
         $account = self::resolve($account)->fresh();
-        $credit  = (float) $account->credit;
 
-        return self::toUsd($credit, $account);
+        return self::toUsd((float) $account->credit, $account);
+    }
+
+    /**
+     * Returns the balance of the given accounting account in USD: payments add to it, usage
+     * deducts from it, and it goes negative once the account spends its granted credit.
+     * Falls back to the current session's accounting account when $account is null.
+     */
+    public static function getBalance(?Accounts $account = null): float
+    {
+        $account = self::resolve($account)->fresh();
+
+        return self::toUsd((float) $account->balance, $account);
+    }
+
+    /**
+     * Returns what the account can still spend in USD: balance plus the granted credit.
+     * Falls back to the current session's accounting account when $account is null.
+     */
+    public static function getAvailable(?Accounts $account = null): float
+    {
+        $account = self::resolve($account)->fresh();
+
+        return self::toUsd((float) $account->balance + (float) $account->credit, $account);
     }
 
     /**
@@ -81,9 +105,10 @@ class CreditHelper
     }
 
     /**
-     * Applies a credit change atomically: the account row is locked and the new value is
-     * computed by the database (credit = credit - x), so concurrent charges can't overwrite
+     * Applies a balance change atomically: the account row is locked and the new value is
+     * computed by the database (balance = balance - x), so concurrent charges can't overwrite
      * each other, and balance_after in the ledger is exactly the value this change produced.
+     * The granted credit column is never touched here.
      */
     private static function apply(
         Accounts $account,
@@ -104,10 +129,7 @@ class CreditHelper
             DB::table($locked->getTable())
                 ->where('id', $locked->id)
                 ->update([
-                    // Postgres evaluates every SET expression against the old row, so both
-                    // columns end up at the same new value.
-                    'credit'     => DB::raw("COALESCE(credit, 0) {$operator} {$delta}"),
-                    'balance'    => DB::raw("COALESCE(credit, 0) {$operator} {$delta}"),
+                    'balance'    => DB::raw("COALESCE(balance, 0) {$operator} {$delta}"),
                     'updated_at' => now(),
                 ]);
 
@@ -120,12 +142,12 @@ class CreditHelper
     }
 
     /**
-     * Returns whether the account has at least the given amount of credit (given in USD).
+     * Returns whether the account can still spend at least the given amount (given in USD).
      * Falls back to the current session's accounting account when $account is null.
      */
     public static function hasEnoughCredit(?Accounts $account = null, float $amountUsd = 0): bool
     {
-        return self::getCredit($account) >= $amountUsd;
+        return self::getAvailable($account) >= $amountUsd;
     }
 
     /**
@@ -137,7 +159,7 @@ class CreditHelper
      */
     public static function check(?Accounts $account = null, float $amountUsd = 0, string $reason = ''): void
     {
-        $available = self::getCredit($account);
+        $available = self::getAvailable($account);
 
         if ($available < $amountUsd) {
             throw new InsufficientCreditException($reason, $amountUsd, $available);

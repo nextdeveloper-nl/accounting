@@ -12,6 +12,10 @@ Features of this library are as follows. Marked ones are implemented and working
 - [x] Transaction Management
 - [x] Credit Card Storage and Management (PCI DSS Compliant)
 
+## Documentation
+
+- [Credit and balance](docs/credit-and-balance.md): what `credit` and `balance` mean on an account and how they combine.
+
 ## Payment Gateways Implemented
 
 - [x] Omnipay / Iyzico

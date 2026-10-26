@@ -13,7 +13,7 @@ class CreditTransactionsHelper
      * Records a credit transaction for the given accounting account.
      *
      * The balance_after is read from the account after a fresh() so it reflects any
-     * credit change that was applied before this log call.
+     * balance change that was applied before this log call.
      *
      * iam_account_id is always taken from the account itself so this method is safe
      * to call from background jobs where there is no active user session.
@@ -39,7 +39,7 @@ class CreditTransactionsHelper
             'accounting_account_id' => $account->id,
             'amount'                => $amount,
             'type'                  => $type,
-            'balance_after'         => (float) $account->credit,
+            'balance_after'         => (float) $account->balance,
             'description'           => $description,
             'object_type'           => $objectType,
             'object_id'             => $objectId,

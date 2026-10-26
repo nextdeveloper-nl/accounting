@@ -24,7 +24,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
 * @property string $tax_office
 * @property string $tax_number
 * @property string $accounting_identifier
-* @property  $credit
+* @property  $credit Credit granted to the account: how far below zero the balance may go. Set by hand, never by payments or usage.
 * @property integer $common_currency_id
 * @property \Carbon\Carbon $created_at
 * @property \Carbon\Carbon $updated_at
@@ -33,7 +33,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
 * @property string $trade_office
 * @property string $tr_mersis
 * @property boolean $is_suspended
-* @property  $balance
+* @property  $balance What the account paid in minus what it used. Payments and usage change it; it can go negative. Available to spend = balance + credit.
 * @property boolean $is_disabled
 * @property integer $distributor_id
 * @property integer $sales_partner_id

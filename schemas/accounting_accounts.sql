@@ -18,6 +18,8 @@ create table if not exists accounting_accounts
 
     accounting_identifier text                                     null,
 
+    -- credit: granted line, set by hand. balance: paid in minus used, changed by payments
+    -- and usage, may go negative. Available to spend = balance + credit. See docs/credit-and-balance.md.
     credit                numeric(18, 6) default 0,
     balance               numeric(18, 6) default 0,
     common_currency_id    bigint                                   not null,
