@@ -21,12 +21,17 @@ class PartnershipInvitationEnvelope extends Mailable
      * @param string $event   invited | accepted | rejected | revoked
      * @param array  $branding display_name, logo_url (https only or null), primary_color, support_email
      * @param array  $details  tenant_name, partner_name, parent_name (nullable), roles (names), action_url (nullable)
+     * @param string $fromName Display name of the sender. Built by the job from the VERIFIED IAM account name in the
+     *                         fixed format "<account name> via <platform>", never from tenant branding.
+     * @param string|null $replyTo Verified email (the tenant account owner), never a tenant typed address.
      */
     public function __construct(
-        public string $event,
-        public array  $branding,
-        public array  $details,
-        public        $recipient
+        public string  $event,
+        public array   $branding,
+        public array   $details,
+        public         $recipient,
+        public string  $fromName,
+        public ?string $replyTo
     ) {
         $tenant = $details['tenant_name'];
         $partner = $details['partner_name'];
@@ -56,12 +61,12 @@ class PartnershipInvitationEnvelope extends Mailable
 
     public function envelope(): Envelope
     {
-        $replyTo = $this->branding['support_email'] ?: config('leo.mail.reply_to');
-
         return new Envelope(
-            //  The sending address stays the platform's (SPF / DKIM), only the display name is the tenant's.
-            from: new Address(config('leo.mail.from'), $this->branding['display_name']),
-            replyTo: $replyTo ? [new Address($replyTo)] : [],
+            //  The sending address stays the platform's (SPF / DKIM). The display name is a FIXED format built from
+            //  the verified account name (see the job), so a tenant cannot present itself as the platform or as someone
+            //  else, and the reply goes to the verified account owner.
+            from: new Address(config('leo.mail.from'), $this->fromName),
+            replyTo: $this->replyTo ? [new Address($this->replyTo)] : [],
             subject: $this->subjectLine,
         );
     }

@@ -59,11 +59,13 @@ class SendPartnershipInvitationEmail implements ShouldQueue
 
         $branding = $this->getBranding($tenant);
         $details = $this->getDetails($partnership, $tenant, $partner);
+        $fromName = $this->getFromName($tenant);
+        $replyTo = $this->getReplyTo($tenant);
 
         foreach ($this->getRecipients($tenant, $partner) as $user) {
             try {
                 (new Communicate($user))->sendEnvelope(
-                    new PartnershipInvitationEnvelope($this->event, $branding, $details, $user)
+                    new PartnershipInvitationEnvelope($this->event, $branding, $details, $user, $fromName, $replyTo)
                 );
             } catch (\Throwable $e) {
                 //  One broken mailbox must not stop the others.
@@ -93,6 +95,40 @@ class SendPartnershipInvitationEmail implements ShouldQueue
 
         //  The owner can also be a partnership manager: one email per person.
         return $users->unique('id')->values();
+    }
+
+    /**
+     * Sender display name: always "<verified account name> via <platform>". The account name comes from IAM, not from
+     * the tenant branding, and is stripped of everything that could turn it into an address or a header injection, so a
+     * tenant cannot pose as the platform or as another company in the From line.
+     */
+    private function getFromName(IamAccounts $tenant): string
+    {
+        $platform = (string)config('leo.mail.from_name');
+
+        //  Control characters (header injection), angle brackets, quotes and @ (fake addresses) are removed.
+        $name = preg_replace('/[\x00-\x1F\x7F<>"@]/u', '', (string)$tenant->name);
+        $name = mb_substr(trim($name), 0, 60);
+
+        //  An account named like the platform would read as "<platform> via <platform>": use a neutral label.
+        if ($name === '' || ($platform !== '' && stripos($name, $platform) !== false)) {
+            $name = 'A partner program';
+        }
+
+        return $platform !== '' ? $name . ' via ' . $platform : $name;
+    }
+
+    /**
+     * Reply-To is the email of the tenant's account owner (a verified IAM user), never the tenant typed support
+     * address, which nobody verified. The support address is only shown as text in the body.
+     */
+    private function getReplyTo(IamAccounts $tenant): ?string
+    {
+        $owner = UserHelper::getAccountOwner($tenant);
+
+        $email = $owner?->email;
+
+        return ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) ? $email : null;
     }
 
     /**

@@ -151,6 +151,19 @@ class PartnershipsService extends AbstractPartnershipsService
             throw new NotAllowedException('You need to offer at least one partnership role.');
         }
 
+        //  Every invitation sends an email to a third party: limit how many a tenant can send per day, so the feature
+        //  cannot be used to spam companies. Counts invitations created in the last 24 hours (re-invitations included).
+        $limit = (int)config('accounting.partnership.max_invitations_per_day', 50);
+
+        $sentToday = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+            ->where('tenant_account_id', $tenant->id)
+            ->where('invited_at', '>=', now()->subDay())
+            ->count();
+
+        if ($sentToday >= $limit) {
+            throw new NotAllowedException('You reached the daily limit of ' . $limit . ' partnership invitations. Try again tomorrow.');
+        }
+
         $partnerIam = Accounts::withoutGlobalScope(AuthorizationScope::class)
             ->where('uuid', $partnerIamAccountId)
             ->first();
