@@ -29,6 +29,14 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
      */
     public function apply(Builder $builder, Model $model)
     {
+        //  Multi-tenant partnership: the accounting manager sees only the commissions of the tenant (account) they act as.
+        //  Cross tenant visibility is for the platform accounting-admin role only.
+        if ($model->getTable() == 'accounting_invoice_commissions') {
+            $builder->where('tenant_account_id', UserHelper::currentAccount()->id);
+
+            return;
+        }
+
         $partners = [
             'accounting_integrators_perspective',
             'accounting_distributors_perspective',
@@ -147,13 +155,8 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
             'accounting_partnerships:update',
             'accounting_partnerships:delete',
 
-            // Multi-tenant partnership tables: read only for the accounting manager.
-            'accounting_partner_programs:read',
-            'accounting_partnership_roles:read',
-            'accounting_partnership_role_assignments:read',
-            'accounting_account_partners:read',
-            'accounting_partner_program_zones:read',
-            'accounting_partnership_zones:read',
+            // Multi-tenant partnership: commission records of OUR tenant (see apply()). The other partnership
+            // tables are handled by partnership-manager / partnership-user.
             'accounting_invoice_commissions:read',
         ];
     }
@@ -185,6 +188,19 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
 
     public function canBeApplied($column)
     {
+        //  Multi-tenant partnership tables belong to partnership-manager / partnership-user. If this role claimed them
+        //  it would apply no filter and expose every tenant's data (the first matching role wins, roles never merge).
+        if (in_array($column, [
+            'accounting_partner_programs',
+            'accounting_partnership_roles',
+            'accounting_partnership_role_assignments',
+            'accounting_account_partners',
+            'accounting_partner_program_zones',
+            'accounting_partnership_zones',
+        ], true)) {
+            return false;
+        }
+
         if (self::DB_PREFIX === '*') {
             return true;
         }

@@ -31,6 +31,29 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
      */
     public function apply(Builder $builder, Model $model)
     {
+        //  Multi-tenant partnership: a partner sees only the commissions that were generated for their own
+        //  active partnerships. Plain DB query on purpose: going through the models would re-enter AuthorizationScope.
+        if($model->getTable() == 'accounting_invoice_commissions') {
+            $myAccountingAccountId = null;
+
+            try {
+                $myAccountingAccountId = AccountingHelper::getAccount()->id;
+            } catch (\Throwable $e) {
+                //  No accounting account yet: nothing to show.
+            }
+
+            $builder->whereIn(
+                'partnership_id',
+                \Illuminate\Support\Facades\DB::table('accounting_partnerships')
+                    ->where('accounting_account_id', $myAccountingAccountId ?? 0)
+                    ->where('status', 'active')
+                    ->whereNull('deleted_at')
+                    ->select('id')
+            );
+
+            return;
+        }
+
         $partners = [
             'accounting_integrators_perspective',
             'accounting_distributors_perspective',
@@ -158,6 +181,9 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             'accounting_partnerships:read',
             'accounting_partnerships:create',
             'accounting_partnerships:update',
+
+            //  Multi-tenant partnership: partners can read their own commissions (read only, see apply()).
+            'accounting_invoice_commissions:read',
         ];
     }
 
