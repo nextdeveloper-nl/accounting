@@ -29,6 +29,25 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
      */
     public function apply(Builder $builder, Model $model)
     {
+        //  Multi-tenant partnership: accounting_partnerships now holds the partners of EVERY tenant, so this role must
+        //  not see them all. It sees its own tenant's partners, plus its own partnership rows in other tenants.
+        //  Cross tenant visibility is for the platform accounting-admin role only.
+        if ($model->getTable() == 'accounting_partnerships') {
+            $currentAccountId = UserHelper::currentAccount()->id;
+
+            $builder->where(function (Builder $q) use ($currentAccountId) {
+                $q->where('tenant_account_id', $currentAccountId);
+
+                try {
+                    $q->orWhere('accounting_account_id', \NextDeveloper\Accounting\Helpers\AccountingHelper::getAccount()->id);
+                } catch (\Throwable $e) {
+                    //  No accounting account provisioned yet, only the tenant filter applies.
+                }
+            });
+
+            return;
+        }
+
         //  Multi-tenant partnership: the accounting manager sees only the commissions of the tenant (account) they act as.
         //  Cross tenant visibility is for the platform accounting-admin role only.
         if ($model->getTable() == 'accounting_invoice_commissions') {

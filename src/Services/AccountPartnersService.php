@@ -3,6 +3,7 @@
 namespace NextDeveloper\Accounting\Services;
 
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountPartnersService;
+use NextDeveloper\Accounting\Helpers\PartnershipTenantGuard;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
 /**
@@ -26,6 +27,10 @@ class AccountPartnersService extends AbstractAccountPartnersService
      */
     public static function create(array $data)
     {
+        //  Every referenced partnership / role / program / customer must belong to OUR tenant (uuids are checked
+        //  before they are converted to ids, independent of what the role scope shows).
+        PartnershipTenantGuard::assertReferences($data);
+
         unset($data['tenant_account_id']);
         $data['tenant_account_id'] = UserHelper::currentAccount()->id;
 
@@ -42,6 +47,9 @@ class AccountPartnersService extends AbstractAccountPartnersService
     public static function update($id, array $data)
     {
         unset($data['tenant_account_id']);
+
+        //  Same ownership check on update, otherwise a row could be re-pointed to another tenant's objects.
+        PartnershipTenantGuard::assertReferences($data);
 
         return parent::update($id, $data);
     }
