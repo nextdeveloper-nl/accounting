@@ -29,6 +29,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
 * @property \Carbon\Carbon $created_at
 * @property \Carbon\Carbon $updated_at
 * @property \Carbon\Carbon $deleted_at
+* @property integer $tenant_account_id
 * @property string $trade_office_number
 * @property string $trade_office
 * @property string $tr_mersis
@@ -88,6 +89,7 @@ protected $fillable = [
             'affiliate_level',
             'partner_code',
             'mapping',
+            'tenant_account_id',
     ];
 
 /**
@@ -109,6 +111,7 @@ protected $appends = [
 * @var array
 */
 protected $casts = [
+'tenant_account_id' => 'integer',
 'id' => 'integer',
 'tax_office' => 'string',
 'tax_number' => 'string',

@@ -87,7 +87,7 @@ create unique index if not exists uq_accounting_partnership_roles_tenant_slug
 -- ---------------------------------------------------------------------------------------------
 alter table accounting_partnerships
     add column if not exists tenant_account_id        bigint references iam_accounts on delete cascade,
-    add column if not exists status                   text default 'active' not null, -- pending|active|rejected|revoked
+    add column if not exists status                   text default 'pending' not null, -- pending|active|rejected|revoked (fail closed)
     add column if not exists invited_at               timestamp with time zone,
     add column if not exists accepted_at              timestamp with time zone,
     add column if not exists invited_by_iam_user_id   bigint references iam_users on delete set null,
@@ -313,11 +313,18 @@ $backfill$
                           where x.tenant_account_id = v_tenant and x.slug = r.slug and x.deleted_at is null);
 
         -- 3. Every existing partnership belongs to the PlusClouds tenant and is already approved/active.
-        update accounting_partnerships
+        -- Approved partnerships, or ones whose account already holds a partner role flag (that is what drives
+        -- commissions today), stay active; unapproved applicants become pending. Soft-deleted rows are skipped.
+        update accounting_partnerships p
         set tenant_account_id = v_tenant,
-            status            = 'active',
-            path              = id::text
-        where tenant_account_id is null;
+            status            = case when coalesce(p.is_approved, false)
+                                          or exists (select 1 from accounting_accounts a
+                                                     where a.id = p.accounting_account_id
+                                                       and (a.is_distributor or a.is_integrator or a.is_reseller or a.is_affiliate))
+                                     then 'active' else 'pending' end,
+            path              = p.id::text
+        where p.tenant_account_id is null
+          and p.deleted_at is null;
 
         -- 4. Role flags on accounting_accounts -> role assignments (is_reseller = legacy sales partner flag).
         insert into accounting_partnership_role_assignments (tenant_account_id, partnership_id, partnership_role_id)
@@ -331,6 +338,7 @@ $backfill$
                               or (r.slug = 'reseller' and a.is_reseller)
                               or (r.slug = 'affiliate' and a.is_affiliate))
         where p.deleted_at is null
+          and p.status = 'active'
         on conflict do nothing;
 
         -- 5. Customer pointer columns -> accounting_account_partners.
