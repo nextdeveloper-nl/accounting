@@ -170,11 +170,15 @@ class PartnerProgramsService extends AbstractPartnerProgramsService
     }
 
     /**
-     * Only platform staff may write the program status directly.
+     * Only system-admin may write the program status directly (this is how the platform suspends / un-suspends).
+     *
+     * accounting-admin is deliberately NOT enough: roles are assigned per account, so a tenant's own admin could hold
+     * it in their account and lift a suspension of their own program. system-admin cannot be handed out through
+     * normal role assignment (see RolesService::NON_ASSIGNABLE_ROLES).
      */
     private static function canSetStatus(): bool
     {
-        return UserHelper::hasRole('system-admin') || UserHelper::hasRole('accounting-admin');
+        return UserHelper::hasRole('system-admin');
     }
 
     /**
