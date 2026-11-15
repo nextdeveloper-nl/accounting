@@ -57,8 +57,15 @@ class AccountingPartnershipUserRole extends AbstractRole implements IAuthorizati
         //  Legacy Partnership module behaviour, unchanged.
         if (Str::startsWith($table, 'partnership_')) {
             if ($table == 'partnership_accounts_perspective' || $table == 'partnership_accounts') {
-                $builder->where('iam_account_id', UserHelper::currentAccount()->id)
-                    ->orWhere('is_distributor', true);
+                //  The legacy filter was `where(iam_account_id = mine) orWhere(is_distributor)` WITHOUT grouping, so the OR
+                //  escaped every other condition (soft delete filtering, other scopes) and exposed more rows than meant.
+                //  Grouped here: same intended rows (mine + distributors), but still inside all other conditions.
+                $currentAccountId = UserHelper::currentAccount()->id;
+
+                $builder->where(function (Builder $q) use ($currentAccountId) {
+                    $q->where('iam_account_id', $currentAccountId)
+                        ->orWhere('is_distributor', true);
+                });
 
                 return;
             }
