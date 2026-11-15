@@ -13,6 +13,7 @@ use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Database\Models\Accounts;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use NextDeveloper\Accounting\Database\Models\PartnerPrograms;
 use NextDeveloper\Accounting\Database\Models\PartnershipRoleAssignments;
 use NextDeveloper\Accounting\Database\Models\PartnershipRoles;
@@ -194,6 +195,13 @@ class PartnershipsService extends AbstractPartnershipsService
             throw new NotAllowedException('This company is already your partner or has a pending invitation.');
         }
 
+        //  Every invitation emails a third party. The quota is counted per email SENT, not per database row: a
+        //  re-invitation reuses the same row, so counting rows would let invite -> revoke -> re-invite loops mail one
+        //  company without limit. Done after all validation so that rejected requests do not use up the quota.
+        if (!self::consumeEmailQuota($tenant->id, $partnerIam->id)) {
+            throw new NotAllowedException('You sent too many partnership emails. Please try again tomorrow.');
+        }
+
         return DB::transaction(function () use ($tenant, $partnerIam, $partnerAccountingAccount, $roles, $parent, $existing) {
             return UserHelper::withRolesCheckBypassed(function () use ($tenant, $partnerIam, $partnerAccountingAccount, $roles, $parent, $existing) {
                 $me = UserHelper::me();
@@ -352,7 +360,11 @@ class PartnershipsService extends AbstractPartnershipsService
             });
         });
 
-        dispatch(new SendPartnershipInvitationEmail($partnership->fresh(), 'revoked'));
+        //  Revoking is a safety action and must never be blocked by the email quota: over the limit we revoke without
+        //  sending the email.
+        if (self::consumeEmailQuota((int)$partnership->tenant_account_id, (int)$partnership->iam_account_id)) {
+            dispatch(new SendPartnershipInvitationEmail($partnership->fresh(), 'revoked'));
+        }
 
         return $partnership->fresh();
     }
@@ -485,6 +497,28 @@ class PartnershipsService extends AbstractPartnershipsService
         }
 
         return $parent;
+    }
+
+    /**
+     * Counts one email to a third party against the daily quotas of the tenant and of the tenant + partner pair.
+     *
+     * RateLimiter::hit() increments atomically and returns the new count, so counting first and checking after means
+     * concurrent requests cannot all pass the check at the same moment.
+     *
+     * @return bool false when a quota is exceeded
+     */
+    private static function consumeEmailQuota(int $tenantAccountId, int $partnerIamAccountId): bool
+    {
+        $day = 86400;
+
+        $perTenant = (int)config('accounting.partnership.max_invitations_per_day', 50);
+        $perPartner = (int)config('accounting.partnership.max_emails_per_partner_per_day', 3);
+
+        if (RateLimiter::hit('partnership-email:tenant:' . $tenantAccountId, $day) > $perTenant) {
+            return false;
+        }
+
+        return RateLimiter::hit('partnership-email:pair:' . $tenantAccountId . ':' . $partnerIamAccountId, $day) <= $perPartner;
     }
 
     /**
