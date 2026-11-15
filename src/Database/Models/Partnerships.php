@@ -40,6 +40,14 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
 * @property \Carbon\Carbon $created_at
 * @property \Carbon\Carbon $updated_at
 * @property \Carbon\Carbon $deleted_at
+* @property integer $tenant_account_id
+* @property string $status
+* @property \Carbon\Carbon $invited_at
+* @property \Carbon\Carbon $accepted_at
+* @property integer $invited_by_iam_user_id
+* @property integer $parent_partnership_id
+* @property string $path
+* @property integer $iam_user_id
 * @property integer $accounting_account_id
 * @property array $operating_countries
 * @property array $operating_cities
@@ -80,6 +88,14 @@ protected $fillable = [
             'accounting_account_id',
             'operating_countries',
             'operating_cities',
+            'tenant_account_id',
+            'status',
+            'invited_at',
+            'accepted_at',
+            'invited_by_iam_user_id',
+            'parent_partnership_id',
+            'path',
+            'iam_user_id',
     ];
 
 /**
@@ -101,6 +117,14 @@ protected $appends = [
 * @var array
 */
 protected $casts = [
+'tenant_account_id' => 'integer',
+'status' => 'string',
+'invited_at' => 'datetime',
+'accepted_at' => 'datetime',
+'invited_by_iam_user_id' => 'integer',
+'parent_partnership_id' => 'integer',
+'path' => 'string',
+'iam_user_id' => 'integer',
 'id' => 'integer',
 'partner_code' => 'string',
 'is_brand_ambassador' => 'boolean',
@@ -131,6 +155,8 @@ protected $casts = [
 * @var array
 */
 protected $dates = [
+'accepted_at',
+'invited_at',
 'created_at',
 'updated_at',
 'deleted_at',

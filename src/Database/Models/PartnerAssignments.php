@@ -32,6 +32,8 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 * @property \Carbon\Carbon $created_at
 * @property \Carbon\Carbon $updated_at
 * @property \Carbon\Carbon $deleted_at
+* @property integer $tenant_account_id
+* @property integer $partnership_role_id
 */
 class PartnerAssignments extends Model
 {
@@ -58,6 +60,8 @@ protected $fillable = [
             'iam_user_id',
             'iam_account_id',
             'reason',
+            'tenant_account_id',
+            'partnership_role_id',
     ];
 
 /**
@@ -89,6 +93,8 @@ protected $casts = [
 'reason' => 'string',
 'created_at' => 'datetime',
 'updated_at' => 'datetime',
+'tenant_account_id' => 'integer',
+'partnership_role_id' => 'integer',
 'deleted_at' => 'datetime',
 ];
 

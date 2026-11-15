@@ -575,6 +575,142 @@ Route::post('{awpip}/addresses ', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoi
             }
         );
 
+
+// MULTI-TENANT PARTNERSHIP ROUTES
+
+Route::prefix('partner-programs')->group(function () {
+        Route::get('/', 'PartnerPrograms\PartnerProgramsController@index');
+        Route::get('/actions', 'PartnerPrograms\PartnerProgramsController@getActions');
+
+Route::get('{accounting_partner_programs}/tags ', 'PartnerPrograms\PartnerProgramsController@tags');
+Route::post('{accounting_partner_programs}/tags ', 'PartnerPrograms\PartnerProgramsController@saveTags');
+Route::get('{accounting_partner_programs}/addresses ', 'PartnerPrograms\PartnerProgramsController@addresses');
+Route::post('{accounting_partner_programs}/addresses ', 'PartnerPrograms\PartnerProgramsController@saveAddresses');
+
+        Route::get('/{accounting_partner_programs}/{subObjects}', 'PartnerPrograms\PartnerProgramsController@relatedObjects');
+        Route::get('/{accounting_partner_programs}', 'PartnerPrograms\PartnerProgramsController@show');
+
+        Route::post('/', 'PartnerPrograms\PartnerProgramsController@store');
+        Route::post('/{accounting_partner_programs}/do/{action}', 'PartnerPrograms\PartnerProgramsController@doAction');
+
+        Route::patch('/{accounting_partner_programs}', 'PartnerPrograms\PartnerProgramsController@update');
+        Route::delete('/{accounting_partner_programs}', 'PartnerPrograms\PartnerProgramsController@destroy');
+    });
+
+Route::prefix('partnership-roles')->group(function () {
+        Route::get('/', 'PartnershipRoles\PartnershipRolesController@index');
+        Route::get('/actions', 'PartnershipRoles\PartnershipRolesController@getActions');
+
+Route::get('{accounting_partnership_roles}/tags ', 'PartnershipRoles\PartnershipRolesController@tags');
+Route::post('{accounting_partnership_roles}/tags ', 'PartnershipRoles\PartnershipRolesController@saveTags');
+Route::get('{accounting_partnership_roles}/addresses ', 'PartnershipRoles\PartnershipRolesController@addresses');
+Route::post('{accounting_partnership_roles}/addresses ', 'PartnershipRoles\PartnershipRolesController@saveAddresses');
+
+        Route::get('/{accounting_partnership_roles}/{subObjects}', 'PartnershipRoles\PartnershipRolesController@relatedObjects');
+        Route::get('/{accounting_partnership_roles}', 'PartnershipRoles\PartnershipRolesController@show');
+
+        Route::post('/', 'PartnershipRoles\PartnershipRolesController@store');
+        Route::post('/{accounting_partnership_roles}/do/{action}', 'PartnershipRoles\PartnershipRolesController@doAction');
+
+        Route::patch('/{accounting_partnership_roles}', 'PartnershipRoles\PartnershipRolesController@update');
+        Route::delete('/{accounting_partnership_roles}', 'PartnershipRoles\PartnershipRolesController@destroy');
+    });
+
+Route::prefix('partnership-role-assignments')->group(function () {
+        Route::get('/', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@index');
+        Route::get('/actions', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@getActions');
+
+Route::get('{accounting_partnership_role_assignments}/tags ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@tags');
+Route::post('{accounting_partnership_role_assignments}/tags ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@saveTags');
+Route::get('{accounting_partnership_role_assignments}/addresses ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@addresses');
+Route::post('{accounting_partnership_role_assignments}/addresses ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@saveAddresses');
+
+        Route::get('/{accounting_partnership_role_assignments}/{subObjects}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@relatedObjects');
+        Route::get('/{accounting_partnership_role_assignments}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@show');
+
+        Route::post('/', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@store');
+        Route::post('/{accounting_partnership_role_assignments}/do/{action}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@doAction');
+
+        Route::patch('/{accounting_partnership_role_assignments}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@update');
+        Route::delete('/{accounting_partnership_role_assignments}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@destroy');
+    });
+
+Route::prefix('account-partners')->group(function () {
+        Route::get('/', 'AccountPartners\AccountPartnersController@index');
+        Route::get('/actions', 'AccountPartners\AccountPartnersController@getActions');
+
+Route::get('{accounting_account_partners}/tags ', 'AccountPartners\AccountPartnersController@tags');
+Route::post('{accounting_account_partners}/tags ', 'AccountPartners\AccountPartnersController@saveTags');
+Route::get('{accounting_account_partners}/addresses ', 'AccountPartners\AccountPartnersController@addresses');
+Route::post('{accounting_account_partners}/addresses ', 'AccountPartners\AccountPartnersController@saveAddresses');
+
+        Route::get('/{accounting_account_partners}/{subObjects}', 'AccountPartners\AccountPartnersController@relatedObjects');
+        Route::get('/{accounting_account_partners}', 'AccountPartners\AccountPartnersController@show');
+
+        Route::post('/', 'AccountPartners\AccountPartnersController@store');
+        Route::post('/{accounting_account_partners}/do/{action}', 'AccountPartners\AccountPartnersController@doAction');
+
+        Route::patch('/{accounting_account_partners}', 'AccountPartners\AccountPartnersController@update');
+        Route::delete('/{accounting_account_partners}', 'AccountPartners\AccountPartnersController@destroy');
+    });
+
+Route::prefix('partner-program-zones')->group(function () {
+        Route::get('/', 'PartnerProgramZones\PartnerProgramZonesController@index');
+        Route::get('/actions', 'PartnerProgramZones\PartnerProgramZonesController@getActions');
+
+Route::get('{accounting_partner_program_zones}/tags ', 'PartnerProgramZones\PartnerProgramZonesController@tags');
+Route::post('{accounting_partner_program_zones}/tags ', 'PartnerProgramZones\PartnerProgramZonesController@saveTags');
+Route::get('{accounting_partner_program_zones}/addresses ', 'PartnerProgramZones\PartnerProgramZonesController@addresses');
+Route::post('{accounting_partner_program_zones}/addresses ', 'PartnerProgramZones\PartnerProgramZonesController@saveAddresses');
+
+        Route::get('/{accounting_partner_program_zones}/{subObjects}', 'PartnerProgramZones\PartnerProgramZonesController@relatedObjects');
+        Route::get('/{accounting_partner_program_zones}', 'PartnerProgramZones\PartnerProgramZonesController@show');
+
+        Route::post('/', 'PartnerProgramZones\PartnerProgramZonesController@store');
+        Route::post('/{accounting_partner_program_zones}/do/{action}', 'PartnerProgramZones\PartnerProgramZonesController@doAction');
+
+        Route::patch('/{accounting_partner_program_zones}', 'PartnerProgramZones\PartnerProgramZonesController@update');
+        Route::delete('/{accounting_partner_program_zones}', 'PartnerProgramZones\PartnerProgramZonesController@destroy');
+    });
+
+Route::prefix('partnership-zones')->group(function () {
+        Route::get('/', 'PartnershipZones\PartnershipZonesController@index');
+        Route::get('/actions', 'PartnershipZones\PartnershipZonesController@getActions');
+
+Route::get('{accounting_partnership_zones}/tags ', 'PartnershipZones\PartnershipZonesController@tags');
+Route::post('{accounting_partnership_zones}/tags ', 'PartnershipZones\PartnershipZonesController@saveTags');
+Route::get('{accounting_partnership_zones}/addresses ', 'PartnershipZones\PartnershipZonesController@addresses');
+Route::post('{accounting_partnership_zones}/addresses ', 'PartnershipZones\PartnershipZonesController@saveAddresses');
+
+        Route::get('/{accounting_partnership_zones}/{subObjects}', 'PartnershipZones\PartnershipZonesController@relatedObjects');
+        Route::get('/{accounting_partnership_zones}', 'PartnershipZones\PartnershipZonesController@show');
+
+        Route::post('/', 'PartnershipZones\PartnershipZonesController@store');
+        Route::post('/{accounting_partnership_zones}/do/{action}', 'PartnershipZones\PartnershipZonesController@doAction');
+
+        Route::patch('/{accounting_partnership_zones}', 'PartnershipZones\PartnershipZonesController@update');
+        Route::delete('/{accounting_partnership_zones}', 'PartnershipZones\PartnershipZonesController@destroy');
+    });
+
+Route::prefix('invoice-commissions')->group(function () {
+        Route::get('/', 'InvoiceCommissions\InvoiceCommissionsController@index');
+        Route::get('/actions', 'InvoiceCommissions\InvoiceCommissionsController@getActions');
+
+Route::get('{accounting_invoice_commissions}/tags ', 'InvoiceCommissions\InvoiceCommissionsController@tags');
+Route::post('{accounting_invoice_commissions}/tags ', 'InvoiceCommissions\InvoiceCommissionsController@saveTags');
+Route::get('{accounting_invoice_commissions}/addresses ', 'InvoiceCommissions\InvoiceCommissionsController@addresses');
+Route::post('{accounting_invoice_commissions}/addresses ', 'InvoiceCommissions\InvoiceCommissionsController@saveAddresses');
+
+        Route::get('/{accounting_invoice_commissions}/{subObjects}', 'InvoiceCommissions\InvoiceCommissionsController@relatedObjects');
+        Route::get('/{accounting_invoice_commissions}', 'InvoiceCommissions\InvoiceCommissionsController@show');
+
+        Route::post('/', 'InvoiceCommissions\InvoiceCommissionsController@store');
+        Route::post('/{accounting_invoice_commissions}/do/{action}', 'InvoiceCommissions\InvoiceCommissionsController@doAction');
+
+        Route::patch('/{accounting_invoice_commissions}', 'InvoiceCommissions\InvoiceCommissionsController@update');
+        Route::delete('/{accounting_invoice_commissions}', 'InvoiceCommissions\InvoiceCommissionsController@destroy');
+    });
+
     }
 );
 

@@ -146,6 +146,15 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
             'accounting_partnerships:create',
             'accounting_partnerships:update',
             'accounting_partnerships:delete',
+
+            // Multi-tenant partnership tables: read only for the accounting manager.
+            'accounting_partner_programs:read',
+            'accounting_partnership_roles:read',
+            'accounting_partnership_role_assignments:read',
+            'accounting_account_partners:read',
+            'accounting_partner_program_zones:read',
+            'accounting_partnership_zones:read',
+            'accounting_invoice_commissions:read',
         ];
     }
 
