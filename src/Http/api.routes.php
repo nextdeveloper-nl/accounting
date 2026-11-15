@@ -577,6 +577,11 @@ Route::post('{awpip}/addresses ', 'WeeklyPaidInvoicesPerformance\WeeklyPaidInvoi
 
 
 // MULTI-TENANT PARTNERSHIP ROUTES
+Route::prefix('partner-programs')->group(function () {
+        //  Self service onboarding of a tenant. POST only, no collision with the generated CRUD routes.
+        Route::post('/enable', 'PartnerPrograms\\PartnerProgramsController@enable');
+        Route::post('/disable', 'PartnerPrograms\\PartnerProgramsController@disable');
+    });
 Route::prefix('partnerships')->group(function () {
         //  Invitation lifecycle. These are POST only, so they do not collide with the generated CRUD routes.
         Route::post('/invite', 'Partnerships\PartnershipsController@invite');

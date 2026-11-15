@@ -3,7 +3,10 @@
 namespace NextDeveloper\Accounting\Services;
 
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractAccountPartnersService;
+use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Helpers\PartnershipTenantGuard;
+use NextDeveloper\Commons\Exceptions\NotAllowedException;
+use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 
 /**
@@ -30,6 +33,17 @@ class AccountPartnersService extends AbstractAccountPartnersService
         //  Every referenced partnership / role / program / customer must belong to OUR tenant (uuids are checked
         //  before they are converted to ids, independent of what the role scope shows).
         PartnershipTenantGuard::assertReferences($data);
+
+        //  A partner that has not accepted (pending), rejected or was revoked must not be given customers.
+        if (!empty($data['partnership_id'])) {
+            $partnership = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+                ->where('uuid', $data['partnership_id'])
+                ->first();
+
+            if (!$partnership || $partnership->status !== 'active') {
+                throw new NotAllowedException('Customers can only be assigned to an active partner.');
+            }
+        }
 
         unset($data['tenant_account_id']);
         $data['tenant_account_id'] = UserHelper::currentAccount()->id;

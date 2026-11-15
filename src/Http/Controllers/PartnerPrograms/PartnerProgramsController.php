@@ -154,4 +154,28 @@ class PartnerProgramsController extends AbstractController
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
+    /**
+     * The owner of the account turns it into a partner program (self service onboarding).
+     *
+     * @return mixed|null
+     */
+    public function enable()
+    {
+        $model = PartnerProgramsService::enableProgram();
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+     * The owner turns the partner program off (no new invitations, existing partners are untouched).
+     *
+     * @return mixed|null
+     */
+    public function disable()
+    {
+        $model = PartnerProgramsService::disableProgram();
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
 }
