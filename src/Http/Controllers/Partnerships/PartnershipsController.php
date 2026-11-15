@@ -10,6 +10,7 @@ use NextDeveloper\Accounting\Database\Filters\PartnershipsQueryFilter;
 use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Services\PartnershipsService;
 use NextDeveloper\Accounting\Http\Requests\Partnerships\PartnershipsCreateRequest;
+use NextDeveloper\Accounting\Http\Requests\Partnerships\PartnershipInviteRequest;
 use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
 class PartnershipsController extends AbstractController
 {
@@ -153,5 +154,68 @@ class PartnershipsController extends AbstractController
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+    /**
+     * The account the user acts as (the tenant) invites an existing company to be its partner.
+     * The operation itself, including every authorization check, lives in PartnershipsService.
+     *
+     * @param  PartnershipInviteRequest $request
+     * @return mixed|null
+     */
+    public function invite(PartnershipInviteRequest $request)
+    {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
+        $model = PartnershipsService::invitePartner(
+            $request->validated('partner_account_id'),
+            $request->validated('role_ids'),
+            $request->validated('parent_partnership_id')
+        );
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+     * The invited company accepts the invitation.
+     *
+     * @param  $partnershipId
+     * @return mixed|null
+     */
+    public function accept($partnershipId)
+    {
+        $model = PartnershipsService::acceptInvitation($partnershipId);
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+     * The invited company rejects the invitation.
+     *
+     * @param  $partnershipId
+     * @return mixed|null
+     */
+    public function reject($partnershipId)
+    {
+        $model = PartnershipsService::rejectInvitation($partnershipId);
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+     * The tenant ends a partnership.
+     *
+     * @param  $partnershipId
+     * @return mixed|null
+     */
+    public function revoke($partnershipId)
+    {
+        $model = PartnershipsService::revokePartner($partnershipId);
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
 
 }
