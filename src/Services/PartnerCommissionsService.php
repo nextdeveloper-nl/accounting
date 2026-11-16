@@ -86,6 +86,34 @@ class PartnerCommissionsService
         return true;
     }
 
+    /**
+     * Checks the rates of everything that would be paid for ONE invoice. Returns the reason when something is out of
+     * bounds, null when it is fine.
+     *
+     * A role rate comes from tenant managed data (a manager can type any number), and every commission becomes a
+     * payable invoice, so the engine does not trust it: each rate must be within 0..$maxEach and all the rates that
+     * would be paid for the invoice together within $maxTotal. When a limit is broken NOTHING is paid for the invoice
+     * (no partial payout), the problem is reported and a person has to look at the role setup.
+     *
+     * @param float[] $rates every rate (own commission and parent override) that would be paid for the invoice
+     */
+    public static function ratesOutOfBounds(array $rates, float $maxEach, float $maxTotal): ?string
+    {
+        foreach ($rates as $rate) {
+            if ($rate < 0 || $rate > $maxEach) {
+                return 'a rate of ' . round($rate * 100, 2) . '% is outside the allowed range of 0% to ' . round($maxEach * 100, 2) . '%';
+            }
+        }
+
+        $total = array_sum($rates);
+
+        if ($total > $maxTotal) {
+            return 'the total of ' . round($total * 100, 2) . '% exceeds the allowed ' . round($maxTotal * 100, 2) . '% payout for one invoice';
+        }
+
+        return null;
+    }
+
     private static function process(Invoices $invoice, bool $dryRun): array
     {
         if (!$invoice->is_paid || $invoice->is_commission_invoice) {
@@ -111,6 +139,8 @@ class PartnerCommissionsService
             ->filter(fn($link) => self::linkCoversInvoice($link->started_at, $link->finished_at, $invoice->created_at));
 
         $results = [];
+        //  Everything that would be paid is collected first, checked as a whole, and only then created.
+        $plan = [];
 
         foreach ($links as $link) {
             $role = PartnershipRoles::withoutGlobalScope(AuthorizationScope::class)->where('id', $link->partnership_role_id)->first();
@@ -139,7 +169,7 @@ class PartnerCommissionsService
             $rate = (float)$role->commission_rate;
 
             if ($rate > 0) {
-                $results[] = self::commission($invoice, $customer, $link, $role, $partnership, 0, $rate, $dryRun);
+                $plan[] = [$link, $role, $partnership, 0, $rate];
             }
 
             //  The direct parent earns the parent override of this role on top of the partner's own commission.
@@ -151,9 +181,29 @@ class PartnerCommissionsService
                     ->first();
 
                 if ($parent && $parent->status === 'active' && (int)$parent->tenant_account_id === (int)$link->tenant_account_id) {
-                    $results[] = self::commission($invoice, $customer, $link, $role, $parent, 1, $overrideRate, $dryRun);
+                    $plan[] = [$link, $role, $parent, 1, $overrideRate];
                 }
             }
+        }
+
+        //  Bounds on the rates (see ratesOutOfBounds). Defaults: no single rate above 50%, no more than 50% paid in
+        //  total for one invoice; both can be changed in config accounting.partnership.*.
+        $problem = self::ratesOutOfBounds(
+            array_map(fn($item) => $item[4], $plan),
+            (float)config('accounting.partnership.max_commission_rate', 0.5),
+            (float)config('accounting.partnership.max_total_commission_rate', 0.5)
+        );
+
+        if ($problem !== null) {
+            Log::error('[PartnerCommissionsService] Commission rates out of bounds, nothing paid for invoice ' . $invoice->id . ': ' . $problem);
+
+            $results[] = self::row('error', $invoice, null, null, null, 0, 0, 'nothing paid for this invoice: ' . $problem);
+
+            return $results;
+        }
+
+        foreach ($plan as [$link, $role, $earner, $level, $rate]) {
+            $results[] = self::commission($invoice, $customer, $link, $role, $earner, $level, $rate, $dryRun);
         }
 
         return $results;
