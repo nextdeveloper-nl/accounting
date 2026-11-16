@@ -729,4 +729,119 @@ class PartnershipsService extends AbstractPartnershipsService
 
         return mb_substr($local, 0, 1) . '***@' . mb_substr($name, 0, 1) . '***' . $tld;
     }
+
+    /**
+     * Keeps the multi-tenant partnership model in step with the legacy role flags on accounting_accounts
+     * (is_distributor / is_integrator / is_reseller / is_affiliate), which staff still set the old way.
+     *
+     * Without this a partner flagged after the multi-tenant release would get a partnership that is pending, has no
+     * tenant, no role and is private: it would vanish from the partner lists and never earn a commission in the new
+     * engine. So for the DEFAULT (platform) tenant:
+     *  - a flagged account gets a partnership (created when missing) in the tenant; a pending one becomes active (staff
+     *    flagging it is the approval, the same rule the status hardening applied to the existing partners);
+     *  - a partnership that is created here starts 'public' (flagged partners were visible to everybody before). The
+     *    visibility of an existing partnership is never changed, a tenant may have made it private since;
+     *  - every flag has a matching role assignment (the role of the tenant with the slug distributor / integrator /
+     *    reseller / affiliate): opened when the flag is on, ended when it is off.
+     * An account without flags and without a partnership is left alone (no partnership is created for it).
+     *
+     * @param \NextDeveloper\Accounting\Database\Models\Accounts $account the accounting account whose flags changed
+     */
+    public static function syncFromLegacyFlags(\NextDeveloper\Accounting\Database\Models\Accounts $account): ?Partnerships
+    {
+        $flags = [
+            'distributor' => (bool)$account->is_distributor,
+            'integrator'  => (bool)$account->is_integrator,
+            'reseller'    => (bool)$account->is_reseller,
+            'affiliate'   => (bool)$account->is_affiliate,
+        ];
+
+        $tenantId = AccountPartnersService::getDefaultTenantId();
+
+        $partnership = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+            ->where('tenant_account_id', $tenantId)
+            ->where('accounting_account_id', $account->id)
+            ->first();
+
+        if (!$partnership && !array_filter($flags)) {
+            return null;
+        }
+
+        return UserHelper::withRolesCheckBypassed(function () use ($account, $flags, $tenantId, $partnership) {
+            $created = false;
+
+            if (!$partnership) {
+                //  Is this a brand new partnership? The legacy create() below returns an existing partnership of the account
+                //  (for example one without a tenant) instead of creating one, and returns a fresh model either way, so the
+                //  answer has to be read BEFORE the call.
+                $existedBefore = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+                    ->where('iam_account_id', $account->iam_account_id)
+                    ->exists();
+
+                //  The legacy create(): generates the partner code and the starting values.
+                $partnership = self::create([
+                    'iam_account_id'        => $account->iam_account_id,
+                    'accounting_account_id' => $account->id,
+                ]);
+
+                $created = !$existedBefore;
+            }
+
+            $updates = [];
+
+            if (!$partnership->tenant_account_id) {
+                $updates['tenant_account_id'] = $tenantId;
+            }
+
+            if (array_filter($flags) && $partnership->status === self::STATUS_PENDING) {
+                $updates['status'] = self::STATUS_ACTIVE;
+            }
+
+            if ($created) {
+                $updates['visibility'] = 'public';
+            }
+
+            if (!$partnership->path) {
+                $updates['path'] = (string)$partnership->id;
+            }
+
+            if ($updates) {
+                $partnership->update($updates);
+                $partnership = $partnership->fresh();
+            }
+
+            foreach ($flags as $slug => $isOn) {
+                $role = PartnershipRoles::withoutGlobalScope(AuthorizationScope::class)
+                    ->where('tenant_account_id', $tenantId)
+                    ->where('slug', $slug)
+                    ->first();
+
+                if (!$role) {
+                    continue;
+                }
+
+                $open = PartnershipRoleAssignments::withoutGlobalScope(AuthorizationScope::class)
+                    ->where('partnership_id', $partnership->id)
+                    ->where('partnership_role_id', $role->id)
+                    ->whereNull('finished_at')
+                    ->first();
+
+                if ($isOn && !$open) {
+                    PartnershipRoleAssignments::create([
+                        'tenant_account_id'   => $tenantId,
+                        'partnership_id'      => $partnership->id,
+                        'partnership_role_id' => $role->id,
+                        'status'              => $partnership->status === self::STATUS_ACTIVE ? self::STATUS_ACTIVE : self::STATUS_PENDING,
+                        'started_at'          => now(),
+                        'iam_account_id'      => $tenantId,
+                        'iam_user_id'         => UserHelper::me()?->id,
+                    ]);
+                } elseif (!$isOn && $open) {
+                    $open->update(['status' => 'inactive', 'finished_at' => now()]);
+                }
+            }
+
+            return $partnership;
+        });
+    }
 }

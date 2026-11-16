@@ -129,16 +129,14 @@ class AccountsService extends AbstractAccountsService
         }
 
         $freshAccount = $updatedAccount->fresh();
-        if (
-            $freshAccount->is_distributor ||
-            $freshAccount->is_sales_partner ||
-            $freshAccount->is_affiliate ||
-            $freshAccount->is_integrator
-        ) {
-            PartnershipsService::create([
-                'iam_account_id'       => $freshAccount->iam_account_id,
-                'accounting_account_id' => $freshAccount->id,
-            ]);
+
+        //  Multi-tenant partnership: the role flags (is_distributor / is_integrator / is_reseller / is_affiliate) drive the
+        //  partnership, its tenant, visibility and role assignments. A failure here must not break the account update.
+        //  (This used to check is_sales_partner, a column that does not exist: the legacy flag is is_reseller.)
+        try {
+            PartnershipsService::syncFromLegacyFlags($freshAccount);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('[AccountsService] Could not sync the partnership of account ' . $freshAccount->id . ': ' . $e->getMessage());
         }
 
         if(array_key_exists('distributor_id', $data)) {
