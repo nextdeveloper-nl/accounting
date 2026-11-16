@@ -128,13 +128,17 @@ class PartnerCommissionsService
             ->where('id', $invoice->accounting_account_id)
             ->first();
 
-        if (!$customer || !$customer->tenant_account_id) {
+        if (!$customer) {
             return [];
         }
 
+        //  A customer without a tenant belongs to the default (platform) tenant: accounts that are created outside the
+        //  signup flow do not get a tenant right away.
+        $tenantId = $customer->tenant_account_id ?: AccountPartnersService::getDefaultTenantId();
+
         $links = AccountPartners::withoutGlobalScope(AuthorizationScope::class)
             ->where('accounting_account_id', $customer->id)
-            ->where('tenant_account_id', $customer->tenant_account_id)
+            ->where('tenant_account_id', $tenantId)
             ->get()
             ->filter(fn($link) => self::linkCoversInvoice($link->started_at, $link->finished_at, $invoice->created_at));
 
