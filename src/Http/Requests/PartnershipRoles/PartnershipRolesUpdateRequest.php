@@ -15,8 +15,9 @@ class PartnershipRolesUpdateRequest extends AbstractFormRequest
             'slug' => 'nullable|string',
             'name' => 'nullable|string',
             'description' => 'nullable|string',
-            'commission_rate' => 'nullable|numeric|between:0,1',
-            'parent_override_rate' => 'nullable|numeric|between:0,1',
+            //  Capped at 50%: the commission engine pays nothing above this (accounting.partnership.max_commission_rate), so refuse it up front.
+            'commission_rate' => 'nullable|numeric|between:0,0.5',
+            'parent_override_rate' => 'nullable|numeric|between:0,0.5',
             'commission_basis' => 'nullable|string',
             'priority' => 'nullable|integer',
             'allows_multiple_per_customer' => 'nullable|boolean',
