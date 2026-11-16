@@ -632,19 +632,19 @@ Route::prefix('partnership-role-assignments')->group(function () {
         Route::get('/', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@index');
         Route::get('/actions', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@getActions');
 
-Route::get('{accounting_partnership_role_assignments}/tags ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@tags');
-Route::post('{accounting_partnership_role_assignments}/tags ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@saveTags');
-Route::get('{accounting_partnership_role_assignments}/addresses ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@addresses');
-Route::post('{accounting_partnership_role_assignments}/addresses ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@saveAddresses');
+Route::get('{partnership_role_assignments}/tags ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@tags');
+Route::post('{partnership_role_assignments}/tags ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@saveTags');
+Route::get('{partnership_role_assignments}/addresses ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@addresses');
+Route::post('{partnership_role_assignments}/addresses ', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@saveAddresses');
 
-        Route::get('/{accounting_partnership_role_assignments}/{subObjects}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@relatedObjects');
-        Route::get('/{accounting_partnership_role_assignments}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@show');
+        Route::get('/{partnership_role_assignments}/{subObjects}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@relatedObjects');
+        Route::get('/{partnership_role_assignments}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@show');
 
         Route::post('/', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@store');
-        Route::post('/{accounting_partnership_role_assignments}/do/{action}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@doAction');
+        Route::post('/{partnership_role_assignments}/do/{action}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@doAction');
 
-        Route::patch('/{accounting_partnership_role_assignments}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@update');
-        Route::delete('/{accounting_partnership_role_assignments}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@destroy');
+        Route::patch('/{partnership_role_assignments}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@update');
+        Route::delete('/{partnership_role_assignments}', 'PartnershipRoleAssignments\PartnershipRoleAssignmentsController@destroy');
     });
 
 Route::prefix('account-partners')->group(function () {
