@@ -1,6 +1,13 @@
 <?php
 
 Route::prefix('accounting')->group(function() {
+
+// MULTI-TENANT PARTNERSHIP GET ROUTES
+//  These fixed paths MUST be registered before the generated '/{accounting_partnerships}' and
+//  '/{accounting_partner_programs}' routes, otherwise 'me' and 'invite-candidates' are taken as an id.
+Route::get('partner-programs/me', 'PartnerPrograms\\PartnerProgramsController@me');
+Route::get('partnerships/invite-candidates', 'Partnerships\\PartnershipsController@inviteCandidates');
+
 Route::prefix('accounts')->group(function () {
         Route::get('/', 'Accounts\AccountsController@index');
         Route::get('/actions', 'Accounts\AccountsController@getActions');
@@ -588,6 +595,7 @@ Route::prefix('partnerships')->group(function () {
         Route::post('/{accounting_partnerships}/accept', 'Partnerships\PartnershipsController@accept');
         Route::post('/{accounting_partnerships}/reject', 'Partnerships\PartnershipsController@reject');
         Route::post('/{accounting_partnerships}/revoke', 'Partnerships\PartnershipsController@revoke');
+        Route::post('/{accounting_partnerships}/visibility', 'Partnerships\PartnershipsController@visibility');
     });
 
 Route::prefix('partner-programs')->group(function () {

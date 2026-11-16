@@ -11,6 +11,7 @@ use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Services\PartnershipsService;
 use NextDeveloper\Accounting\Http\Requests\Partnerships\PartnershipsCreateRequest;
 use NextDeveloper\Accounting\Http\Requests\Partnerships\PartnershipInviteRequest;
+use NextDeveloper\Accounting\Http\Requests\Partnerships\PartnershipVisibilityRequest;
 use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
 class PartnershipsController extends AbstractController
 {
@@ -170,11 +171,47 @@ class PartnershipsController extends AbstractController
             ];
         }
 
+        //  Invite by email: the answer is the same text in every case, see PartnershipsService::invitePartnerByEmail().
+        if (!$request->validated('partner_account_id')) {
+            return $this->withArray(PartnershipsService::invitePartnerByEmail(
+                $request->validated('partner_email'),
+                $request->validated('role_ids'),
+                $request->validated('parent_partnership_id')
+            ));
+        }
+
         $model = PartnershipsService::invitePartner(
             $request->validated('partner_account_id'),
             $request->validated('role_ids'),
             $request->validated('parent_partnership_id')
         );
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+     * Candidate companies for the invite drawer: ?q=<at least 3 characters of the company name>.
+     *
+     * @param  Request $request
+     * @return mixed|null
+     */
+    public function inviteCandidates(Request $request)
+    {
+        return $this->withArray([
+            'data' => PartnershipsService::findInviteCandidates((string)$request->query('q', ''))
+        ]);
+    }
+
+    /**
+     * The tenant decides who sees this partner in the partner lists (private, customers, public).
+     *
+     * @param  $partnershipId
+     * @param  PartnershipVisibilityRequest $request
+     * @return mixed|null
+     */
+    public function visibility($partnershipId, PartnershipVisibilityRequest $request)
+    {
+        $model = PartnershipsService::setVisibility($partnershipId, $request->validated('visibility'));
 
         return ResponsableFactory::makeResponse($this, $model);
     }

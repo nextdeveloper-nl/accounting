@@ -4,6 +4,8 @@ namespace NextDeveloper\Accounting\Services;
 
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractPartnerProgramsService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
+use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Database\Models\PartnerPrograms;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
@@ -179,6 +181,53 @@ class PartnerProgramsService extends AbstractPartnerProgramsService
     private static function canSetStatus(): bool
     {
         return UserHelper::hasRole('system-admin');
+    }
+
+    /**
+     * One call that tells the UI everything it needs to draw the navigation and the first screen:
+     * is this account a tenant, may the user enable the program, how many invitations wait, how many partnerships are
+     * active, and how many invitation emails the tenant may still send today.
+     *
+     * Everything is read for the account the user acts as, with explicit conditions (no role scope involved).
+     */
+    public static function getSummary(): array
+    {
+        $account = UserHelper::currentAccount();
+        $me = UserHelper::me();
+
+        $program = PartnerPrograms::withoutGlobalScope(AuthorizationScope::class)
+            ->where('tenant_account_id', $account->id)
+            ->first();
+
+        $isOwner = (int)$account->iam_user_id === (int)$me->id;
+        $isManager = UserHelper::hasRole('partnership-manager');
+
+        $asPartner = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+            ->where('iam_account_id', $account->id);
+
+        $perTenant = (int)config('accounting.partnership.max_invitations_per_day', 50);
+        $perPartner = (int)config('accounting.partnership.max_emails_per_partner_per_day', 3);
+
+        return [
+            'is_tenant'                => $program !== null && $program->status === self::STATUS_ACTIVE,
+            'program'                  => $program ? [
+                'id'                  => $program->uuid,
+                'status'              => $program->status,
+                'branding'            => $program->branding,
+                'responsible_email'   => $program->responsible_email,
+                'max_hierarchy_depth' => $program->max_hierarchy_depth,
+            ] : null,
+            //  Only the owner can enable, and not a program the platform suspended.
+            'can_enable'               => $isOwner && (!$program || $program->status === self::STATUS_DISABLED),
+            'can_manage'               => $isManager,
+            'pending_invitations'      => (clone $asPartner)->where('status', 'pending')->count(),
+            'active_partnerships'      => (clone $asPartner)->where('status', 'active')->count(),
+            'invitation_quota'         => $program ? [
+                'per_day_remaining'      => RateLimiter::remaining('partnership-email:tenant:' . $account->id, $perTenant),
+                'per_day_limit'          => $perTenant,
+                'per_partner_per_day_limit' => $perPartner,
+            ] : null,
+        ];
     }
 
     /**

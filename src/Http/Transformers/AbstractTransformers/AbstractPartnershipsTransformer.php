@@ -55,10 +55,35 @@ class AbstractPartnershipsTransformer extends AbstractTransformer {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $accountingAccountId = \NextDeveloper\Accounting\Database\Models\Accounts::where('id', $model->accounting_account_id)->first();
 
+        //  Multi-tenant partnership: the tenant (program owner), the parent partner and the inviter, as public ids.
+        //  Looked up without AuthorizationScope on purpose: the viewer of an invitation (the invited company) has no
+        //  permission to read the tenant's account row, but must be able to see who invited them.
+        $tenantAccount = $model->tenant_account_id
+            ? \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)->where('id', $model->tenant_account_id)->first()
+            : null;
+        $parentPartnership = $model->parent_partnership_id
+            ? \NextDeveloper\Accounting\Database\Models\Partnerships::withoutGlobalScope(AuthorizationScope::class)->where('id', $model->parent_partnership_id)->first()
+            : null;
+        $invitedBy = $model->invited_by_iam_user_id
+            ? \NextDeveloper\IAM\Database\Models\Users::where('id', $model->invited_by_iam_user_id)->first()
+            : null;
+        $partnerAccount = $model->iam_account_id
+            ? \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)->where('id', $model->iam_account_id)->first()
+            : null;
+
         return $this->buildPayload([
 'id'  =>  $model->uuid,
 'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
 'partner_code'  =>  $model->partner_code,
+'status'  =>  $model->status,
+'visibility'  =>  $model->visibility,
+'tenant_id'  =>  $tenantAccount ? $tenantAccount->uuid : null,
+'tenant_name'  =>  $tenantAccount ? $tenantAccount->name : null,
+'partner_name'  =>  $partnerAccount ? $partnerAccount->name : null,
+'parent_partnership_id'  =>  $parentPartnership ? $parentPartnership->uuid : null,
+'invited_by_iam_user_id'  =>  $invitedBy ? $invitedBy->uuid : null,
+'invited_at'  =>  $model->invited_at,
+'accepted_at'  =>  $model->accepted_at,
 'is_brand_ambassador'  =>  $model->is_brand_ambassador,
 'customer_count'  =>  $model->customer_count,
 'level'  =>  $model->level,

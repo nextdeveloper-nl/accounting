@@ -3,6 +3,7 @@
 namespace NextDeveloper\Accounting\Http\Transformers;
 
 use Illuminate\Support\Facades\Cache;
+use NextDeveloper\Accounting\Helpers\PartnerDirectory;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Accounting\Database\Models\SalesPartnersPerspective;
 use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
@@ -28,10 +29,14 @@ class SalesPartnersPerspectiveTransformer extends AbstractSalesPartnersPerspecti
         );
 
         if($transformed) {
-            return $transformed;
+            //  Old cache entries still contain the private fields: strip them here as well.
+            return PartnerDirectory::stripPrivateFields($transformed);
         }
 
         $transformed = parent::transform($model);
+
+        //  Partner directory entry: never expose credit balance, tax numbers or trade registration data.
+        $transformed = PartnerDirectory::stripPrivateFields($transformed);
 
         Cache::set(
             CacheHelper::getKey('SalesPartnersPerspective', $model->uuid, 'Transformed'),

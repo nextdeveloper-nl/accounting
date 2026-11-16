@@ -61,6 +61,9 @@ class AbstractAccountsTransformer extends AbstractTransformer {
 
         return $this->buildPayload([
 'id'  =>  $model->uuid,
+'tenant_id'  =>  $model->tenant_account_id
+    ? optional(\NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(AuthorizationScope::class)->where('id', $model->tenant_account_id)->first())->uuid
+    : null,
 'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
 'tax_office'  =>  $model->tax_office,
 'tax_number'  =>  $model->tax_number,
