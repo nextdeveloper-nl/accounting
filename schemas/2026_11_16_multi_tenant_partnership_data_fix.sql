@@ -139,7 +139,7 @@ $datafix$
             loop
                 insert into accounting_partnerships
                 (iam_account_id, accounting_account_id, tenant_account_id, partner_code, customer_count, level,
-                 is_approved, status, accepted_at)
+                 is_approved, status, accepted_at, visibility)
                 select v_account.iam_account_id,
                        v_account.id,
                        v_tenant,
@@ -148,7 +148,9 @@ $datafix$
                        1,
                        true,
                        'active',
-                       now()
+                       now(),
+                       -- flagged partners were visible to everybody before the multi-tenant work: keep that
+                       'public'
                 from (select substr(md5(random()::text || clock_timestamp()::text || v_account.id::text), 1, 10) as code) c
                 where not exists (select 1 from accounting_partnerships x where x.partner_code = c.code);
             end loop;
