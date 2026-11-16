@@ -173,6 +173,24 @@ class AccountsService extends AbstractAccountsService
             self::assignPartner($updatedAccount, $partnerAccount);
         }
 
+        //  Multi-tenant partnership: keep the customer links (accounting_account_partners) in step with the legacy
+        //  pointer columns that were just changed. A failure here must not break the legacy update itself.
+        foreach (AccountPartnersService::LEGACY_POINTERS as $column => $roleSlug) {
+            if (!array_key_exists($column, $data)) {
+                continue;
+            }
+
+            try {
+                $linkedPartner = $data[$column]
+                    ? Accounts::withoutGlobalScope(AuthorizationScope::class)->where('id', $data[$column])->first()
+                    : null;
+
+                AccountPartnersService::syncLegacyPartner($updatedAccount->fresh(), $roleSlug, $linkedPartner);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('[AccountsService] Could not sync the partner link for ' . $column . ': ' . $e->getMessage());
+            }
+        }
+
         return $updatedAccount;
     }
 
