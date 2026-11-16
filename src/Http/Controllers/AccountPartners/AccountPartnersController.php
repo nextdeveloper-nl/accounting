@@ -154,4 +154,17 @@ class AccountPartnersController extends AbstractController
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
+    /**
+     * Customers of the acting tenant for the customer picker: ?q=<at least 3 characters of the customer name>.
+     *
+     * @param  Request $request
+     * @return mixed|null
+     */
+    public function customerCandidates(Request $request)
+    {
+        return $this->withArray([
+            'data' => AccountPartnersService::findCustomerCandidates((string)$request->query('q', ''))
+        ]);
+    }
+
 }

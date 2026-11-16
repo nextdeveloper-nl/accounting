@@ -5,6 +5,8 @@ namespace NextDeveloper\Accounting\Http\Transformers;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use NextDeveloper\Accounting\Database\Models\PartnershipRoleAssignments;
+use NextDeveloper\Accounting\Helpers\PartnershipBranding;
+use NextDeveloper\IAM\Database\Models\Accounts as IamAccounts;
 use NextDeveloper\Accounting\Database\Models\PartnershipRoles;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
@@ -39,6 +41,8 @@ class PartnershipsTransformer extends AbstractPartnershipsTransformer
         'permissions',
         'roles',
         'stats',
+        'branding',
+        'child_roles',
     ];
 
     /**
@@ -86,7 +90,10 @@ class PartnershipsTransformer extends AbstractPartnershipsTransformer
             'can_set_visibility'      => $canManage,
             'can_manage_roles'        => $canManage,
             'can_have_sub_partners'   => $canHaveSubPartners,
-            'can_add_sub_partner'     => $canHaveSubPartners && ($canManage || ($isPartner && ($isOwner || $isManager))),
+            //  Only the TENANT adds sub-partners under a partner. A partner inviting on its own is not supported: an
+            //  invitation always belongs to the program of the account that sends it, so it would create a partnership
+            //  in the partner's OWN program, not under this parent.
+            'can_add_sub_partner'     => $canHaveSubPartners && $canManage,
         ]);
     }
 
@@ -111,6 +118,7 @@ class PartnershipsTransformer extends AbstractPartnershipsTransformer
 
             return $role ? [
                 'id'                   => $role->uuid,
+                'assignment_id'        => $assignment->uuid,
                 'name'                 => $role->name,
                 'slug'                 => $role->slug,
                 'commission_rate'      => $role->commission_rate,
@@ -120,6 +128,60 @@ class PartnershipsTransformer extends AbstractPartnershipsTransformer
         })->filter()->values();
 
         return $this->collection($rows, fn($row) => $row);
+    }
+
+    /**
+     * Branding of the TENANT (logo, colour, name), validated. This is what the invited company sees on the invitation
+     * page, the same data the invitation email uses. Visible to everyone who can see the partnership (the tenant and the
+     * invited company).
+     */
+    public function includeBranding(Partnerships $model)
+    {
+        $tenant = $model->tenant_account_id
+            ? IamAccounts::withoutGlobalScope(AuthorizationScope::class)->where('id', $model->tenant_account_id)->first()
+            : null;
+
+        return $this->item($model, fn() => $tenant ? PartnershipBranding::forTenant($tenant) : null);
+    }
+
+    /**
+     * The roles this partner may hand out to sub-partners: the union of allowed_child_role_ids of the roles it holds,
+     * only when one of those roles allows sub-partners. The partner side cannot read the tenant's other roles through
+     * /partnership-roles (it only sees the roles it holds), so the tenant UI uses this instead.
+     */
+    public function includeChildRoles(Partnerships $model)
+    {
+        $held = PartnershipRoles::withoutGlobalScope(AuthorizationScope::class)
+            ->whereIn('id', PartnershipRoleAssignments::withoutGlobalScope(AuthorizationScope::class)
+                ->where('partnership_id', $model->id)
+                ->where('status', 'active')
+                ->whereNull('finished_at')
+                ->select('partnership_role_id'))
+            ->get();
+
+        $childIds = [];
+        foreach ($held as $role) {
+            if (!empty($role->permissions['can_invite_sub_partners'])) {
+                foreach (($role->allowed_child_role_ids ?? []) as $childId) {
+                    $childIds[] = (int)$childId;
+                }
+            }
+        }
+
+        $children = PartnershipRoles::withoutGlobalScope(AuthorizationScope::class)
+            ->where('tenant_account_id', $model->tenant_account_id)
+            ->where('status', 'active')
+            ->whereIn('id', array_unique($childIds))
+            ->get()
+            ->map(fn($role) => [
+                'id'                   => $role->uuid,
+                'name'                 => $role->name,
+                'slug'                 => $role->slug,
+                'commission_rate'      => $role->commission_rate,
+                'parent_override_rate' => $role->parent_override_rate,
+            ])->values();
+
+        return $this->collection($children, fn($row) => $row);
     }
 
     /**

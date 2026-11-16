@@ -7,6 +7,7 @@ Route::prefix('accounting')->group(function() {
 //  '/{accounting_partner_programs}' routes, otherwise 'me' and 'invite-candidates' are taken as an id.
 Route::get('partner-programs/me', 'PartnerPrograms\\PartnerProgramsController@me');
 Route::get('partnerships/invite-candidates', 'Partnerships\\PartnershipsController@inviteCandidates');
+Route::get('account-partners/customer-candidates', 'AccountPartners\\AccountPartnersController@customerCandidates');
 
 Route::prefix('accounts')->group(function () {
         Route::get('/', 'Accounts\AccountsController@index');
