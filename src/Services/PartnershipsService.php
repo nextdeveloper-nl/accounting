@@ -534,4 +534,199 @@ class PartnershipsService extends AbstractPartnershipsService
 
         return $code;
     }
+
+    // ---------------------------------------------------------------------------------------------------------
+    // Visibility in the partner lists, finding a company to invite
+    // ---------------------------------------------------------------------------------------------------------
+
+    public const VISIBILITIES = ['private', 'customers', 'public'];
+
+    /**
+     * The tenant decides who sees one of its partners in the partner lists: private, customers or public.
+     * Only the tenant (not the partner itself) can change it, because the partner is listed on behalf of the tenant.
+     *
+     * @throws NotAllowedException
+     */
+    public static function setVisibility(string $partnershipId, string $visibility): Partnerships
+    {
+        self::assertCanManageProgram();
+
+        if (!in_array($visibility, self::VISIBILITIES, true)) {
+            throw new NotAllowedException('The visibility must be one of: ' . implode(', ', self::VISIBILITIES) . '.');
+        }
+
+        PartnershipTenantGuard::assertOwned(Partnerships::class, $partnershipId, 'partnership_id');
+
+        $partnership = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+            ->where('uuid', $partnershipId)
+            ->first();
+
+        UserHelper::withRolesCheckBypassed(function () use ($partnership, $visibility) {
+            $partnership->update(['visibility' => $visibility]);
+        });
+
+        return $partnership->fresh();
+    }
+
+    /**
+     * Candidate companies for the invite drawer: accounts whose name STARTS with the typed text.
+     *
+     * This is a directory lookup, so it is deliberately narrow: only partnership managers of an active program, at least
+     * 3 characters, prefix match only, 10 results at most, a per tenant hourly limit, companies that already are a
+     * pending or active partner of the tenant are left out, and the owner email is masked. It returns just enough to
+     * tell two companies with the same name apart.
+     *
+     * @return array [{id, name, owner_email}] (id is the public id to send as partner_account_id)
+     * @throws NotAllowedException
+     */
+    public static function findInviteCandidates(string $query): array
+    {
+        $tenant = UserHelper::currentAccount();
+
+        self::assertCanManageProgram();
+        self::assertActiveProgram($tenant->id);
+
+        $query = trim($query);
+
+        if (mb_strlen($query) < 3 || mb_strlen($query) > 100) {
+            throw new NotAllowedException('Type at least 3 characters to search for a company.');
+        }
+
+        $limit = (int)config('accounting.partnership.max_candidate_searches_per_hour', 60);
+
+        if (RateLimiter::hit('partnership-candidates:tenant:' . $tenant->id, 3600) > $limit) {
+            throw new NotAllowedException('You searched too often. Please try again later.');
+        }
+
+        //  Escape LIKE wildcards: the text is a literal prefix, a typed % or _ must not widen the search.
+        $prefix = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query) . '%';
+
+        $alreadyPartners = DB::table('accounting_partnerships')
+            ->where('tenant_account_id', $tenant->id)
+            ->whereIn('status', [self::STATUS_PENDING, self::STATUS_ACTIVE])
+            ->whereNull('deleted_at')
+            ->select('iam_account_id');
+
+        $accounts = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('name', 'ilike', $prefix)
+            ->where('id', '!=', $tenant->id)
+            ->whereNotIn('id', $alreadyPartners)
+            //  Only companies that have an accounting account can become partners.
+            ->whereIn('id', DB::table('accounting_accounts')->whereNull('deleted_at')->select('iam_account_id'))
+            ->orderBy('name')
+            ->limit(10)
+            ->get();
+
+        return $accounts->map(function ($account) {
+            $owner = Users::withoutGlobalScope(AuthorizationScope::class)->where('id', $account->iam_user_id)->first();
+
+            return [
+                'id'          => $account->uuid,
+                'name'        => $account->name,
+                'owner_email' => $owner ? self::maskEmail($owner->email) : null,
+            ];
+        })->values()->all();
+    }
+
+    /**
+     * Invite a company by the email of its account owner.
+     *
+     * To keep this from becoming a way to find out which emails are registered, the answer is always the same text,
+     * whether or not the email belongs to an account (and whether or not the invitation could be sent). Problems about
+     * the TENANT's own request (no program, bad role, bad parent) are still reported, they reveal nothing about the
+     * invited company. The lookups are rate limited per tenant.
+     *
+     * @return array the same message in every case
+     * @throws NotAllowedException
+     */
+    public static function invitePartnerByEmail(string $email, array $roleIds, ?string $parentPartnershipId = null): array
+    {
+        $tenant = UserHelper::currentAccount();
+
+        self::assertCanManageProgram();
+        self::assertActiveProgram($tenant->id);
+
+        if (empty($roleIds)) {
+            throw new NotAllowedException('You need to offer at least one partnership role.');
+        }
+
+        //  Tenant side input is validated first and reported: it says nothing about the invited company.
+        foreach (array_unique($roleIds) as $roleId) {
+            PartnershipTenantGuard::assertOwned(PartnershipRoles::class, $roleId, 'role_ids');
+        }
+
+        if ($parentPartnershipId) {
+            PartnershipTenantGuard::assertOwned(Partnerships::class, $parentPartnershipId, 'parent_partnership_id');
+        }
+
+        $limit = (int)config('accounting.partnership.max_email_lookups_per_hour', 20);
+
+        if (RateLimiter::hit('partnership-email-lookup:tenant:' . $tenant->id, 3600) > $limit) {
+            throw new NotAllowedException('You tried too many email addresses. Please try again later.');
+        }
+
+        $message = ['message' => 'If an account is registered with this email address, its owner has received your invitation.'];
+
+        $owner = Users::withoutGlobalScope(AuthorizationScope::class)
+            ->whereRaw('lower(email) = ?', [mb_strtolower(trim($email))])
+            ->first();
+
+        if (!$owner) {
+            return $message;
+        }
+
+        //  The account(s) this person owns. Only an unambiguous match is used, we never guess between accounts.
+        $accounts = Accounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where('iam_user_id', $owner->id)
+            ->get();
+
+        if ($accounts->count() !== 1) {
+            return $message;
+        }
+
+        try {
+            self::invitePartner($accounts->first()->uuid, $roleIds, $parentPartnershipId);
+        } catch (NotAllowedException | NotFoundException $e) {
+            //  Target specific problems (own account, no accounting account, already a partner, quota) stay hidden
+            //  from the caller on purpose; they are only logged.
+            Log::info('[PartnershipsService] Invitation by email was not sent: ' . $e->getMessage());
+        }
+
+        return $message;
+    }
+
+    /**
+     * The tenant needs an active partner program for everything that sends invitations.
+     *
+     * @throws NotAllowedException
+     */
+    private static function assertActiveProgram(int $tenantAccountId): void
+    {
+        $exists = PartnerPrograms::withoutGlobalScope(AuthorizationScope::class)
+            ->where('tenant_account_id', $tenantAccountId)
+            ->where('status', 'active')
+            ->exists();
+
+        if (!$exists) {
+            throw new NotAllowedException('Your account does not have an active partner program.');
+        }
+    }
+
+    /**
+     * jane.doe@example.com -> j***@e***.com (enough to tell two owners apart, not enough to contact them).
+     */
+    private static function maskEmail(?string $email): ?string
+    {
+        if (!$email || !str_contains($email, '@')) {
+            return null;
+        }
+
+        [$local, $domain] = explode('@', $email, 2);
+
+        $dot = strrpos($domain, '.');
+        $name = $dot === false ? $domain : substr($domain, 0, $dot);
+        $tld = $dot === false ? '' : substr($domain, $dot);
+
+        return mb_substr($local, 0, 1) . '***@' . mb_substr($name, 0, 1) . '***' . $tld;
+    }
 }

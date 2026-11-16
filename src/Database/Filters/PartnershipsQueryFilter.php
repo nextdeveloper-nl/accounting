@@ -213,6 +213,60 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
+    //  Multi-tenant partnership filters. Placed below the marker on purpose: the generator does not know them yet.
+
+    /**
+     * ?status=pending|active|rejected|revoked (exact match)
+     */
+    public function status($value)
+    {
+        return $this->builder->where('status', '=', $value);
+    }
+
+    /**
+     * ?visibility=private|customers|public (exact match)
+     */
+    public function visibility($value)
+    {
+        return $this->builder->where('visibility', '=', $value);
+    }
+
+    /**
+     * ?tenant_id=<uuid of the IAM account that owns the program>
+     */
+    public function tenantId($value)
+    {
+        $tenant = \NextDeveloper\IAM\Database\Models\Accounts::withoutGlobalScope(
+            \NextDeveloper\IAM\Database\Scopes\AuthorizationScope::class
+        )->where('uuid', $value)->first();
+
+        //  Unknown tenant: return nothing instead of ignoring the filter and returning everything.
+        return $this->builder->where('tenant_account_id', '=', $tenant ? $tenant->id : 0);
+    }
+
+    //  Snake case alias, so that ?tenant_id=<uuid> works too
+    public function tenant_id($value)
+    {
+        return $this->tenantId($value);
+    }
+
+    /**
+     * ?parent_partnership_id=<uuid of the parent partnership>
+     */
+    public function parentPartnershipId($value)
+    {
+        $parent = \NextDeveloper\Accounting\Database\Models\Partnerships::withoutGlobalScope(
+            \NextDeveloper\IAM\Database\Scopes\AuthorizationScope::class
+        )->where('uuid', $value)->first();
+
+        return $this->builder->where('parent_partnership_id', '=', $parent ? $parent->id : 0);
+    }
+
+    public function parent_partnership_id($value)
+    {
+        return $this->parentPartnershipId($value);
+    }
+
 
 
 

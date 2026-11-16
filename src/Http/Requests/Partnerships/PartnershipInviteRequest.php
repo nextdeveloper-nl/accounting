@@ -17,7 +17,10 @@ class PartnershipInviteRequest extends AbstractFormRequest
      */
     public function rules() {
         return [
-            'partner_account_id'    => 'required|uuid|exists:iam_accounts,uuid',
+            //  The company is given either by its account id (found with the candidate search) or by the email of its
+            //  account owner. One of them is required. When both are sent the account id wins.
+            'partner_account_id'    => 'required_without:partner_email|nullable|uuid|exists:iam_accounts,uuid',
+            'partner_email'         => 'required_without:partner_account_id|nullable|email|max:254',
             'role_ids'              => 'required|array|min:1|max:20',
             'role_ids.*'            => 'required|uuid|distinct|exists:accounting_partnership_roles,uuid',
             'parent_partnership_id' => 'nullable|uuid|exists:accounting_partnerships,uuid',

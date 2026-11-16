@@ -63,6 +63,9 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
         ];
 
         if(in_array($model->getTable(), $partners)) {
+            //  Partner directory: only the partners this account may see (visibility private / customers / public).
+            \NextDeveloper\Accounting\Helpers\PartnerDirectory::scope($builder);
+
             return;
         }
 

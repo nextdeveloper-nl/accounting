@@ -155,6 +155,16 @@ class PartnerProgramsController extends AbstractController
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
     /**
+     * Summary of the partner program state of the account the user acts as (drives navigation visibility).
+     *
+     * @return mixed|null
+     */
+    public function me()
+    {
+        return $this->withArray(PartnerProgramsService::getSummary());
+    }
+
+    /**
      * The owner of the account turns it into a partner program (self service onboarding).
      *
      * @return mixed|null

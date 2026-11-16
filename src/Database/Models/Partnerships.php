@@ -40,6 +40,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
 * @property \Carbon\Carbon $created_at
 * @property \Carbon\Carbon $updated_at
 * @property \Carbon\Carbon $deleted_at
+* @property string $visibility
 * @property integer $tenant_account_id
 * @property string $status
 * @property \Carbon\Carbon $invited_at
@@ -96,6 +97,7 @@ protected $fillable = [
             'parent_partnership_id',
             'path',
             'iam_user_id',
+            'visibility',
     ];
 
 /**
@@ -117,6 +119,7 @@ protected $appends = [
 * @var array
 */
 protected $casts = [
+'visibility' => 'string',
 'tenant_account_id' => 'integer',
 'status' => 'string',
 'invited_at' => 'datetime',
