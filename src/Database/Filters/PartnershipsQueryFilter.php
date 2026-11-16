@@ -251,6 +251,32 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
     }
 
     /**
+     * ?descendants_of=<uuid of a partnership> returns the whole sub-partner tree below it (every level, not the
+     * partnership itself), so a UI can load one subtree instead of the full partner list.
+     *
+     * The root is looked up WITH the viewer's role scope: a partnership the viewer cannot see gives an empty result,
+     * so this filter cannot be used to read the tree below someone else's partner.
+     */
+    public function descendantsOf($value)
+    {
+        $root = \NextDeveloper\Accounting\Database\Models\Partnerships::where('uuid', $value)->first();
+
+        if (!$root || !$root->path) {
+            return $this->builder->whereRaw('1 = 0');
+        }
+
+        //  path is the materialised list of ancestor ids + own id (e.g. 5.9.14), so descendants start with "<path>.".
+        return $this->builder
+            ->where('tenant_account_id', $root->tenant_account_id)
+            ->where('path', 'like', $root->path . '.%');
+    }
+
+    public function descendants_of($value)
+    {
+        return $this->descendantsOf($value);
+    }
+
+    /**
      * ?parent_partnership_id=<uuid of the parent partnership>
      */
     public function parentPartnershipId($value)
