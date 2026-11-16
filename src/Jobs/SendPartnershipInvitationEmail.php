@@ -12,6 +12,7 @@ use NextDeveloper\Accounting\Database\Models\PartnershipRoleAssignments;
 use NextDeveloper\Accounting\Database\Models\PartnershipRoles;
 use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Envelopes\Partnerships\PartnershipInvitationEnvelope;
+use NextDeveloper\Accounting\Helpers\PartnershipBranding;
 use NextDeveloper\Communication\Helpers\Communicate;
 use NextDeveloper\IAM\Database\Models\Accounts as IamAccounts;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
@@ -212,43 +213,11 @@ class SendPartnershipInvitationEmail implements ShouldQueue
     }
 
     /**
-     * Branding of the tenant's program. The values are controlled by the tenant, so they are validated before they
-     * end up in an email: https logo only, hex colour only, valid email only.
+     * Branding of the tenant's program, validated (https logo, hex colour, valid email). See PartnershipBranding.
      */
     private function getBranding(IamAccounts $tenant): array
     {
-        $program = PartnerPrograms::withoutGlobalScope(AuthorizationScope::class)
-            ->where('tenant_account_id', $tenant->id)
-            ->first();
-
-        $raw = (array)($program?->branding ?? []);
-
-        $logo = $raw['logo_url'] ?? null;
-        if (!is_string($logo) || !filter_var($logo, FILTER_VALIDATE_URL) || !str_starts_with(strtolower($logo), 'https://')) {
-            $logo = null;
-        }
-
-        $color = $raw['primary_color'] ?? null;
-        if (!is_string($color) || !preg_match('/^#[0-9a-fA-F]{3,8}$/', $color)) {
-            $color = '#2563eb';
-        }
-
-        $support = $raw['support_email'] ?? $program?->responsible_email;
-        if (!is_string($support) || !filter_var($support, FILTER_VALIDATE_EMAIL)) {
-            $support = null;
-        }
-
-        $name = $raw['display_name'] ?? null;
-        if (!is_string($name) || trim($name) === '') {
-            $name = $tenant->name;
-        }
-
-        return [
-            'display_name'  => mb_substr($name, 0, 100),
-            'logo_url'      => $logo,
-            'primary_color' => $color,
-            'support_email' => $support,
-        ];
+        return PartnershipBranding::forTenant($tenant);
     }
 
     private function getDetails(Partnerships $partnership, IamAccounts $tenant, IamAccounts $partner): array
