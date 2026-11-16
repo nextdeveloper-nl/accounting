@@ -756,11 +756,29 @@ class PartnershipsService extends AbstractPartnershipsService
             'affiliate'   => (bool)$account->is_affiliate,
         ];
 
+        //  Defence in depth: this opens roles and activates partnerships, so only staff (or the system itself, jobs run
+        //  as the system identity) may trigger it, whatever the caller did before. AccountsService::update also strips
+        //  the flags from normal users, so a flag can only arrive here from staff.
+        if (!(
+            UserHelper::hasRole('accounting-admin') ||
+            UserHelper::hasRole('accounting-manager') ||
+            UserHelper::hasRole('system-admin') ||
+            UserHelper::bypassRolesCheck()
+        )) {
+            Log::warning('[PartnershipsService] syncFromLegacyFlags refused for account ' . $account->id . ': caller is not staff.');
+
+            return null;
+        }
+
         $tenantId = AccountPartnersService::getDefaultTenantId();
 
+        //  Only a partnership of the DEFAULT tenant (or an old one that has no tenant yet) is touched here. A partnership
+        //  of the same account in another tenant is a different relationship and is never changed by a legacy flag.
         $partnership = Partnerships::withoutGlobalScope(AuthorizationScope::class)
-            ->where('tenant_account_id', $tenantId)
             ->where('accounting_account_id', $account->id)
+            ->where(function ($q) use ($tenantId) {
+                $q->where('tenant_account_id', $tenantId)->orWhereNull('tenant_account_id');
+            })
             ->first();
 
         if (!$partnership && !array_filter($flags)) {
@@ -771,20 +789,21 @@ class PartnershipsService extends AbstractPartnershipsService
             $created = false;
 
             if (!$partnership) {
-                //  Is this a brand new partnership? The legacy create() below returns an existing partnership of the account
-                //  (for example one without a tenant) instead of creating one, and returns a fresh model either way, so the
-                //  answer has to be read BEFORE the call.
-                $existedBefore = Partnerships::withoutGlobalScope(AuthorizationScope::class)
-                    ->where('iam_account_id', $account->iam_account_id)
-                    ->exists();
-
-                //  The legacy create(): generates the partner code and the starting values.
-                $partnership = self::create([
+                //  Created explicitly in the default tenant. The legacy create() is NOT used: it returns any existing
+                //  partnership of the account, also one that belongs to another tenant, and would then be modified.
+                //  Staff flagged the account, so it starts active, and public like every flagged partner was before.
+                $partnership = AbstractPartnershipsService::create([
+                    'tenant_account_id'     => $tenantId,
                     'iam_account_id'        => $account->iam_account_id,
                     'accounting_account_id' => $account->id,
+                    'partner_code'          => self::generatePartnerCode(),
+                    'customer_count'        => 0,
+                    'level'                 => 1,
+                    'status'                => self::STATUS_ACTIVE,
+                    'visibility'            => 'public',
                 ]);
 
-                $created = !$existedBefore;
+                $created = true;
             }
 
             $updates = [];

@@ -80,6 +80,15 @@ class AccountsService extends AbstractAccountsService
             unset($data['sales_partner_id']);
             unset($data['integrator_partner_id']);
             unset($data['affiliate_partner_id']);
+
+            //  The partner role flags, the affiliate level and the partner code decide who is a partner, which role they
+            //  hold and what they are paid. The update API accepts them and every account may update its own accounting
+            //  account, so a normal user must not be able to set them: it would let anybody promote themselves to a
+            //  partner. Only staff change them.
+            foreach (['is_distributor', 'is_integrator', 'is_reseller', 'is_affiliate', 'is_vendor', 'is_sales_partner',
+                         'affiliate_level', 'partner_code', 'tenant_account_id'] as $privileged) {
+                unset($data[$privileged]);
+            }
         }
 
         if(array_key_exists('affiliate_partner_id', $data)) {
