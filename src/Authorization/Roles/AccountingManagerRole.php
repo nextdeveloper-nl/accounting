@@ -14,7 +14,9 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
 {
     public const NAME = 'accounting-manager';
 
-    public const LEVEL = 20;
+    //  Customer manager level (leo4#1304), was 20: below accounting-admin (10) and accounting-user (150), outside the
+    //  admin level range (<= 100) that customers must not reach.
+    public const LEVEL = 120;
 
     public const DESCRIPTION = 'Accounting operations manager who has access to all objects in this module.';
 

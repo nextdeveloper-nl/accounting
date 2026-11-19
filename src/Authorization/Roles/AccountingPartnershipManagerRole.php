@@ -24,8 +24,9 @@ class AccountingPartnershipManagerRole extends AbstractRole implements IAuthoriz
 {
     public const NAME = 'partnership-manager';
 
-    //  Must be lower than accounting-user (150) so it is evaluated first for the partnership tables.
-    public const LEVEL = 60;
+    //  Must be lower than partnership-user (120) and accounting-user (150) so it is evaluated first for the
+    //  partnership tables, and above 100 so it is not in the admin level range (leo4#1304, was 60).
+    public const LEVEL = 110;
 
     public const DESCRIPTION = 'Partnership manager manages the partner program of their own account: partnership' .
     ' roles, partners, partner zones and customer assignments.';
