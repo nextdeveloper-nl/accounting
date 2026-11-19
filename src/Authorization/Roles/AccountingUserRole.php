@@ -69,14 +69,10 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             return;
         }
 
-        if(
-            UserHelper::has('sales-person') && (
-                $model->getTable() === 'accounting_accounts_perspective' ||
-                $model->getTable() === 'accounting_accounts'
-            )
-        ) {
-            return;
-        }
+        //  SECURITY: a former early return here let anyone holding 'sales-person' read every accounting account
+        //  unfiltered. 'sales-person' is granted to every registered user (leo.register.default_roles), so every
+        //  user could read all accounts' tax numbers, credit etc. Removed: accounts now fall through to the
+        //  iam_account_id filter below. Staff needing cross-account access use accounting-admin/manager roles.
 
         if(
             $model->getTable() == 'accounting_invoices' ||
@@ -141,15 +137,10 @@ class AccountingUserRole extends AbstractRole implements IAuthorizationRole
             'accounting_credit_cards:update',
             'accounting_credit_cards:delete',
 
+            //  SECURITY: customers may only read invoices and items. create/update/delete were removed so a user
+            //  cannot forge, mark as paid or delete invoices. Invoices are written by services/system actions.
             'accounting_invoices:read',
-            'accounting_invoices:create',
-            'accounting_invoices:update',
-            'accounting_invoices:delete',
-
             'accounting_invoice_items:read',
-            'accounting_invoice_items:create',
-            'accounting_invoice_items:update',
-            'accounting_invoice_items:delete',
 
             'accounting_contracts:read',
             'accounting_contracts:create',
