@@ -299,12 +299,15 @@ class InvoicesPerspectiveQueryFilter extends AbstractQueryFilter
         if($accountingAccount) {
             return $this->builder->where('accounting_account_id', '=', $accountingAccount->id);
         }
+
+        // Unknown / not visible account must return nothing, not every invoice.
+        return $this->builder->whereRaw('1 = 0');
         }
 
         //  This is an alias function of accountingAccount
     public function accounting_account_id($value)
     {
-    return $this->accountingAccount($value);
+    return $this->accountingAccountId($value);
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
