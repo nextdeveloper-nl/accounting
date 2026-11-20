@@ -88,6 +88,12 @@ class AccountingManagerRole extends AbstractRole implements IAuthorizationRole
             $builder->where('iam_account_id', UserHelper::currentAccount()->id);
             return;
         }
+
+        //  Every other accounting table (payment gateways with live Stripe / iyzico data, ...) used to fall through
+        //  without any filter, so the role saw the rows of every account. Default to the acting account's own rows.
+        if (\NextDeveloper\Commons\Helpers\DatabaseHelper::isColumnExists($model->getTable(), 'iam_account_id')) {
+            $builder->where($model->getTable() . '.iam_account_id', UserHelper::currentAccount()->id);
+        }
     }
 
     public function checkPrivileges(?Users $users = null)
