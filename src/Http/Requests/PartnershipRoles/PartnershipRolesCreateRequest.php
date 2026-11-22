@@ -12,7 +12,8 @@ class PartnershipRolesCreateRequest extends AbstractFormRequest
      */
     public function rules() {
         return [
-            'slug' => 'required|string',
+            //  Optional: PartnershipRolesService::create() derives a unique slug from the name when it is not sent.
+            'slug' => 'nullable|string',
             'name' => 'required|string',
             'description' => 'nullable|string',
             //  Capped at 50%: the commission engine pays nothing above this (accounting.partnership.max_commission_rate), so refuse it up front.
