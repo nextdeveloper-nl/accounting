@@ -620,20 +620,12 @@ class PartnershipsService extends AbstractPartnershipsService
         return $accounts->map(function ($account) {
             $owner = Users::withoutGlobalScope(AuthorizationScope::class)->where('id', $account->iam_user_id)->first();
 
-            //  Two companies can share a name: initials of the owner and the month the account was opened tell them apart
-            //  without exposing anything the masked email does not already hint at.
-            $initials = $owner
-                ? trim(implode(' ', array_filter([
-                    $owner->name ? mb_strtoupper(mb_substr($owner->name, 0, 1)) . '.' : null,
-                    $owner->surname ? mb_strtoupper(mb_substr($owner->surname, 0, 1)) . '.' : null,
-                ])))
-                : null;
-
+            //  Two companies can share a name: the month the account was opened helps tell them apart. Owner name or
+            //  initials are personal data of another tenant's user, so they are deliberately NOT returned.
             return [
                 'id'             => $account->uuid,
                 'name'           => $account->name,
                 'owner_email'    => $owner ? self::maskEmail($owner->email) : null,
-                'owner_initials' => $initials ?: null,
                 'created_at'     => $account->created_at ? $account->created_at->format('Y-m') : null,
             ];
         })->values()->all();
