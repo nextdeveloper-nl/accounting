@@ -593,6 +593,10 @@ Route::prefix('partner-programs')->group(function () {
 Route::prefix('partnerships')->group(function () {
         //  Invitation lifecycle. These are POST only, so they do not collide with the generated CRUD routes.
         Route::post('/invite', 'Partnerships\PartnershipsController@invite');
+        //  Applications: a company asks to join another company's program, the tenant approves or rejects.
+        Route::post('/apply', 'Partnerships\PartnershipsController@apply');
+        Route::post('/{accounting_partnerships}/approve-application', 'Partnerships\PartnershipsController@approveApplication');
+        Route::post('/{accounting_partnerships}/reject-application', 'Partnerships\PartnershipsController@rejectApplication');
         Route::post('/{accounting_partnerships}/accept', 'Partnerships\PartnershipsController@accept');
         Route::post('/{accounting_partnerships}/reject', 'Partnerships\PartnershipsController@reject');
         Route::post('/{accounting_partnerships}/revoke', 'Partnerships\PartnershipsController@revoke');

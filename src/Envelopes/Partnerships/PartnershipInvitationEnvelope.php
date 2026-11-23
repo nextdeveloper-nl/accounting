@@ -41,6 +41,9 @@ class PartnershipInvitationEnvelope extends Mailable
             'accepted' => $partner . ' accepted your partnership invitation',
             'rejected' => $partner . ' declined your partnership invitation',
             'revoked'  => 'Your partnership with ' . $tenant . ' has ended',
+            'applied'  => $partner . ' applied to your partner program',
+            'approved' => $tenant . ' approved your partner application',
+            'declined' => $tenant . ' declined your partner application',
             default    => 'Partnership update',
         };
     }

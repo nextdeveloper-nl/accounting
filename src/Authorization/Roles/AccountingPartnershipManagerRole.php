@@ -126,10 +126,11 @@ class AccountingPartnershipManagerRole extends AbstractRole implements IAuthoriz
             'accounting_partnership_zones:update',
             'accounting_partnership_zones:delete',
 
-            //  Partners are revoked (status change), not deleted, so there is no delete here.
+            //  Partners are revoked (status change), not deleted, so there is no delete here. There is also no
+            //  create / update on purpose: partnerships are created and changed only by the action endpoints (invite,
+            //  apply, accept, approve, revoke ...), which check who acts. A role must not be able to write the ownership
+            //  or lifecycle fields through the generic CRUD endpoints.
             'accounting_partnerships:read',
-            'accounting_partnerships:create',
-            'accounting_partnerships:update',
         ];
     }
 

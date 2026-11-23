@@ -54,6 +54,22 @@
                                 They are now an active partner.</p>
                         @elseif($event === 'rejected')
                             <p><strong>{{ $details['partner_name'] }}</strong> declined your partnership invitation.</p>
+                        @elseif($event === 'applied')
+                            <p><strong>{{ $details['partner_name'] }}</strong> applied to join your partner program.
+                                Nothing changes until you approve the application.</p>
+                            @if(!empty($details['roles']))
+                                <p>Roles requested:</p>
+                                <ul>
+                                    @foreach($details['roles'] as $role)
+                                        <li>{{ $role }}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        @elseif($event === 'approved')
+                            <p><strong>{{ $details['tenant_name'] }}</strong> approved your application.
+                                You are now an active partner.</p>
+                        @elseif($event === 'declined')
+                            <p><strong>{{ $details['tenant_name'] }}</strong> declined your partner application.</p>
                         @elseif($event === 'revoked')
                             <p>The partnership between <strong>{{ $details['partner_name'] }}</strong> and
                                 <strong>{{ $details['tenant_name'] }}</strong> has ended.</p>
