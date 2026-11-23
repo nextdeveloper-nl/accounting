@@ -89,8 +89,22 @@ class PartnershipsService extends AbstractPartnershipsService
                 $data['path'],
                 $data['invited_at'],
                 $data['accepted_at'],
-                $data['invited_by_iam_user_id']
+                $data['invited_by_iam_user_id'],
+                //  Security review: the partner row must be bound to the CURRENT account only.
+                $data['accounting_account_id'],
+                $data['partner_code'],
+                $data['level'],
+                $data['customer_count']
             );
+
+            //  The accounting account is derived on the server from the account the user acts as.
+            $accountingAccount = AccountingHelper::getAccountFromIamAccountId(UserHelper::currentAccount()->id);
+
+            if (!$accountingAccount) {
+                throw new NotAllowedException('Your company does not have an accounting account yet.');
+            }
+
+            $data['accounting_account_id'] = $accountingAccount->id;
         }
 
         $partnership = null;
@@ -248,8 +262,10 @@ class PartnershipsService extends AbstractPartnershipsService
             ->where('accounting_account_id', $partnerAccountingAccount->id)
             ->first();
 
-        if ($existing && in_array($existing->status, [self::STATUS_PENDING, self::STATUS_ACTIVE])) {
-            throw new NotAllowedException('This company is already your partner or has a pending invitation.');
+        //  An open APPLICATION blocks an invitation too: the tenant has to approve or reject it, otherwise the roles the
+        //  applicant asked for would be activated together with the invitation.
+        if ($existing && in_array($existing->status, [self::STATUS_PENDING, self::STATUS_APPLIED, self::STATUS_ACTIVE])) {
+            throw new NotAllowedException('This company is already your partner or has a pending invitation or application.');
         }
 
         //  Every invitation emails a third party. The quota is counted per email SENT, not per database row: a
