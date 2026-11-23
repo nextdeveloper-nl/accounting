@@ -306,6 +306,8 @@ class PartnerProgramsService extends AbstractPartnerProgramsService
                 'branding'            => $program->branding,
                 'responsible_email'   => $program->responsible_email,
                 'max_hierarchy_depth' => $program->max_hierarchy_depth,
+                //  Whether other companies may apply (null until the accepting_applications column exists).
+                'accepting_applications' => (bool)$program->accepting_applications,
             ] : null,
             //  Only the owner can enable, and not a program the platform suspended.
             'can_enable'               => $isOwner && (!$program || $program->status === self::STATUS_DISABLED),
