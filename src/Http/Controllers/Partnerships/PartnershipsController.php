@@ -10,6 +10,7 @@ use NextDeveloper\Accounting\Database\Filters\PartnershipsQueryFilter;
 use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Services\PartnershipsService;
 use NextDeveloper\Accounting\Http\Requests\Partnerships\PartnershipsCreateRequest;
+use NextDeveloper\Accounting\Http\Requests\Partnerships\PartnershipApplyRequest;
 use NextDeveloper\Accounting\Http\Requests\Partnerships\PartnershipInviteRequest;
 use NextDeveloper\Accounting\Http\Requests\Partnerships\PartnershipVisibilityRequest;
 use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
@@ -185,6 +186,55 @@ class PartnershipsController extends AbstractController
             $request->validated('role_ids'),
             $request->validated('parent_partnership_id')
         );
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+     * The account the user acts as applies to the partner program of another company. The operation and every
+     * authorization check live in PartnershipsService.
+     *
+     * @param  PartnershipApplyRequest $request
+     * @return mixed|null
+     */
+    public function apply(PartnershipApplyRequest $request)
+    {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
+        $model = PartnershipsService::applyToProgram(
+            $request->validated('tenant_account_id'),
+            $request->validated('role_ids')
+        );
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+     * The tenant approves an application to its program.
+     *
+     * @param  $partnershipId
+     * @return mixed|null
+     */
+    public function approveApplication($partnershipId)
+    {
+        $model = PartnershipsService::approveApplication($partnershipId);
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+     * The tenant declines an application to its program.
+     *
+     * @param  $partnershipId
+     * @return mixed|null
+     */
+    public function rejectApplication($partnershipId)
+    {
+        $model = PartnershipsService::rejectApplication($partnershipId);
 
         return ResponsableFactory::makeResponse($this, $model);
     }

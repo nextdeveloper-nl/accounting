@@ -32,7 +32,7 @@ class SendPartnershipInvitationEmail implements ShouldQueue
 
     /**
      * @param Partnerships $partnership
-     * @param string       $event       invited | accepted | rejected | revoked
+     * @param string       $event       invited | accepted | rejected | revoked | applied | approved | declined
      */
     public function __construct(Partnerships $partnership, private string $event)
     {
@@ -78,13 +78,15 @@ class SendPartnershipInvitationEmail implements ShouldQueue
     /**
      * invited / revoked   -> the invited company: its account owner and partnership managers
      * accepted / rejected -> the tenant: its account owner and partnership managers
+     * applied             -> the tenant (someone asks to join its program)
+     * approved / declined -> the applicant company (the tenant answered its application)
      *
      * (accounting-admin is not used on purpose, it is the cross tenant platform role and normal accounts do not
      * hold it.)
      */
     private function getRecipients(IamAccounts $tenant, IamAccounts $partner)
     {
-        $account = in_array($this->event, ['invited', 'revoked']) ? $partner : $tenant;
+        $account = in_array($this->event, ['invited', 'revoked', 'approved', 'declined']) ? $partner : $tenant;
 
         $users = UserHelper::getUsersWithRole('partnership-manager', account: $account, authorization: true);
 

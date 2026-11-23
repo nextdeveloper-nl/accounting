@@ -55,6 +55,8 @@ protected $fillable = [
             'branding',
             'default_country_code',
             'max_hierarchy_depth',
+            //  Needs column accounting_partner_programs.accepting_applications (boolean, default false).
+            'accepting_applications',
             'status',
             'iam_account_id',
             'iam_user_id',
@@ -86,6 +88,7 @@ protected $casts = [
 'branding' => 'array',
 'default_country_code' => 'string',
 'max_hierarchy_depth' => 'integer',
+'accepting_applications' => 'boolean',
 'status' => 'string',
 'iam_account_id' => 'integer',
 'iam_user_id' => 'integer',

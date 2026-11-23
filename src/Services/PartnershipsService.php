@@ -36,8 +36,63 @@ class PartnershipsService extends AbstractPartnershipsService
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
+    /**
+     * Hardening (multi-tenant): the ownership, program and lifecycle fields of a partnership can never be changed
+     * through the generic update endpoint. They change only through the action endpoints (accept, approve, revoke ...),
+     * which check who is acting. Platform admins keep full control.
+     *
+     * @param  $id
+     * @param  array $data
+     * @return mixed
+     */
+    public static function update($id, array $data)
+    {
+        if (!UserHelper::hasRole('system-admin')) {
+            unset(
+                $data['tenant_account_id'],
+                $data['iam_account_id'],
+                $data['iam_user_id'],
+                $data['accounting_account_id'],
+                $data['status'],
+                $data['is_approved'],
+                $data['level'],
+                $data['customer_count'],
+                $data['partner_code'],
+                $data['visibility'],
+                $data['parent_partnership_id'],
+                $data['path'],
+                $data['invited_at'],
+                $data['accepted_at'],
+                $data['invited_by_iam_user_id']
+            );
+        }
+
+        return parent::update($id, $data);
+    }
+
     public static function create(array $data)
     {
+        //  Hardening (multi-tenant): this generic endpoint must never let a client choose who owns the row, which
+        //  program it joins, or skip the approval flow. Joining a program is done only by the action endpoints
+        //  (invite / apply / accept / approve ...). Platform admins keep the full control they had.
+        if (!UserHelper::hasRole('system-admin')) {
+            //  The partner is always the account the user acts as, and the tenant is never taken from the client.
+            $data['iam_account_id'] = UserHelper::currentAccount()->id;
+            $data['iam_user_id'] = UserHelper::me()->id;
+
+            unset(
+                $data['tenant_account_id'],
+                $data['status'],
+                $data['is_approved'],
+                $data['visibility'],
+                $data['parent_partnership_id'],
+                $data['path'],
+                $data['invited_at'],
+                $data['accepted_at'],
+                $data['invited_by_iam_user_id']
+            );
+        }
+
         $partnership = null;
 
         if(array_key_exists('iam_account_id', $data)) {
@@ -113,6 +168,8 @@ class PartnershipsService extends AbstractPartnershipsService
     // the partner account, which has no write permission on the tenant's rows by design.
     // ---------------------------------------------------------------------------------------------------------
 
+    //  A company asked to join a tenant's program (the tenant has to approve). 'pending' stays the invited-by-tenant state.
+    public const STATUS_APPLIED = 'applied';
     public const STATUS_PENDING = 'pending';
     public const STATUS_ACTIVE = 'active';
     public const STATUS_REJECTED = 'rejected';
@@ -383,6 +440,220 @@ class PartnershipsService extends AbstractPartnershipsService
         }
 
         throw new NotAllowedException('You are not allowed to manage the partner program.');
+    }
+
+    /**
+     * The account the user acts as asks to join the partner program of another account (the tenant).
+     *
+     * The row belongs to the applicant (iam_account_id = the account the user acts as, like an invitation row belongs
+     * to the invited company); the tenant is taken from the program that is applied to, never from free input. It
+     * starts as 'applied' and the tenant has to approve it. The same answer is given when the program does not exist
+     * and when it does not take applications, so programs cannot be probed.
+     *
+     * @param  string $tenantIamAccountId public id (uuid) of the IAM account that runs the program
+     * @param  array  $roleIds            public ids of the roles (of that tenant) the applicant asks for
+     * @throws NotAllowedException
+     * @throws NotFoundException
+     */
+    public static function applyToProgram(string $tenantIamAccountId, array $roleIds): Partnerships
+    {
+        $partnerIam = UserHelper::currentAccount();
+        $me = UserHelper::me();
+
+        //  Who may apply for the company: its account owner or a partnership manager of that account.
+        $isOwner = (int)$partnerIam->iam_user_id === (int)$me->id;
+
+        if (!($isOwner || UserHelper::hasRole('partnership-manager') || UserHelper::hasRole('system-admin'))) {
+            throw new NotAllowedException('Only the owner or a partnership manager of the company can apply to a partner program.');
+        }
+
+        if (empty($roleIds)) {
+            throw new NotAllowedException('You need to choose at least one partnership role.');
+        }
+
+        $tenantIam = Accounts::withoutGlobalScope(AuthorizationScope::class)->where('uuid', $tenantIamAccountId)->first();
+
+        $program = $tenantIam
+            ? PartnerPrograms::withoutGlobalScope(AuthorizationScope::class)
+                ->where('tenant_account_id', $tenantIam->id)
+                ->where('status', 'active')
+                ->first()
+            : null;
+
+        //  'accepting_applications' is read as an attribute: a program that never set it does not take applications.
+        if (!$program || !$program->accepting_applications) {
+            throw new NotFoundException('We cannot find a partner program that takes applications for this company.');
+        }
+
+        if ((int)$tenantIam->id === (int)$partnerIam->id) {
+            throw new NotAllowedException('You cannot apply to your own partner program.');
+        }
+
+        $partnerAccountingAccount = AccountingHelper::getAccountFromIamAccountId($partnerIam->id);
+
+        if (!$partnerAccountingAccount) {
+            throw new NotAllowedException('Your company does not have an accounting account yet.');
+        }
+
+        //  The roles must be active roles of THAT tenant (the current account is the applicant, so the tenant guard
+        //  of the invite flow cannot be used here).
+        $roles = PartnershipRoles::withoutGlobalScope(AuthorizationScope::class)
+            ->where('tenant_account_id', $tenantIam->id)
+            ->whereIn('uuid', array_unique($roleIds))
+            ->get();
+
+        if ($roles->count() !== count(array_unique($roleIds)) || $roles->contains(fn($r) => $r->status !== 'active')) {
+            throw new NotAllowedException('One of the roles you chose is not available in this partner program.');
+        }
+
+        $existing = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+            ->where('tenant_account_id', $tenantIam->id)
+            ->where('accounting_account_id', $partnerAccountingAccount->id)
+            ->first();
+
+        if ($existing && in_array($existing->status, [self::STATUS_PENDING, self::STATUS_APPLIED, self::STATUS_ACTIVE])) {
+            throw new NotAllowedException('Your company is already a partner of this program or has an open invitation or application.');
+        }
+
+        //  Every application notifies a third party, so it is limited per applicant per day (atomic hit, then check).
+        $limit = (int)config('accounting.partnership.max_applications_per_day', 5);
+
+        if (RateLimiter::hit('partnership-apply:account:' . $partnerIam->id, 86400) > $limit) {
+            throw new NotAllowedException('You sent too many applications. Please try again tomorrow.');
+        }
+
+        $partnership = DB::transaction(function () use ($tenantIam, $partnerIam, $partnerAccountingAccount, $roles, $existing, $me) {
+            return UserHelper::withRolesCheckBypassed(function () use ($tenantIam, $partnerIam, $partnerAccountingAccount, $roles, $existing, $me) {
+                $data = [
+                    'status'      => self::STATUS_APPLIED,
+                    'accepted_at' => null,
+                    'parent_partnership_id' => null,
+                ];
+
+                if ($existing) {
+                    //  Re-application after a rejection / revocation: reuse the row, keep its partner code.
+                    $existing->update($data);
+                    $partnership = $existing->fresh();
+                } else {
+                    $partnership = Partnerships::create($data + [
+                        'tenant_account_id'     => $tenantIam->id,
+                        'accounting_account_id' => $partnerAccountingAccount->id,
+                        //  The partner owns its membership row, same as for an invitation.
+                        'iam_account_id'        => $partnerIam->id,
+                        'iam_user_id'           => $me->id,
+                        'partner_code'          => self::generatePartnerCode(),
+                        'customer_count'        => 0,
+                        'level'                 => 1,
+                    ]);
+                }
+
+                $partnership->path = (string)$partnership->id;
+                $partnership->save();
+
+                foreach ($roles as $role) {
+                    //  Starts as pending, becomes active together with the partnership when the tenant approves.
+                    PartnershipRoleAssignments::create([
+                        'tenant_account_id'   => $tenantIam->id,
+                        'partnership_id'      => $partnership->id,
+                        'partnership_role_id' => $role->id,
+                        'status'              => self::STATUS_PENDING,
+                        'started_at'          => now(),
+                        'iam_account_id'      => $tenantIam->id,
+                        'iam_user_id'         => $me->id,
+                    ]);
+                }
+
+                return $partnership->fresh();
+            });
+        });
+
+        dispatch(new SendPartnershipInvitationEmail($partnership, 'applied'));
+
+        return $partnership;
+    }
+
+    /**
+     * The tenant approves an application: the partnership and its roles become active and the partner code starts
+     * working.
+     *
+     * @throws NotAllowedException
+     */
+    public static function approveApplication(string $partnershipId): Partnerships
+    {
+        $partnership = self::getApplicationOfTenant($partnershipId);
+
+        UserHelper::withRolesCheckBypassed(function () use ($partnership) {
+            DB::transaction(function () use ($partnership) {
+                $partnership->update([
+                    'status'      => self::STATUS_ACTIVE,
+                    'accepted_at' => now(),
+                ]);
+
+                PartnershipRoleAssignments::withoutGlobalScope(AuthorizationScope::class)
+                    ->where('partnership_id', $partnership->id)
+                    ->where('status', self::STATUS_PENDING)
+                    ->whereNull('finished_at')
+                    ->get()
+                    ->each(fn($assignment) => $assignment->update([
+                        'status'     => self::STATUS_ACTIVE,
+                        'started_at' => now(),
+                    ]));
+            });
+        });
+
+        //  Quota like revoke: over the limit the approval still happens, only the email is skipped.
+        if (self::consumeEmailQuota((int)$partnership->tenant_account_id, (int)$partnership->iam_account_id)) {
+            dispatch(new SendPartnershipInvitationEmail($partnership->fresh(), 'approved'));
+        }
+
+        return $partnership->fresh();
+    }
+
+    /**
+     * The tenant declines an application.
+     *
+     * @throws NotAllowedException
+     */
+    public static function rejectApplication(string $partnershipId): Partnerships
+    {
+        $partnership = self::getApplicationOfTenant($partnershipId);
+
+        UserHelper::withRolesCheckBypassed(function () use ($partnership) {
+            DB::transaction(function () use ($partnership) {
+                $partnership->update(['status' => self::STATUS_REJECTED]);
+
+                self::endRoleAssignments($partnership, self::STATUS_REJECTED);
+            });
+        });
+
+        if (self::consumeEmailQuota((int)$partnership->tenant_account_id, (int)$partnership->iam_account_id)) {
+            dispatch(new SendPartnershipInvitationEmail($partnership->fresh(), 'declined'));
+        }
+
+        return $partnership->fresh();
+    }
+
+    /**
+     * Finds an APPLIED partnership of our tenant and checks that the user may manage the program.
+     *
+     * @throws NotAllowedException
+     */
+    private static function getApplicationOfTenant(string $partnershipId): Partnerships
+    {
+        self::assertCanManageProgram();
+
+        //  Same message for "does not exist" and "belongs to another tenant".
+        PartnershipTenantGuard::assertOwned(Partnerships::class, $partnershipId, 'partnership_id');
+
+        $partnership = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+            ->where('uuid', $partnershipId)
+            ->first();
+
+        if ($partnership->status !== self::STATUS_APPLIED) {
+            throw new NotAllowedException('This application is not open anymore.');
+        }
+
+        return $partnership;
     }
 
     /**

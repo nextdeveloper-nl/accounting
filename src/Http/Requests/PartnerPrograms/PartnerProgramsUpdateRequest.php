@@ -17,6 +17,8 @@ class PartnerProgramsUpdateRequest extends AbstractFormRequest
             'branding' => 'nullable',
             'default_country_code' => 'nullable|string',
             'max_hierarchy_depth' => 'nullable|integer',
+            //  Whether other companies may apply to this program (needs the accepting_applications column).
+            'accepting_applications' => 'nullable|boolean',
             'status' => 'nullable|string',
         ];
     }
