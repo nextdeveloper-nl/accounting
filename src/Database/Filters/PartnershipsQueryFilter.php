@@ -213,6 +213,21 @@ class PartnershipsQueryFilter extends AbstractQueryFilter
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 
+    /**
+     * Revoked partnerships are history: unless the caller asks for a status explicitly (?status=revoked, or any other
+     * value), the list does not contain them. Single partnerships (show by id) are not affected.
+     */
+    public function apply(Builder $builder)
+    {
+        $builder = parent::apply($builder);
+
+        if (!array_key_exists('status', $this->filters())) {
+            $builder->where($builder->getModel()->getTable() . '.status', '!=', 'revoked');
+        }
+
+        return $builder;
+    }
+
     //  Multi-tenant partnership filters. Placed below the marker on purpose: the generator does not know them yet.
 
     /**
