@@ -4,7 +4,11 @@ namespace NextDeveloper\Accounting\Services;
 
 use NextDeveloper\Accounting\Services\AbstractServices\AbstractPartnerProgramsService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Schema;
+use NextDeveloper\Accounting\Database\Models\PartnershipRoles;
+use NextDeveloper\IAM\Database\Models\Accounts as IamAccounts;
 use NextDeveloper\Accounting\Database\Models\Partnerships;
 use NextDeveloper\Accounting\Database\Models\PartnerPrograms;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
@@ -181,6 +185,92 @@ class PartnerProgramsService extends AbstractPartnerProgramsService
     private static function canSetStatus(): bool
     {
         return UserHelper::hasRole('system-admin');
+    }
+
+    /**
+     * Discovery: the partner programs that take applications, for any logged in account that wants to apply.
+     *
+     * This is a directory of OTHER companies' programs, so it is deliberately narrow: only programs that are active and
+     * opted in (accepting_applications), the account's own program is left out, and a program shows only what an
+     * applicant needs: the VERIFIED account name (never the tenant typed branding, so a program cannot pose as another
+     * company), its active roles (id and name, no commission rates or other terms) and the status of the caller's own
+     * partnership with it. No emails, no owners. Prefix search on the name, paged, and limited per account per hour.
+     *
+     * @param  string|null $query   prefix of the company name
+     * @param  int         $page
+     * @param  int         $perPage at most 50
+     * @return array {data: [{id, name, roles: [{id, name}], my_status}], meta: {page, per_page, total}}
+     * @throws NotAllowedException
+     */
+    public static function discoverPrograms(?string $query, int $page = 1, int $perPage = 20): array
+    {
+        $account = UserHelper::currentAccount();
+
+        $limit = (int)config('accounting.partnership.max_discovery_requests_per_hour', 120);
+
+        if (RateLimiter::hit('partnership-discover:account:' . $account->id, 3600) > $limit) {
+            throw new NotAllowedException('You searched too often. Please try again later.');
+        }
+
+        $page = max(1, $page);
+        $perPage = min(50, max(1, $perPage));
+
+        //  Until the accepting_applications column exists nothing can be listed (checked at most every 10 minutes).
+        $hasColumn = Cache::remember('partnership:programs-has-accepting-applications', 600, function () {
+            return Schema::hasColumn('accounting_partner_programs', 'accepting_applications');
+        });
+
+        if (!$hasColumn) {
+            return ['data' => [], 'meta' => ['page' => $page, 'per_page' => $perPage, 'total' => 0]];
+        }
+
+        $programs = PartnerPrograms::withoutGlobalScope(AuthorizationScope::class)
+            //  Columns are qualified: the query joins iam_accounts.
+            ->where('accounting_partner_programs.status', self::STATUS_ACTIVE)
+            ->where('accounting_partner_programs.accepting_applications', true)
+            ->where('accounting_partner_programs.tenant_account_id', '!=', $account->id)
+            ->join('iam_accounts', 'iam_accounts.id', '=', 'accounting_partner_programs.tenant_account_id')
+            ->whereNull('iam_accounts.deleted_at')
+            ->select('accounting_partner_programs.tenant_account_id', 'iam_accounts.uuid as account_uuid', 'iam_accounts.name as account_name');
+
+        $query = trim((string)$query);
+
+        if ($query !== '') {
+            //  Escape LIKE wildcards: the text is a literal prefix.
+            $prefix = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], mb_substr($query, 0, 100)) . '%';
+            $programs->where('iam_accounts.name', 'ilike', $prefix);
+        }
+
+        $total = (clone $programs)->count();
+
+        $rows = $programs->orderBy('iam_accounts.name')->forPage($page, $perPage)->get();
+
+        $tenantIds = $rows->pluck('tenant_account_id')->all();
+
+        //  Active roles per program, in one query.
+        $roles = PartnershipRoles::withoutGlobalScope(AuthorizationScope::class)
+            ->whereIn('tenant_account_id', $tenantIds)
+            ->where('status', 'active')
+            ->orderBy('priority', 'desc')
+            ->get(['uuid', 'name', 'tenant_account_id'])
+            ->groupBy('tenant_account_id');
+
+        //  The caller's own partnership with each program (any status), in one query.
+        $mine = Partnerships::withoutGlobalScope(AuthorizationScope::class)
+            ->whereIn('tenant_account_id', $tenantIds)
+            ->where('iam_account_id', $account->id)
+            ->get(['tenant_account_id', 'status'])
+            ->pluck('status', 'tenant_account_id');
+
+        $data = $rows->map(fn($row) => [
+            'id'        => $row->account_uuid,
+            'name'      => $row->account_name,
+            'roles'     => ($roles->get($row->tenant_account_id) ?? collect())
+                ->map(fn($r) => ['id' => $r->uuid, 'name' => $r->name])->values()->all(),
+            'my_status' => $mine->get($row->tenant_account_id),
+        ])->values()->all();
+
+        return ['data' => $data, 'meta' => ['page' => $page, 'per_page' => $perPage, 'total' => $total]];
     }
 
     /**

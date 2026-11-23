@@ -165,6 +165,22 @@ class PartnerProgramsController extends AbstractController
     }
 
     /**
+     * Programs of other companies that take applications (?q=<name prefix>&page=&per_page=). The rules live in
+     * PartnerProgramsService.
+     *
+     * @param  Request $request
+     * @return mixed|null
+     */
+    public function discover(Request $request)
+    {
+        return $this->withArray(PartnerProgramsService::discoverPrograms(
+            $request->query('q'),
+            (int)$request->query('page', 1),
+            (int)$request->query('per_page', 20)
+        ));
+    }
+
+    /**
      * The owner of the account turns it into a partner program (self service onboarding).
      *
      * @return mixed|null

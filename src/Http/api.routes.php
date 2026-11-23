@@ -6,6 +6,8 @@ Route::prefix('accounting')->group(function() {
 //  These fixed paths MUST be registered before the generated '/{accounting_partnerships}' and
 //  '/{accounting_partner_programs}' routes, otherwise 'me' and 'invite-candidates' are taken as an id.
 Route::get('partner-programs/me', 'PartnerPrograms\\PartnerProgramsController@me');
+//  Programs of other companies that take applications (before the generated '/{accounting_partner_programs}' route).
+Route::get('partner-programs/discover', 'PartnerPrograms\\PartnerProgramsController@discover');
 Route::get('partnerships/invite-candidates', 'Partnerships\\PartnershipsController@inviteCandidates');
 Route::get('account-partners/customer-candidates', 'AccountPartners\\AccountPartnersController@customerCandidates');
 
