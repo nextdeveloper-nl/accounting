@@ -6,7 +6,13 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use NextDeveloper\Accounting\Database\Models\PartnershipRoleAssignments;
 use NextDeveloper\Accounting\Helpers\PartnershipBranding;
+use NextDeveloper\Accounting\Database\Models\Accounts as AccountingAccounts;
+use NextDeveloper\Commons\Database\Models\Addresses;
+use NextDeveloper\Commons\Database\Models\Countries;
+use NextDeveloper\Commons\Database\Models\Domains;
+use NextDeveloper\Commons\Database\Models\PhoneNumbers;
 use NextDeveloper\IAM\Database\Models\Accounts as IamAccounts;
+use NextDeveloper\IAM\Database\Models\Users as IamUsers;
 use NextDeveloper\Accounting\Database\Models\PartnershipRoles;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
@@ -43,6 +49,7 @@ class PartnershipsTransformer extends AbstractPartnershipsTransformer
         'stats',
         'branding',
         'child_roles',
+        'partner_profile',
     ];
 
     /**
@@ -182,6 +189,147 @@ class PartnershipsTransformer extends AbstractPartnershipsTransformer
             ])->values();
 
         return $this->collection($children, fn($row) => $row);
+    }
+
+    /**
+     * Who the partner is and how to reach it: company, owner contact, addresses, tax info and the matching CRM
+     * account. Only for the TENANT that owns the partnership; everyone else (the partner looking at its own
+     * partnership included) gets null, so the tenant's CRM data never reaches the partner side.
+     *
+     * The tenant has no permission on the partner's own account rows, so they are read without AuthorizationScope.
+     * The CRM row is the tenant's own record of the partner; can_open_crm is checked WITH the scope, so it tells
+     * whether this viewer may open that record.
+     */
+    public function includePartnerProfile(Partnerships $model)
+    {
+        $isTenant = (int)$model->tenant_account_id === (int)UserHelper::currentAccount()->id;
+
+        if (!$isTenant || !$model->iam_account_id) {
+            return $this->null();
+        }
+
+        //  A partnership outlives its partner account: a deleted account is still shown, flagged as deleted.
+        $account = IamAccounts::withoutGlobalScope(AuthorizationScope::class)
+            ->withTrashed()
+            ->where('id', $model->iam_account_id)
+            ->first();
+
+        if (!$account) {
+            return $this->null();
+        }
+
+        $owner = $account->iam_user_id
+            ? IamUsers::withoutGlobalScope(AuthorizationScope::class)->where('id', $account->iam_user_id)->first()
+            : null;
+        $country = $account->common_country_id
+            ? Countries::withoutGlobalScope(AuthorizationScope::class)->where('id', $account->common_country_id)->first()
+            : null;
+        $domain = $account->common_domain_id
+            ? Domains::withoutGlobalScope(AuthorizationScope::class)->where('id', $account->common_domain_id)->first()
+            : null;
+        $invitedBy = $model->invited_by_iam_user_id
+            ? IamUsers::withoutGlobalScope(AuthorizationScope::class)->where('id', $model->invited_by_iam_user_id)->first()
+            : null;
+
+        $accountingAccount = AccountingAccounts::withoutGlobalScope(AuthorizationScope::class)
+            ->where($model->accounting_account_id ? 'id' : 'iam_account_id', $model->accounting_account_id ?: $model->iam_account_id)
+            ->first();
+
+        $addresses = Addresses::withoutGlobalScope(AuthorizationScope::class)
+            ->where('object_type', IamAccounts::class)
+            ->where('object_id', $account->id)
+            ->orderByDesc('is_invoice_address')
+            ->limit(5)
+            ->get();
+
+        $countryNames = Countries::withoutGlobalScope(AuthorizationScope::class)
+            ->whereIn('id', $addresses->pluck('common_country_id')->filter()->unique()->values())
+            ->get()
+            ->pluck('name', 'id');
+
+        $phoneNumbers = PhoneNumbers::withoutGlobalScope(AuthorizationScope::class)
+            ->where('object_type', IamAccounts::class)
+            ->where('object_id', $account->id)
+            ->limit(5)
+            ->get();
+
+        $crm = $this->partnerCrmAccount($model);
+
+        return $this->item($model, fn() => [
+            'company' => [
+                'name'         => $account->name,
+                'description'  => $account->description,
+                'phone_number' => $account->phone_number,
+                'website'      => $domain?->name,
+                'country'      => $country?->name,
+                'created_at'   => $account->created_at,
+                'is_deleted'   => $account->deleted_at !== null,
+            ],
+            'owner' => $owner ? [
+                'name'         => $owner->fullname ?: trim($owner->name . ' ' . $owner->surname),
+                'email'        => $owner->email,
+                'phone_number' => $owner->phone_number,
+            ] : null,
+            'tax' => $accountingAccount ? [
+                'tax_number'          => $accountingAccount->tax_number,
+                'tax_office'          => $accountingAccount->tax_office,
+                'trade_office'        => $accountingAccount->trade_office,
+                'trade_office_number' => $accountingAccount->trade_office_number,
+            ] : null,
+            'addresses' => $addresses->map(fn($address) => [
+                'name'               => $address->name,
+                'line1'              => $address->line1,
+                'line2'              => $address->line2,
+                'city'               => $address->city,
+                'state'              => $address->state,
+                'postcode'           => $address->postcode,
+                'country'            => $countryNames->get($address->common_country_id),
+                'email_address'      => $address->email_address,
+                'is_invoice_address' => (bool)$address->is_invoice_address,
+            ])->values()->all(),
+            'phone_numbers' => $phoneNumbers->map(fn($phone) => [
+                'name'   => $phone->name,
+                'number' => trim($phone->code . ' ' . $phone->number),
+            ])->values()->all(),
+            'office_email'        => $crm['office_email'],
+            'office_phone_number' => $crm['office_phone_number'],
+            'crm_account_id'      => $crm['id'],
+            'can_open_crm'        => $crm['can_open'],
+            'invited_by_name'     => $invitedBy ? ($invitedBy->fullname ?: trim($invitedBy->name . ' ' . $invitedBy->surname)) : null,
+        ]);
+    }
+
+    /**
+     * The tenant's CRM record of the partner company. Accounting does not require the CRM package, so everything is
+     * null when it is not installed.
+     *
+     * @return array{id: ?string, can_open: bool, office_email: ?string, office_phone_number: ?string}
+     */
+    private function partnerCrmAccount(Partnerships $model): array
+    {
+        $empty = ['id' => null, 'can_open' => false, 'office_email' => null, 'office_phone_number' => null];
+        $crmModel = '\\NextDeveloper\\CRM\\Database\\Models\\Accounts';
+
+        if (!class_exists($crmModel)) {
+            return $empty;
+        }
+
+        $crmAccount = $crmModel::withoutGlobalScope(AuthorizationScope::class)
+            ->where('iam_account_id', $model->iam_account_id)
+            ->where('owner_iam_account_id', $model->tenant_account_id)
+            ->orderBy('id')
+            ->first();
+
+        if (!$crmAccount) {
+            return $empty;
+        }
+
+        return [
+            'id'                  => $crmAccount->uuid,
+            'can_open'            => $crmModel::where('id', $crmAccount->id)->exists(),
+            'office_email'        => $crmAccount->office_email,
+            'office_phone_number' => $crmAccount->office_phone_number,
+        ];
     }
 
     /**
